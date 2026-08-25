@@ -251,6 +251,7 @@ class WorldState:
         default_factory=lambda: {"黑夜教会": {"attention": 0}}
     )
     event_nodes: dict[str, str] = field(default_factory=dict)
+    event_last_triggered: dict[str, int] = field(default_factory=dict)
     npcs: dict[str, NPC] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -263,6 +264,7 @@ class WorldState:
                 name: dict(values) for name, values in self.organizations.items()
             },
             "event_nodes": dict(self.event_nodes),
+            "event_last_triggered": dict(self.event_last_triggered),
             "npcs": {npc_id: npc.to_dict() for npc_id, npc in self.npcs.items()},
         }
 
@@ -275,6 +277,7 @@ class WorldState:
             city=dict(data.get("city", {"tension": 0})),
             organizations=dict(data.get("organizations", {"黑夜教会": {"attention": 0}})),
             event_nodes=dict(data.get("event_nodes", {})),
+            event_last_triggered=dict(data.get("event_last_triggered", {})),
             npcs={
                 npc_id: NPC.from_dict(npc)
                 for npc_id, npc in data.get("npcs", {}).items()

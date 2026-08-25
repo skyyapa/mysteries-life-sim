@@ -16,6 +16,7 @@ class EventNode:
     conditions: dict[str, Any] = field(default_factory=dict)
     add_tags: list[str] = field(default_factory=list)
     add_clues: list[str] = field(default_factory=list)
+    cooldown: int = 0
 
 
 @dataclass(frozen=True)
@@ -51,6 +52,20 @@ LOCATION_ALIASES = {
     "station": "廷根车站",
 }
 
+SEASONS = {
+    "winter": {12, 1, 2},
+    "spring": {3, 4, 5},
+    "summer": {6, 7, 8},
+    "autumn": {9, 10, 11},
+}
+
+
+def season_of_month(month: int) -> str:
+    for season, months in SEASONS.items():
+        if month in months:
+            return season
+    return "winter"
+
 
 def map_effect_keys(effects: dict[str, int]) -> dict[str, int]:
     """把 Web 版效果键映射到规则引擎的属性名（如 mysticism → mysticism_knowledge）。"""
@@ -81,13 +96,24 @@ class EventSystem:
                 for node in graph.nodes.values():
                     if node.id == graph.start_node and node.chance <= 0:
                         continue  # chance=0 的占位节点（如链图的 start）
-                    if self.conditions_met(node.conditions, state):
+                    if not self.on_cooldown(node, state) and self.conditions_met(
+                        node.conditions, state
+                    ):
                         available.append((graph, node))
                 continue
             node = self.current_node(graph, state)
-            if node is not None and self.conditions_met(node.conditions, state):
-                available.append((graph, node))
+            if node is not None and not self.on_cooldown(node, state):
+                if self.conditions_met(node.conditions, state):
+                    available.append((graph, node))
         return available
+
+    def on_cooldown(self, node: EventNode, state: GameState) -> bool:
+        if node.cooldown <= 0:
+            return False
+        last = state.world.event_last_triggered.get(node.id)
+        if last is None:
+            return False
+        return state.days_lived - last < node.cooldown
 
     def current_node(self, graph: EventGraph, state: GameState) -> EventNode | None:
         node_id = state.event_nodes.get(graph.id, graph.start_node)
@@ -135,6 +161,8 @@ class EventSystem:
         for clue in node.add_clues:
             if clue not in state.clues:
                 state.clues.append(clue)
+        if node.cooldown > 0:
+            state.world.event_last_triggered[node.id] = state.days_lived
         self.advance(graph, state)
         return node.text
 
@@ -148,6 +176,21 @@ class EventSystem:
         max_day = conditions.get("max_day")
         if max_day is not None and state.days_lived > max_day:
             return False
+
+        season = conditions.get("season")
+        if season is not None:
+            if season_of_month(state.date.month) != season:
+                return False
+
+        months = conditions.get("months")
+        if months is not None and state.date.month not in months:
+            return False
+
+        jobs = conditions.get("job")
+        if jobs is not None:
+            allowed = jobs if isinstance(jobs, list) else [jobs]
+            if character.job not in allowed:
+                return False
 
         location = conditions.get("location")
         if location is not None:
@@ -231,6 +274,7 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
             conditions=normalize_conditions(node),
             add_tags=add_tags,
             add_clues=add_clues,
+            cooldown=int(node.get("cooldown", 0)),
         )
     edges = [
         EventEdge(
@@ -276,6 +320,15 @@ def normalize_conditions(node: dict[str, Any]) -> dict[str, Any]:
     if "requires_contacts" in node:
         # 信任门槛在规则引擎中暂不建模，仅要求对应联系人存在于世界。
         conditions["contacts"] = list(node["requires_contacts"].keys())
+
+    if "season" in node:
+        conditions["season"] = node["season"]
+    if "months" in node:
+        conditions["months"] = list(node["months"])
+    if "jobs" in node:
+        conditions["job"] = list(node["jobs"])
+    elif "job" in node:
+        conditions["job"] = node["job"]
 
     if "conditions" in node:
         for key, value in node["conditions"].items():

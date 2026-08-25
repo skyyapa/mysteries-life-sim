@@ -648,6 +648,14 @@ const eventGraphs = {
       { id: "ordinary_neighbor_soup", eventId: "neighbor_soup", label: "邻居热汤" },
       { id: "ordinary_market_price", eventId: "market_price_rise", label: "市场涨价" },
       { id: "ordinary_home_leak", eventId: "home_leak", label: "屋顶漏水" },
+      { id: "ordinary_winter_coal", eventId: "winter_coal", label: "冬季煤价", repeatable: true },
+      { id: "ordinary_spring_mud", eventId: "spring_mud", label: "开春泥路", repeatable: true },
+      { id: "ordinary_summer_heat", eventId: "summer_heat", label: "盛夏酷暑", repeatable: true },
+      { id: "ordinary_autumn_harvest", eventId: "autumn_harvest", label: "秋日集市", repeatable: true },
+      { id: "career_student_prize", eventId: "career_student_prize", label: "奖学金" },
+      { id: "career_apprentice_test", eventId: "career_apprentice_test", label: "师傅考校" },
+      { id: "career_clerk_audit", eventId: "career_clerk_audit", label: "月底查账" },
+      { id: "career_temp_short", eventId: "career_temp_short", label: "工钱缩水" },
     ],
   },
   abnormalDisappearance: {
@@ -1441,6 +1449,198 @@ const events = [
       },
     ],
   },
+  {
+    id: "winter_coal",
+    title: "煤价上涨",
+    locations: ["market", "north"],
+    season: "winter",
+    minDay: 40,
+    cooldownDays: 25,
+    text: "入冬后煤价涨了一截。卖煤的老汉说，今年运河结冰早，运不进来。",
+    chance: 20,
+    weight: 3,
+    choices: [
+      {
+        label: "多囤一点煤",
+        result: "你咬牙多买了一袋煤。钱包薄了，但冬天不用在夜里被冻醒。",
+        effects: { money: -8, comfort: 4, stress: -2 },
+      },
+      {
+        label: "省着烧",
+        result: "你决定把炭火调到最小。屋里冷了些，但账面撑住了。",
+        effects: { money: 3, comfort: -3, stress: 2 },
+      },
+    ],
+  },
+  {
+    id: "spring_mud",
+    title: "开春泥路",
+    locations: ["market", "east", "station"],
+    season: "spring",
+    minDay: 90,
+    cooldownDays: 30,
+    text: "开春雪水化开，廷根的街道变成泥河。马车陷在坑里，车夫大声咒骂着。",
+    chance: 16,
+    weight: 2,
+    choices: [
+      {
+        label: "绕远路",
+        result: "你多走了一刻钟绕开泥坑，靴子保住了。",
+        effects: { stamina: -3, stress: -1 },
+      },
+      {
+        label: "帮忙推车",
+        result: "你帮着推了一把，车夫塞给你几个便士，说你还算可靠。",
+        effects: { stamina: -6, money: 2, charisma: 1 },
+      },
+    ],
+  },
+  {
+    id: "summer_heat",
+    title: "盛夏酷暑",
+    locations: ["north", "east"],
+    season: "summer",
+    minDay: 150,
+    cooldownDays: 30,
+    text: "夏日的廷根闷热难耐。傍晚的街道晒了一天，空气里全是尘土和散热的气味。",
+    chance: 18,
+    weight: 3,
+    choices: [
+      {
+        label: "买一杯凉饮",
+        result: "街角摊子的凉饮很贵，但确实让脑子清醒了一些。",
+        effects: { money: -3, stress: -3, health: 1 },
+      },
+      {
+        label: "忍一忍",
+        result: "你省下了钱，但到家时已经头晕眼花。",
+        effects: { money: 2, health: -2, stamina: -2 },
+      },
+    ],
+  },
+  {
+    id: "autumn_harvest",
+    title: "秋日集市",
+    locations: ["market"],
+    season: "autumn",
+    minDay: 240,
+    cooldownDays: 30,
+    text: "秋天的集市堆满了苹果、面包和熏鱼。摊贩们难得露出笑脸。",
+    chance: 16,
+    weight: 3,
+    choices: [
+      {
+        label: "买点应季食物",
+        result: "你买了几颗苹果和一袋面粉。物美价廉，心情也跟着好了。",
+        effects: { money: -4, health: 2, stress: -2 },
+      },
+      {
+        label: "只是逛逛",
+        result: "你在人群里走了一圈，闻着食物的香气，没花一分钱。",
+        effects: { stress: -1, charisma: 1 },
+      },
+    ],
+  },
+  {
+    id: "career_student_prize",
+    title: "奖学金机会",
+    locations: ["north"],
+    jobs: ["文法学校学生"],
+    minDay: 30,
+    cooldownDays: 60,
+    text: "学校宣布，学年末成绩优异者可以获得一份奖学金，足够抵掉几个月的开销。",
+    chance: 16,
+    weight: 2,
+    choices: [
+      {
+        label: "报名参赛",
+        result: "你把课余时间都压在备考上。这是一场赌博，但奖品值得一试。",
+        effects: { intelligence: 3, stress: 6, stamina: -4 },
+        addTags: ["争取奖学金"],
+      },
+      {
+        label: "量力而行",
+        result: "你决定保住平时的节奏。奖学金很好，但不是唯一的路。",
+        effects: { stress: -2 },
+        addTags: ["放弃奖学金"],
+      },
+    ],
+  },
+  {
+    id: "career_apprentice_test",
+    title: "师傅考校",
+    locations: ["market", "north"],
+    jobs: ["店铺学徒"],
+    minDay: 30,
+    cooldownDays: 60,
+    text: "师傅突然说要考校你最近的功夫。他板着脸，但你知道这是机会。",
+    chance: 16,
+    weight: 2,
+    choices: [
+      {
+        label: "全力以赴",
+        result: "你把自己学到的东西全使了出来。师傅没说话，但嘴角动了动。",
+        effects: { intelligence: 2, stress: 5, charisma: 1 },
+        addTags: ["师傅认可"],
+      },
+      {
+        label: "求稳",
+        result: "你只做了最有把握的部分。不难看，但也不出彩。",
+        effects: { stress: -1 },
+        addTags: ["应对考试"],
+      },
+    ],
+  },
+  {
+    id: "career_clerk_audit",
+    title: "月底查账",
+    locations: ["north"],
+    jobs: ["事务所文员"],
+    minDay: 30,
+    cooldownDays: 60,
+    text: "事务所月底要查账。主管把一摞厚账本推到你面前，语气很轻：别出错。",
+    chance: 16,
+    weight: 2,
+    choices: [
+      {
+        label: "连夜核对",
+        result: "你查了三遍，挑出两处小错。主管罕见地对你点了点头。",
+        effects: { intelligence: 2, stress: 7, stamina: -6 },
+        addTags: ["账目无误"],
+      },
+      {
+        label: "按时下班",
+        result: "你照常下班。身体轻松，但你知道明天可能不好过。",
+        effects: { stress: -1 },
+        addTags: ["账目平常"],
+      },
+    ],
+  },
+  {
+    id: "career_temp_short",
+    title: "工钱缩水",
+    locations: ["market", "east"],
+    jobs: ["临时工"],
+    minDay: 30,
+    cooldownDays: 60,
+    text: "工头发工钱时少给了几先令。他说这是“扣下的一笔管理费”。",
+    chance: 16,
+    weight: 2,
+    choices: [
+      {
+        label: "当面质问",
+        result: "你当着众人的面把数目点给他看。工头冷笑，但还是补上了差额。",
+        effects: { money: 5, stress: 6, charisma: 1 },
+        addTags: ["据理力争"],
+      },
+      {
+        label: "忍下这口气",
+        result: "你接过钱走开了。几先令不值得丢掉这份活计。",
+        effects: { money: -4, stress: 2 },
+        addTags: ["忍气吞声"],
+      },
+    ],
+  },
 ];
 
 const initialState = {
@@ -1504,6 +1704,7 @@ const initialState = {
     tickCount: 0,
     economyPressure: 0,
     cityTension: 0,
+    eventLastTriggered: {},
     eventGraph: {
       completedNodes: [],
     },
@@ -1697,6 +1898,7 @@ function resolveEvent(choiceIndex, shouldRender = true) {
   (choice.addTags || []).forEach(addTag);
   (choice.addClues || []).forEach(addClue);
   completeEventGraphNode(event.id);
+  markEventTriggered(event);
   updateStoryArcs();
   state.pendingEvent = null;
   addEntry(event.happenedAt || formatDate(), `${event.title}：${choice.result}`);
@@ -1767,7 +1969,7 @@ function travelTo(locationId) {
 
 function rollEvent() {
   const candidates = events.filter((event) => {
-    return canEventTriggerAt(event, state.locationId);
+    return canEventTriggerAt(event, state.locationId) && !isEventOnCooldown(event);
   });
   const weighted = candidates.flatMap((event) => Array(event.weight || 1).fill(event));
   const event = weighted[Math.floor(Math.random() * weighted.length)];
@@ -1775,6 +1977,35 @@ function rollEvent() {
     return null;
   }
   return Math.random() * 100 <= event.chance ? event : null;
+}
+
+function getSeason(month) {
+  const m = month || state.month || 1;
+  if (m === 12 || m === 1 || m === 2) return "winter";
+  if (m >= 3 && m <= 5) return "spring";
+  if (m >= 6 && m <= 8) return "summer";
+  return "autumn";
+}
+
+function isEventOnCooldown(event) {
+  if (!event.cooldownDays) {
+    return false;
+  }
+  const last = (state.world.eventLastTriggered || {})[event.id];
+  if (last === undefined) {
+    return false;
+  }
+  return state.daysLived - last < event.cooldownDays;
+}
+
+function markEventTriggered(event) {
+  if (!event.cooldownDays) {
+    return;
+  }
+  if (!state.world.eventLastTriggered) {
+    state.world.eventLastTriggered = {};
+  }
+  state.world.eventLastTriggered[event.id] = state.daysLived;
 }
 
 function canEventTriggerAt(event, locationId) {
@@ -1819,6 +2050,15 @@ function canEventTriggerAt(event, locationId) {
     return false;
   }
   if (event.monthlyFlag && state.finance.monthlyFlags[event.monthlyFlag]) {
+    return false;
+  }
+  if (event.season && getSeason(state.month) !== event.season) {
+    return false;
+  }
+  if (event.months && !event.months.includes(state.month)) {
+    return false;
+  }
+  if (event.jobs && !event.jobs.includes(getCareer().name)) {
     return false;
   }
   return true;
@@ -3036,6 +3276,7 @@ function mergeWorld(savedWorld) {
       ...(savedWorld.eventGraph || {}),
       completedNodes: savedWorld.eventGraph?.completedNodes || [],
     },
+    eventLastTriggered: savedWorld.eventLastTriggered || {},
     arcs: {
       ...base.arcs,
       ...(savedWorld.arcs || {}),

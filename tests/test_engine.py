@@ -109,7 +109,7 @@ def test_world_engine_loads_event_graph_data():
     fun = engine.event_system.graphs["abnormal_disappearance"]
 
     assert ordinary.is_pool
-    assert len(ordinary.nodes) == 11  # start 占位 + 10 个普通事件
+    assert len(ordinary.nodes) == 19  # start 占位 + 10 普通 + 4 季节 + 4 职业
     assert {n.id for n in ordinary.nodes.values()} - {"start"}
 
     assert not fun.is_pool

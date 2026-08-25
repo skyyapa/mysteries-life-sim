@@ -171,5 +171,77 @@
     "conditions": { "min_day": 25 },
     "effects": { "mysticism": 5, "spirituality": 4, "corruption": 1, "stress": 6 },
     "add_tags": ["初涉非凡"]
+  },
+  {
+    "id": "winter_coal",
+    "text": "入冬后煤价涨了一截。卖煤的老汉说，今年运河结冰早，运不进来。",
+    "chance": 20,
+    "weight": 3,
+    "conditions": { "min_day": 40, "season": "winter" },
+    "effects": { "money": -8, "stress": -2 },
+    "add_tags": []
+  },
+  {
+    "id": "spring_mud",
+    "text": "开春雪水化开，廷根的街道变成泥河。马车陷在坑里，车夫大声咒骂着。",
+    "chance": 16,
+    "weight": 2,
+    "conditions": { "min_day": 90, "season": "spring" },
+    "effects": { "stamina": -3, "stress": -1 },
+    "add_tags": []
+  },
+  {
+    "id": "summer_heat",
+    "text": "夏日的廷根闷热难耐。傍晚的街道晒了一天，空气里全是尘土和散热的气味。",
+    "chance": 18,
+    "weight": 3,
+    "conditions": { "min_day": 150, "season": "summer" },
+    "effects": { "money": -3, "stress": -3, "health": 1 },
+    "add_tags": []
+  },
+  {
+    "id": "autumn_harvest",
+    "text": "秋天的集市堆满了苹果、面包和熏鱼。摊贩们难得露出笑脸。",
+    "chance": 16,
+    "weight": 3,
+    "conditions": { "min_day": 240, "season": "autumn" },
+    "effects": { "money": -4, "health": 2, "stress": -2 },
+    "add_tags": []
+  },
+  {
+    "id": "career_student_prize",
+    "text": "学校宣布，学年末成绩优异者可以获得一份奖学金，足够抵掉几个月的开销。",
+    "chance": 16,
+    "weight": 2,
+    "conditions": { "min_day": 30, "job": "文法学校学生" },
+    "effects": { "intelligence": 3, "stress": 6, "stamina": -4 },
+    "add_tags": ["争取奖学金"]
+  },
+  {
+    "id": "career_apprentice_test",
+    "text": "师傅突然说要考校你最近的功夫。他板着脸，但你知道这是机会。",
+    "chance": 16,
+    "weight": 2,
+    "conditions": { "min_day": 30, "job": "店铺学徒" },
+    "effects": { "intelligence": 2, "stress": 5, "charisma": 1 },
+    "add_tags": ["师傅认可"]
+  },
+  {
+    "id": "career_clerk_audit",
+    "text": "事务所月底要查账。主管把一摞厚账本推到你面前，语气很轻：别出错。",
+    "chance": 16,
+    "weight": 2,
+    "conditions": { "min_day": 30, "job": "事务所文员" },
+    "effects": { "intelligence": 2, "stress": 7, "stamina": -6 },
+    "add_tags": ["账目无误"]
+  },
+  {
+    "id": "career_temp_short",
+    "text": "工头发工钱时少给了几先令。他说这是“扣下的一笔管理费”。",
+    "chance": 16,
+    "weight": 2,
+    "conditions": { "min_day": 30, "job": "临时工" },
+    "effects": { "money": 5, "stress": 6, "charisma": 1 },
+    "add_tags": ["据理力争"]
   }
 ]
