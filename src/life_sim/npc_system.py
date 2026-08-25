@@ -27,6 +27,7 @@ class NPCSystem:
                 current_activity=npc.current_activity,
                 schedule=list(npc.schedule),
                 weekend_schedule=list(npc.weekend_schedule),
+                relationship=dict(npc.relationship),
             )
             for npc_id, npc in self.templates.items()
         }
@@ -83,6 +84,14 @@ def npc_from_data(data: dict) -> NPC:
     schedule = parse_entries(data.get("schedule", []))
     weekend_schedule = parse_entries(data.get("weekend_schedule", []))
     current = schedule[0] if schedule else None
+    trust = int(data.get("trust", 0))
+    relationship = dict(
+        data.get(
+            "relationship",
+            {"trust": trust, "friendship": 0, "fear": 0},
+        )
+    )
+    relationship.setdefault("trust", trust)
     return NPC(
         id=data["id"],
         name=data["name"],
@@ -92,11 +101,12 @@ def npc_from_data(data: dict) -> NPC:
         location=data.get("location", data["home"]),
         fatigue=int(data.get("fatigue", 30)),
         money=int(data.get("money", 0)),
-        trust=int(data.get("trust", 0)),
+        trust=trust,
         current_time=current.time if current else data.get("current_time", "08:00"),
         current_activity=current.activity if current else data.get("current_activity", "开始一天"),
         schedule=schedule,
         weekend_schedule=weekend_schedule,
         disappeared=bool(data.get("disappeared", False)),
         disappeared_day=data.get("disappeared_day"),
+        relationship=relationship,
     )

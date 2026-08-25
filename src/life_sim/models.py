@@ -10,19 +10,46 @@ class WorldDate:
     year: int = 1348
     month: int = 1
     day: int = 1
+    hour: int = 8
+    minute: int = 0
+
+    HOURS_PER_DAY = 24
+    MINUTES_PER_HOUR = 60
+    DAYS_PER_MONTH = 30
 
     def advance_days(self, days: int = 1) -> None:
-        for _ in range(days):
-            self.day += 1
-            if self.day > 30:
-                self.day = 1
-                self.month += 1
+        self.advance_minutes(days * self.HOURS_PER_DAY * self.MINUTES_PER_HOUR)
+
+    def advance_minutes(self, minutes: int) -> None:
+        total = (
+            ((self.day - 1) * self.HOURS_PER_DAY + self.hour) * self.MINUTES_PER_HOUR
+            + self.minute
+            + minutes
+        )
+        if total < 0:
+            total = 0
+        day_index, minute_of_day = divmod(total, self.HOURS_PER_DAY * self.MINUTES_PER_HOUR)
+        self.hour, self.minute = divmod(minute_of_day, self.MINUTES_PER_HOUR)
+        # day_index 是自第 1 天开始的增量
+        self.day = 1 + day_index
+        while self.day > self.DAYS_PER_MONTH:
+            self.day -= self.DAYS_PER_MONTH
+            self.month += 1
             if self.month > 12:
                 self.month = 1
                 self.year += 1
 
+    def advance_hours(self, hours: int) -> None:
+        self.advance_minutes(hours * self.MINUTES_PER_HOUR)
+
+    def is_night(self) -> bool:
+        return self.hour >= 21 or self.hour < 5
+
     def label(self) -> str:
         return f"{self.era} {self.year}年{self.month}月{self.day}日"
+
+    def label_full(self) -> str:
+        return f"{self.label()} {self.hour:02d}:{self.minute:02d}"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -30,6 +57,8 @@ class WorldDate:
             "year": self.year,
             "month": self.month,
             "day": self.day,
+            "hour": self.hour,
+            "minute": self.minute,
         }
 
     @classmethod
@@ -39,6 +68,8 @@ class WorldDate:
             year=int(data.get("year", 1348)),
             month=int(data.get("month", 1)),
             day=int(data.get("day", 1)),
+            hour=int(data.get("hour", 8)),
+            minute=int(data.get("minute", 0)),
         )
 
 
@@ -201,17 +232,60 @@ class NPC:
     location: str
     fatigue: int = 30
     money: int = 0
-    trust: int = 0
     current_time: str = "08:00"
     current_activity: str = "开始一天"
     schedule: list[NPCScheduleEntry] = field(default_factory=list)
     weekend_schedule: list[NPCScheduleEntry] = field(default_factory=list)
     disappeared: bool = False
     disappeared_day: int | None = None
+    relationship: dict[str, int] = field(
+        default_factory=lambda: {"trust": 0, "friendship": 0, "fear": 0}
+    )
+    trust: int = field(default=0, init=False, repr=False)
+
+    @property
+    def friendship(self) -> int:
+        return self.relationship.get("friendship", 0)
+
+    @property
+    def fear(self) -> int:
+        return self.relationship.get("fear", 0)
+
+    @property
+    def trust(self) -> int:
+        return self.relationship.get("trust", 0)
+
+    @trust.setter
+    def trust(self, value: int) -> None:
+        self.relationship["trust"] = max(0, min(100, int(value)))
+
+    def __post_init__(self) -> None:
+        if "trust" not in self.relationship or self.relationship["trust"] == 0:
+            self.relationship["trust"] = max(0, min(100, self.trust))
 
     def clamp(self) -> None:
         self.fatigue = max(0, min(100, self.fatigue))
-        self.trust = max(0, min(100, self.trust))
+        for key in ("trust", "friendship", "fear"):
+            self.relationship[key] = max(0, min(100, self.relationship.get(key, 0)))
+
+    def set_trust(self, amount: int) -> None:
+        """同步信任到 relationship（便捷）。"""
+        self.relationship["trust"] = max(0, min(100, amount))
+
+    def add_trust(self, amount: int) -> None:
+        self.relationship["trust"] = max(
+            0, min(100, self.relationship.get("trust", 0) + amount)
+        )
+
+    def add_friendship(self, amount: int) -> None:
+        self.relationship["friendship"] = max(
+            0, min(100, self.relationship.get("friendship", 0) + amount)
+        )
+
+    def add_fear(self, amount: int) -> None:
+        self.relationship["fear"] = max(
+            0, min(100, self.relationship.get("fear", 0) + amount)
+        )
 
     def is_weekend(self, day: int) -> bool:
         """day 0-6 对应周一..周日；5(周六)、6(周日) 为休息日。"""
@@ -241,6 +315,7 @@ class NPC:
             "weekend_schedule": [entry.to_dict() for entry in self.weekend_schedule],
             "disappeared": self.disappeared,
             "disappeared_day": self.disappeared_day,
+            "relationship": dict(self.relationship),
         }
 
     @classmethod
@@ -266,6 +341,12 @@ class NPC:
             ],
             disappeared=bool(data.get("disappeared", False)),
             disappeared_day=data.get("disappeared_day"),
+            relationship=dict(
+                data.get(
+                    "relationship",
+                    {"trust": data.get("trust", 0), "friendship": 0, "fear": 0},
+                )
+            ),
         )
 
 
@@ -284,6 +365,7 @@ class WorldState:
     event_nodes: dict[str, str] = field(default_factory=dict)
     event_last_triggered: dict[str, int] = field(default_factory=dict)
     expired_traced: dict[str, int] = field(default_factory=dict)
+    locations: dict[str, dict[str, int]] = field(default_factory=dict)
     npcs: dict[str, NPC] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -298,6 +380,9 @@ class WorldState:
             "event_nodes": dict(self.event_nodes),
             "event_last_triggered": dict(self.event_last_triggered),
             "expired_traced": dict(self.expired_traced),
+            "locations": {
+                name: dict(values) for name, values in self.locations.items()
+            },
             "npcs": {npc_id: npc.to_dict() for npc_id, npc in self.npcs.items()},
         }
 
@@ -312,6 +397,10 @@ class WorldState:
             event_nodes=dict(data.get("event_nodes", {})),
             event_last_triggered=dict(data.get("event_last_triggered", {})),
             expired_traced=dict(data.get("expired_traced", {})),
+            locations={
+                name: dict(values)
+                for name, values in data.get("locations", {}).items()
+            },
             npcs={
                 npc_id: NPC.from_dict(npc)
                 for npc_id, npc in data.get("npcs", {}).items()

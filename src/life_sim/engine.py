@@ -4,9 +4,13 @@ import random
 from typing import Any
 
 from .data_loader import load_json, load_optional_json
+from .economy.system import EconomySystem
 from .event_system import EventGraph, EventNode, EventSystem
+from .location.system import LocationSystem
 from .models import Character, GameState, JournalEntry, WorldState
 from .npc_system import NPCSystem
+from .relation.system import RelationshipSystem
+from .world.tick import WorldTick
 
 
 class WorldEngine:
@@ -21,6 +25,23 @@ class WorldEngine:
         else:
             self.event_system = EventSystem.from_graph_data(event_graphs)
         self.npc_system = NPCSystem.from_data(load_optional_json("npcs.json") or [])
+        self.location_system = LocationSystem()
+        self.economy_system = EconomySystem()
+        self.relation_system = RelationshipSystem()
+        # V0.14：世界推进唯一入口（组装各子系统）
+        self.world_tick = WorldTick(
+            npc_system=self.npc_system,
+            location_system=self.location_system,
+            economy_system=self.economy_system,
+            relation_system=self.relation_system,
+            event_system=self.event_system,
+            commit=self._commit_state,
+            seed=seed,
+        )
+
+    def _commit_state(self, state: GameState) -> None:
+        """状态提交钩子（存档由外层统一调用 save_game）。"""
+        pass
 
     def set_focused_contact(self, state: GameState, npc_id: str | None) -> bool:
         """设置深交对象；npc_id None 表示取消。返回是否成功。"""
@@ -53,6 +74,21 @@ class WorldEngine:
             previous_year = state.date.year
             state.date.advance_days(1)
             self.update_world(state, previous_year=previous_year)
+
+    def tick_world(self, state: GameState, *, days: int = 0, hours: int = 0) -> None:
+        """V0.14 世界推进唯一入口（WorldTick.run 封装）。
+
+        days/hours 由 TimeSystem 推进；当 days>0 时同时推进 days_lived 与跨年年龄。
+        """
+        if days or hours:
+            for _ in range(days):
+                state.days_lived += 1
+                previous_year = state.date.year
+                self.world_tick.run(state, days=1, hours=hours)
+                if previous_year is not None and state.date.year > previous_year:
+                    state.character.age += 1
+        else:
+            self.world_tick.run(state)
 
     def process_action(self, state: GameState, action_id: str) -> JournalEntry:
         if action_id not in self.actions:
@@ -90,13 +126,13 @@ class WorldEngine:
         changes: dict[str, int] = {"social_trust": 0}
 
         if focused is not None:
-            focused.trust = max(0, min(100, focused.trust + 3))
+            focused.add_trust(3)
             changes["social_trust"] = changes.get("social_trust", 0) + 3
             changes["focused"] = 1
         else:
             for npc in state.npcs.values():
                 if npc.trust < 40:
-                    npc.trust = min(40, npc.trust + 1)
+                    npc.set_trust(min(40, npc.trust + 1))
                     changes["social_trust"] = changes.get("social_trust", 0) + 1
         return changes
 
@@ -108,6 +144,8 @@ class WorldEngine:
         self.update_city(state)
         self.update_madness(state)
         self.update_organizations(state)
+        self.location_system.tick(state)
+        self.relation_system.tick(state)
         self.tick_expired_events(state)
         self.event_system.auto_advance(state)
         self.npc_system.tick(state)

@@ -177,7 +177,7 @@ class EventSystem:
         for npc_id, amount in node.trust_effects.items():
             npc = state.npcs.get(npc_id)
             if npc is not None:
-                npc.trust = max(0, min(100, npc.trust + amount))
+                npc.add_trust(amount)
         if node.cooldown > 0:
             state.world.event_last_triggered[node.id] = state.days_lived
         self.advance(graph, state)
