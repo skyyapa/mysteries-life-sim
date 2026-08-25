@@ -205,10 +205,17 @@ class NPC:
     current_time: str = "08:00"
     current_activity: str = "开始一天"
     schedule: list[NPCScheduleEntry] = field(default_factory=list)
+    weekend_schedule: list[NPCScheduleEntry] = field(default_factory=list)
+    disappeared: bool = False
+    disappeared_day: int | None = None
 
     def clamp(self) -> None:
         self.fatigue = max(0, min(100, self.fatigue))
         self.trust = max(0, min(100, self.trust))
+
+    def is_weekend(self, day: int) -> bool:
+        """day 0-6 对应周一..周日；5(周六)、6(周日) 为休息日。"""
+        return day in (5, 6)
 
     def apply_schedule_entry(self, entry: NPCScheduleEntry) -> None:
         self.current_time = entry.time
@@ -231,6 +238,9 @@ class NPC:
             "current_time": self.current_time,
             "current_activity": self.current_activity,
             "schedule": [entry.to_dict() for entry in self.schedule],
+            "weekend_schedule": [entry.to_dict() for entry in self.weekend_schedule],
+            "disappeared": self.disappeared,
+            "disappeared_day": self.disappeared_day,
         }
 
     @classmethod
@@ -250,6 +260,12 @@ class NPC:
             schedule=[
                 NPCScheduleEntry.from_dict(entry) for entry in data.get("schedule", [])
             ],
+            weekend_schedule=[
+                NPCScheduleEntry.from_dict(entry)
+                for entry in data.get("weekend_schedule", [])
+            ],
+            disappeared=bool(data.get("disappeared", False)),
+            disappeared_day=data.get("disappeared_day"),
         )
 
 
@@ -260,7 +276,10 @@ class WorldState:
     economy: dict[str, int] = field(default_factory=lambda: {"pressure": 0})
     city: dict[str, int] = field(default_factory=lambda: {"tension": 0})
     organizations: dict[str, dict[str, int]] = field(
-        default_factory=lambda: {"黑夜教会": {"attention": 0}}
+        default_factory=lambda: {
+            "黑夜教会": {"attention": 0},
+            "暗流组织": {"activity": 0},
+        }
     )
     event_nodes: dict[str, str] = field(default_factory=dict)
     event_last_triggered: dict[str, int] = field(default_factory=dict)
@@ -284,12 +303,12 @@ class WorldState:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> WorldState:
-        return cls(
+        result = cls(
             date=WorldDate.from_dict(data.get("date", {})),
             weather=data.get("weather", "阴天"),
             economy=dict(data.get("economy", {"pressure": 0})),
             city=dict(data.get("city", {"tension": 0})),
-            organizations=dict(data.get("organizations", {"黑夜教会": {"attention": 0}})),
+            organizations=dict(data.get("organizations", {})),
             event_nodes=dict(data.get("event_nodes", {})),
             event_last_triggered=dict(data.get("event_last_triggered", {})),
             expired_traced=dict(data.get("expired_traced", {})),
@@ -298,6 +317,13 @@ class WorldState:
                 for npc_id, npc in data.get("npcs", {}).items()
             },
         )
+        # 兼容旧存档：确保组织键存在
+        for org, default in (
+            ("黑夜教会", {"attention": 0}),
+            ("暗流组织", {"activity": 0}),
+        ):
+            result.organizations.setdefault(org, dict(default))
+        return result
 
 
 @dataclass

@@ -34,7 +34,33 @@
         "fatigue_change": -8
       }
     ],
-    "trust": 10
+    "trust": 10,
+    "weekend_schedule": [
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "睡个懒觉再开店",
+        "fatigue_change": -4
+      },
+      {
+        "time": "14:00",
+        "location": "黑夜教堂",
+        "activity": "去教堂做礼拜",
+        "fatigue_change": 2
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "招待周末酒客",
+        "fatigue_change": 8
+      },
+      {
+        "time": "22:00",
+        "location": "北区",
+        "activity": "提前打烊休息",
+        "fatigue_change": -6
+      }
+    ]
   },
   {
     "id": "toby_newsboy",
@@ -89,7 +115,33 @@
         "fatigue_change": -10
       }
     ],
-    "trust": 12
+    "trust": 12,
+    "weekend_schedule": [
+      {
+        "time": "07:00",
+        "location": "廷根车站",
+        "activity": "卖假日晨报",
+        "fatigue_change": 4
+      },
+      {
+        "time": "11:00",
+        "location": "市场区",
+        "activity": "帮摊主跑腿赚零花",
+        "fatigue_change": 5
+      },
+      {
+        "time": "16:00",
+        "location": "市场区",
+        "activity": "和伙伴们玩",
+        "fatigue_change": 2
+      },
+      {
+        "time": "20:00",
+        "location": "市场区",
+        "activity": "早早睡下",
+        "fatigue_change": -8
+      }
+    ]
   },
   {
     "id": "olson_priest",
@@ -749,7 +801,39 @@
         "fatigue_change": 3
       }
     ],
-    "trust": 4
+    "trust": 4,
+    "weekend_schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "上午值班巡逻",
+        "fatigue_change": 4
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "处理集市纠纷",
+        "fatigue_change": 4
+      },
+      {
+        "time": "15:00",
+        "location": "北区",
+        "activity": "轮休回家",
+        "fatigue_change": -2
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "和家人吃饭",
+        "fatigue_change": 1
+      },
+      {
+        "time": "22:00",
+        "location": "北区",
+        "activity": "休息",
+        "fatigue_change": -5
+      }
+    ]
   },
   {
     "id": "carter_teacher",
@@ -804,7 +888,39 @@
         "fatigue_change": 2
       }
     ],
-    "trust": 12
+    "trust": 12,
+    "weekend_schedule": [
+      {
+        "time": "09:00",
+        "location": "北区",
+        "activity": "在家批改作业",
+        "fatigue_change": 2
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "逛市场",
+        "fatigue_change": 3
+      },
+      {
+        "time": "15:00",
+        "location": "黑夜教堂",
+        "activity": "参加礼拜",
+        "fatigue_change": 1
+      },
+      {
+        "time": "19:00",
+        "location": "北区",
+        "activity": "准备下周教案",
+        "fatigue_change": 3
+      },
+      {
+        "time": "22:00",
+        "location": "北区",
+        "activity": "休息",
+        "fatigue_change": -5
+      }
+    ]
   },
   {
     "id": "percival_librarian",

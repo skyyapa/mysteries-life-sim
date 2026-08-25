@@ -2032,6 +2032,10 @@ const initialState = {
     cityTension: 0,
     eventLastTriggered: {},
     expiredTraced: {},
+    organizations: {
+      黑夜教会: { attention: 0 },
+      暗流组织: { activity: 0 },
+    },
     eventGraph: {
       completedNodes: [],
     },
@@ -2659,6 +2663,7 @@ function worldTick() {
   tickEconomy();
   tickLocations();
   tickMadness();
+  tickOrganizations();
   tickExpiredEvents();
   updateStoryArcs();
 }
@@ -2744,8 +2749,21 @@ function updateContactSchedules(targetState) {
 
 function updateNpcLives(targetState) {
   Object.values(targetState.contacts).forEach((contact) => {
+    if (contact.disappeared) {
+      contact.currentActivity = "（失踪）";
+      return;
+    }
+    const dayIndex = targetState.daysLived % 7;
+    const isWeekend = dayIndex === 5 || dayIndex === 6;
+    const weekendRoutine = contact.weekendRoutine || [];
+    if (isWeekend && weekendRoutine.length > 0) {
+      const routine = weekendRoutine[dayIndex % weekendRoutine.length];
+      contact.currentLocationId = routine.locationId;
+      contact.currentActivity = routine.activity;
+      return;
+    }
     if (contact.routine && contact.routine.length > 0) {
-      const routine = contact.routine[targetState.daysLived % contact.routine.length];
+      const routine = contact.routine[dayIndex % contact.routine.length];
       contact.currentLocationId = routine.locationId;
       contact.currentActivity = routine.activity;
       return;
@@ -2763,6 +2781,43 @@ function updateNpcLives(targetState) {
 function tickEconomy() {
   const pressure = state.stats.money < getCareer().rent ? 1 : -1;
   state.world.economyPressure = Math.max(0, Math.min(100, state.world.economyPressure + pressure));
+}
+
+function tickOrganizations() {
+  // 组织行动层：黑夜教会注意度 + 暗流组织活跃度 逐日演化
+  if (!state.world.organizations) {
+    state.world.organizations = {
+      黑夜教会: { attention: 0 },
+      暗流组织: { activity: 0 },
+    };
+  }
+  const church = state.world.organizations["黑夜教会"] || { attention: 0 };
+  const secret = state.world.organizations["暗流组织"] || { activity: 0 };
+  const clues = state.clues || [];
+  const tags = state.tags || [];
+
+  // 教会注意度：线索引起注意，沾染异常被察，向教会靠拢显著抬高
+  let attention = church.attention - 1;
+  attention += Math.min(3, Math.max(0, clues.length - 1));
+  if ((state.stats.corruption || 0) >= 5) attention += 1;
+  if (tags.some((t) => ["向教会举报", "向教士坦白", "成为教会线人"].includes(t))) {
+    attention += 3;
+  }
+  church.attention = Math.max(0, Math.min(100, attention));
+
+  // 暗流组织：越靠近非凡越活跃，活跃反推城市紧张
+  let activity = secret.activity - 1;
+  if (tags.some((t) => ["初涉非凡", "完成第二件委托", "加入神秘组织"].includes(t))) {
+    activity += 2;
+  }
+  if ((state.stats.corruption || 0) >= 10) activity += 1;
+  secret.activity = Math.max(0, Math.min(100, activity));
+
+  state.world.organizations["黑夜教会"] = church;
+  state.world.organizations["暗流组织"] = secret;
+  if (secret.activity > 40) {
+    state.world.cityTension = Math.max(0, Math.min(100, state.world.cityTension + 1));
+  }
 }
 
 function tickLocations() {
@@ -3468,6 +3523,10 @@ function renderWorld() {
   const npcSummary = getNpcScheduleSummary();
   document.getElementById("cityTension").textContent = state.world.cityTension;
   document.getElementById("economyPressure").textContent = state.world.economyPressure;
+  document.getElementById("churchAttention").textContent =
+    state.world.organizations?.["黑夜教会"]?.attention ?? 0;
+  document.getElementById("secretActivity").textContent =
+    state.world.organizations?.["暗流组织"]?.activity ?? 0;
   document.getElementById("disappearanceArc").textContent =
     storyArcLabels[arc.node] || storyArcLabels.unnoticed;
   document.getElementById(
@@ -3962,6 +4021,12 @@ function mergeWorld(savedWorld) {
       completedNodes: savedWorld.eventGraph?.completedNodes || [],
     },
     eventLastTriggered: savedWorld.eventLastTriggered || {},
+    organizations: {
+      黑夜教会: { attention: 0 },
+      ...(savedWorld.organizations?.["黑夜教会"] ? { 黑夜教会: savedWorld.organizations["黑夜教会"] } : {}),
+      暗流组织: { activity: 0 },
+      ...(savedWorld.organizations?.["暗流组织"] ? { 暗流组织: savedWorld.organizations["暗流组织"] } : {}),
+    },
     arcs: {
       ...base.arcs,
       ...(savedWorld.arcs || {}),

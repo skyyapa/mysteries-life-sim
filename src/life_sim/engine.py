@@ -107,9 +107,48 @@ class WorldEngine:
         self.update_economy(state)
         self.update_city(state)
         self.update_madness(state)
+        self.update_organizations(state)
         self.tick_expired_events(state)
         self.event_system.auto_advance(state)
         self.npc_system.tick(state)
+
+    def update_organizations(self, state: GameState) -> None:
+        """组织行动层：两大组织逐日演化。
+
+        - 黑夜教会注意度：玩家越深入异常调查（线索多、沾染异常）越受注目；
+          向教会举报/坦白/求助会显著抬高；每天自然回落。
+        - 暗流组织活跃度:玩家越靠近非凡（初涉非凡、做委托、加入组织）组织越活跃；
+          活跃会反推城市紧张。
+        """
+        character = state.character
+        church = state.world.organizations.setdefault("黑夜教会", {"attention": 0})
+        secret = state.world.organizations.setdefault("暗流组织", {"activity": 0})
+
+        # 教会注意度
+        attention = church["attention"]
+        attention -= 1  # 自然回落
+        attention += min(3, max(0, len(state.clues) - 1))  # 每个线索引起注意
+        if character.corruption >= 5:
+            attention += 1  # 沾染异常被察觉
+        if any(t in character.tags for t in ("向教会举报", "向教士坦白", "成为教会线人")):
+            attention += 3
+        church["attention"] = max(0, min(100, attention))
+
+        # 暗流组织活跃度
+        activity = secret["activity"]
+        activity -= 1
+        if any(t in character.tags for t in ("初涉非凡", "完成第二件委托", "加入神秘组织")):
+            activity += 2
+        if character.corruption >= 10:
+            activity += 1
+        secret["activity"] = max(0, min(100, activity))
+
+        # 组织活跃反推城市紧张
+        city = state.world.city
+        city["tension"] = max(
+            0,
+            min(100, city["tension"] + (1 if secret["activity"] > 40 else 0)),
+        )
 
     # 事件过期痕迹：耗尽时效的一次性事件留一句"错过"日志（每事件一次）
     EXPIRED_TRACES = {

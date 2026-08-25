@@ -1,0 +1,32 @@
+[
+  {
+    "id": "night_goddess_church",
+    "name": "黑夜女神教会",
+    "type": "organization",
+    "era": "第五纪",
+    "location": ["鲁恩", "廷根", "贝克兰德"],
+    "faith": "黑夜女神",
+    "leader": "教皇（现任不详）",
+    "notes": "黑夜女神是鲁恩主流信仰。教会设有值夜者小队，负责处理神秘事件与非凡生物。"
+  },
+  {
+    "id": "night_guard",
+    "name": "值夜者",
+    "type": "organization",
+    "era": "第五纪",
+    "location": ["廷根", "贝克兰德"],
+    "faith": "黑夜女神",
+    "leader": "廷根值夜者小队队长：邓恩·史密斯",
+    "notes": "隶属黑夜教会的外勤武装，负责巡逻、驱邪与收容异常。"
+  },
+  {
+    "id": "fool_cult",
+    "name": "愚者教派",
+    "type": "organization",
+    "era": "第五纪",
+    "location": ["神秘"],
+    "faith": "愚者",
+    "leader": "愚者（自号）",
+    "notes": "新兴隐秘组织，与教会无隶属关系，成员身份隐秘。"
+  }
+]

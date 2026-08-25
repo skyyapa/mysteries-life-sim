@@ -1,0 +1,14 @@
+[
+  {
+    "id": "unknown",
+    "name": "愚者教派",
+    "type": "organization",
+    "era": "第五纪",
+    "location": [
+      "神秘"
+    ],
+    "faith": "愚者",
+    "leader": "愚者（自号）",
+    "notes": "新兴隐秘组织，与教会无隶属关系，成员身份隐秘。"
+  }
+]

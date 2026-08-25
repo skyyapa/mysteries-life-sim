@@ -26,18 +26,38 @@ class NPCSystem:
                 current_time=npc.current_time,
                 current_activity=npc.current_activity,
                 schedule=list(npc.schedule),
+                weekend_schedule=list(npc.weekend_schedule),
             )
             for npc_id, npc in self.templates.items()
         }
 
     def tick(self, state: GameState) -> None:
         self.ensure_npcs(state)
-        schedule_index = state.days_lived % self.max_schedule_length()
+        week_index = state.days_lived % 7
         for npc in state.npcs.values():
-            if not npc.schedule:
+            if npc.disappeared:
+                continue  # 失踪者不再按日程活动
+            if npc.is_weekend(week_index) and npc.weekend_schedule:
+                entries = npc.weekend_schedule
+            else:
+                entries = npc.schedule
+            if not entries:
                 continue
-            entry = npc.schedule[schedule_index % len(npc.schedule)]
+            entry = entries[week_index % len(entries)]
             npc.apply_schedule_entry(entry)
+
+    def disappear(self, state: GameState, npc_id: str) -> bool:
+        """让 NPC 失踪：之后不再移动（诡秘消失），返回是否成功。"""
+        npc = state.npcs.get(npc_id)
+        if npc is None or npc.disappeared:
+            return False
+        npc.disappeared = True
+        npc.disappeared_day = state.days_lived
+        npc.current_activity = "（失踪）"
+        return True
+
+    def missing_npcs(self, state: GameState) -> list[NPC]:
+        return [npc for npc in state.npcs.values() if npc.disappeared]
 
     def ensure_npcs(self, state: GameState) -> None:
         for npc_id, npc in self.create_state().items():
@@ -49,15 +69,19 @@ class NPCSystem:
 
 
 def npc_from_data(data: dict) -> NPC:
-    schedule = [
-        NPCScheduleEntry(
-            time=entry["time"],
-            location=entry["location"],
-            activity=entry["activity"],
-            fatigue_change=int(entry.get("fatigue_change", 0)),
-        )
-        for entry in data.get("schedule", [])
-    ]
+    def parse_entries(raw):
+        return [
+            NPCScheduleEntry(
+                time=entry["time"],
+                location=entry["location"],
+                activity=entry["activity"],
+                fatigue_change=int(entry.get("fatigue_change", 0)),
+            )
+            for entry in raw
+        ]
+
+    schedule = parse_entries(data.get("schedule", []))
+    weekend_schedule = parse_entries(data.get("weekend_schedule", []))
     current = schedule[0] if schedule else None
     return NPC(
         id=data["id"],
@@ -72,4 +96,7 @@ def npc_from_data(data: dict) -> NPC:
         current_time=current.time if current else data.get("current_time", "08:00"),
         current_activity=current.activity if current else data.get("current_activity", "开始一天"),
         schedule=schedule,
+        weekend_schedule=weekend_schedule,
+        disappeared=bool(data.get("disappeared", False)),
+        disappeared_day=data.get("disappeared_day"),
     )

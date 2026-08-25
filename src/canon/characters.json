@@ -1,0 +1,15 @@
+[
+  {
+    "id": "unknown",
+    "name": "奥尔森教士",
+    "type": "character",
+    "era": "第五纪",
+    "location": "廷根",
+    "organization": "黑夜女神教会",
+    "roles": [
+      "黑夜教士",
+      "教区牧师"
+    ],
+    "notes": "廷根北区教区教士，温和但警觉异常。"
+  }
+]
