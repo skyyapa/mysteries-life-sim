@@ -315,6 +315,42 @@ button:active {
   border: 1px solid rgba(255, 184, 168, 0.55);
 }
 
+.panel-note {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(244, 239, 230, 0.5);
+  margin-left: 6px;
+}
+
+.contact[data-contact-id] {
+  cursor: pointer;
+}
+
+.contact.focused {
+  border-color: rgba(208, 179, 106, 0.9);
+  background: rgba(208, 179, 106, 0.18);
+  box-shadow: 0 0 0 1px rgba(208, 179, 106, 0.35);
+}
+
+.focused-tag {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(208, 179, 106, 0.85);
+  color: #201c1a;
+  vertical-align: 1px;
+}
+
+.deep-only {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  color: rgba(244, 217, 137, 0.7);
+}
+
 .play-area {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;

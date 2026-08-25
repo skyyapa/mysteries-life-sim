@@ -1859,6 +1859,7 @@ const initialState = {
   },
   ui: {
     mapOpen: false,
+    focusedContactId: null,
   },
   tags: [],
   clues: [],
@@ -2666,6 +2667,59 @@ function changeTrust(contactId, amount) {
   contact.trust = Math.max(0, Math.min(100, contact.trust + amount));
 }
 
+function changeTrustCapped(contactId, amount, cap) {
+  const contact = state.contacts[contactId];
+  if (!contact) {
+    return 0;
+  }
+  const before = contact.trust;
+  contact.trust = Math.max(0, Math.min(cap, contact.trust + amount));
+  return contact.trust - before;
+}
+
+/** 泛社交：同地点联系人 +1 信任，但封顶 40（朋友），浅交无法更深。 */
+function socializeBroadly(amount = 1) {
+  let added = 0;
+  Object.entries(state.contacts).forEach(([contactId, contact]) => {
+    if (getContactLocation(contact) !== state.locationId) {
+      return;
+    }
+    added += changeTrustCapped(contactId, amount, 40);
+  });
+  return added;
+}
+
+/** 深交：只对选定的深交对象生效，且数额更大、无朋友封顶。 */
+function socializeFocused(amount = 3) {
+  const contactId = state.ui.focusedContactId;
+  if (!contactId || !state.contacts[contactId]) {
+    return null;
+  }
+  const contact = state.contacts[contactId];
+  if (getContactLocation(contact) !== state.locationId) {
+    return false; // 深交对象不在这里
+  }
+  changeTrust(contactId, amount);
+  return true;
+}
+
+function getFocusedContact() {
+  const contactId = state.ui.focusedContactId;
+  return (contactId && state.contacts[contactId]) || null;
+}
+
+function toggleFocusedContact(contactId) {
+  if (state.ui.focusedContactId === contactId) {
+    state.ui.focusedContactId = null;
+    return false;
+  }
+  if (!state.contacts[contactId]) {
+    return false;
+  }
+  state.ui.focusedContactId = contactId;
+  return true;
+}
+
 function getRelationshipTier(trust) {
   if (trust >= 80) return "挚友";
   if (trust >= 60) return "密友";
@@ -2685,7 +2739,7 @@ function getRelationshipTierId(trust) {
 function improveLocalContacts(amount) {
   Object.entries(state.contacts).forEach(([contactId, contact]) => {
     if (getContactLocation(contact) === state.locationId) {
-      changeTrust(contactId, amount);
+      changeTrustCapped(contactId, amount, 40);
     }
   });
 }
@@ -2725,15 +2779,27 @@ function applyDailyLife(actionId) {
 
   let flavor = "";
   if (actionId === "social") {
-    // 社交时，与同地点的联系人互动，按关系层次获得不同深度
+    // 先处理深交对象：如果选中了深交对象且同地，专门互动（无封顶、收益大）
+    const focusedResult = socializeFocused(3);
+    const focused = getFocusedContact();
     const localContacts = Object.values(state.contacts).filter(
       (contact) => getContactLocation(contact) === state.locationId,
     );
-    if (localContacts.length > 0) {
-      improveLocalContacts(actionId === "social" ? 1 : 0);
+    if (focusedResult === true && focused) {
+      changeLife({ comfort: 6, stress: -4 });
+      const fTier = getRelationshipTier(focused.trust);
+      flavor = `你把今天的时间主要留给了${focused.name}（${fTier}）。你们聊了很久，关系明显更近了。`;
+    } else if (focusedResult === false && focused) {
+      // 深交对象不在此地 → 只能泛社交
+      changeLife({ comfort: 2, stress: -1 });
+      flavor = `你想找${focused.name}，但他今天不在这里。你只好和附近的人随便聊了几句。`;
+    } else if (localContacts.length > 0) {
+      const added = socializeBroadly(1);
       const bestTier = Math.max(...localContacts.map((c) => c.trust));
       const tierId = getRelationshipTierId(bestTier);
-      if (tierId === "stranger") {
+      if (added === 0) {
+        flavor = "你和附近的熟人点头示意，但没有深入交谈。";
+      } else if (tierId === "stranger") {
         flavor = "大多是生面孔，你礼貌地问候了几句。";
       } else if (tierId === "acquaintance") {
         flavor = "和几个熟人聊了聊天气和煤价。";
@@ -2746,6 +2812,9 @@ function applyDailyLife(actionId) {
       } else {
         changeLife({ comfort: 5, stress: -3 });
         flavor = "你与挚友并肩坐了很久，不需要说太多话。";
+      }
+      if (focused && state.ui.focusedContactId) {
+        flavor += ` （泛社交封顶于朋友，要继续深交，选中${focused.name}并到TA所在的${getLocation().name}见面。）`;
       }
     } else {
       flavor = "这里没有熟面孔，你独自坐了一会儿。";
@@ -3139,25 +3208,39 @@ function renderContacts() {
     return;
   }
 
+  const focusedId = state.ui.focusedContactId;
   contacts.innerHTML = entries
     .map(([contactId, contact]) => {
       const contactLocationId = getContactLocation(contact);
       const location = locations[contactLocationId] || locations.north;
       const nearby = contactLocationId === state.locationId ? " nearby" : "";
+      const focused = contactId === focusedId ? " focused" : "";
       const tier = getRelationshipTier(contact.trust);
       const tierClass = `tier-${getRelationshipTierId(contact.trust)}`;
+      const deepHint =
+        contact.trust >= 40
+          ? `<span class="deep-only">已在朋友之上，需专门深交</span>`
+          : "";
       return `
-        <article class="contact${nearby}">
+        <article class="contact${nearby}${focused}" data-contact-id="${contactId}">
           <div>
-            <strong>${contact.name} <em class="tier-label ${tierClass}">${tier}</em></strong>
+            <strong>${contact.name} <em class="tier-label ${tierClass}">${tier}</em>${focused ? '<em class="focused-tag">深交中</em>' : ""}</strong>
             <span>${contact.role} · ${location.name}</span>
             <span>${contact.currentActivity || "维持日常生活"}</span>
           </div>
           <b class="trust-num">${contact.trust}</b>
+          ${deepHint}
         </article>
       `;
     })
     .join("");
+
+  contacts.querySelectorAll("[data-contact-id]").forEach((card) => {
+    card.addEventListener("click", () => {
+      toggleFocusedContact(card.dataset.contactId);
+      renderContacts();
+    });
+  });
 }
 
 function renderPendingEvent() {

@@ -22,6 +22,13 @@ class WorldEngine:
             self.event_system = EventSystem.from_graph_data(event_graphs)
         self.npc_system = NPCSystem.from_data(load_optional_json("npcs.json") or [])
 
+    def set_focused_contact(self, state: GameState, npc_id: str | None) -> bool:
+        """设置深交对象；npc_id None 表示取消。返回是否成功。"""
+        if npc_id is not None and npc_id not in state.npcs:
+            return False
+        state.focused_contact = npc_id
+        return True
+
     def new_game(self, name: str = "埃文·莫里斯") -> GameState:
         character = Character(
             name=name,
@@ -54,6 +61,9 @@ class WorldEngine:
         action = self.actions[action_id]
         changes = self.apply_action_effects(state, action)
 
+        if action_id == "social":
+            changes.update(self.apply_social_effects(state))
+
         event_text = self.trigger_event(state)
         summary = self._build_summary(action, event_text)
         entry = JournalEntry(
@@ -67,6 +77,28 @@ class WorldEngine:
         state.journal.append(entry)
         self.tick(state, days=int(action.get("days", 1)))
         return entry
+
+    def apply_social_effects(self, state: GameState) -> dict[str, int]:
+        """社交行动：泛社交封顶 40（朋友）；选中深交对象且同地点则无封顶深交。
+
+        NPC.location 是区域级（北区/市场区），角色在城市级（廷根）——
+        玩家可在城市内各区域活动，规则引擎中同地判断一律视为可遇见。
+        returns: {"social_trust": 净变化} 用于日志。
+        """
+        focused_id = state.focused_contact
+        focused = state.npcs.get(focused_id) if focused_id else None
+        changes: dict[str, int] = {"social_trust": 0}
+
+        if focused is not None:
+            focused.trust = max(0, min(100, focused.trust + 3))
+            changes["social_trust"] = changes.get("social_trust", 0) + 3
+            changes["focused"] = 1
+        else:
+            for npc in state.npcs.values():
+                if npc.trust < 40:
+                    npc.trust = min(40, npc.trust + 1)
+                    changes["social_trust"] = changes.get("social_trust", 0) + 1
+        return changes
 
     def update_world(self, state: GameState, *, previous_year: int | None = None) -> None:
         if previous_year is not None and state.date.year > previous_year:

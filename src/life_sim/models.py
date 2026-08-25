@@ -301,6 +301,7 @@ class GameState:
     days_lived: int = 0
     clues: list[str] = field(default_factory=list)
     deductions: list[str] = field(default_factory=list)
+    focused_contact: str | None = None
 
     @property
     def date(self) -> WorldDate:
@@ -322,6 +323,7 @@ class GameState:
             "days_lived": self.days_lived,
             "clues": list(self.clues),
             "deductions": list(self.deductions),
+            "focused_contact": self.focused_contact,
         }
 
     @classmethod
@@ -343,4 +345,5 @@ class GameState:
             days_lived=int(data.get("days_lived", 0)),
             clues=list(data.get("clues", [])),
             deductions=list(data.get("deductions", [])),
+            focused_contact=data.get("focused_contact"),
         )

@@ -104,3 +104,80 @@ def test_social_graph_has_tier_events():
 
     assert "ordinary_friend_errand" in node_ids
     assert "ordinary_confession" in node_ids
+
+
+def test_broad_social_caps_at_friend():
+    """泛社交（无深交对象）把联系人信任最多推到 40（朋友），不能再高。"""
+    engine = WorldEngine(seed=5)
+    state = engine.new_game()
+    # 把莎伦太太推到 39
+    state.npcs["sha_ren_neighbor"].trust = 39
+
+    for _ in range(5):
+        engine.process_action(state, "social")
+
+    assert state.npcs["sha_ren_neighbor"].trust == 40
+
+
+def test_focused_social_breaks_beyond_friend():
+    """选中深交对象后，社交可突破 40 继续上升。"""
+    engine = WorldEngine(seed=5)
+    state = engine.new_game()
+    state.npcs["sha_ren_neighbor"].trust = 39
+    engine.set_focused_contact(state, "sha_ren_neighbor")
+
+    engine.process_action(state, "social")
+
+    assert state.npcs["sha_ren_neighbor"].trust == 42
+
+
+def test_focused_contact_required_for_deep_ties():
+    """40+ 是分水岭：没有深交对象时永远停在 40。"""
+    engine = WorldEngine(seed=7)
+    state = engine.new_game()
+    state.npcs["erin_doctor"].trust = 40
+
+    for _ in range(10):
+        engine.process_action(state, "social")
+
+    assert state.npcs["erin_doctor"].trust == 40
+    assert state.focused_contact is None
+
+
+def test_focus_toggle_and_validation():
+    engine = WorldEngine(seed=1)
+    state = engine.new_game()
+
+    assert engine.set_focused_contact(state, "erin_doctor") is True
+    assert state.focused_contact == "erin_doctor"
+
+    assert engine.set_focused_contact(state, "不存在的NPC") is False
+    assert engine.set_focused_contact(state, None) is True
+    assert state.focused_contact is None
+
+
+def test_focused_social_reaches_close_friend():
+    """持续深交能把信任推到挚友（80+）。"""
+    engine = WorldEngine(seed=3)
+    state = engine.new_game()
+    state.npcs["erin_doctor"].trust = 70
+    engine.set_focused_contact(state, "erin_doctor")
+
+    for _ in range(10):
+        engine.process_action(state, "social")
+
+    assert state.npcs["erin_doctor"].trust >= 80
+
+
+def test_focused_contact_roundtrip(tmp_path, monkeypatch):
+    import life_sim.save as save_module
+
+    monkeypatch.setattr(save_module, "SAVE_DIR", tmp_path)
+    engine = WorldEngine(seed=1)
+    state = engine.new_game()
+    state.focused_contact = "erin_doctor"
+
+    save_game(state, "focus.json")
+    loaded = load_game("focus.json")
+
+    assert loaded.focused_contact == "erin_doctor"
