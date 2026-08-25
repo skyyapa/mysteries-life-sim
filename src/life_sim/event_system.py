@@ -344,6 +344,14 @@ def normalize_conditions(node: dict[str, Any]) -> dict[str, Any]:
         # 信任门槛：{npc_id: min_trust} 保留完整映射，conditions_met 按真实信任校验。
         conditions["contacts"] = dict(node["requires_contacts"])
 
+    # 统计门槛：min_stat 下游统一用 {"属性": 阈值} 处理
+    if "min_madness" in node:
+        conditions.setdefault("min_stat", {})["madness"] = int(node["min_madness"])
+    if "min_spirituality" in node:
+        conditions.setdefault("min_stat", {})["spirituality"] = int(
+            node["min_spirituality"]
+        )
+
     if "season" in node:
         conditions["season"] = node["season"]
     if "months" in node:

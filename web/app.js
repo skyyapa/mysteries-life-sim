@@ -723,6 +723,36 @@ const eventGraphs = {
       },
     ],
   },
+  hiddenCurrent: {
+    title: "廷根的暗流",
+    type: "mystic",
+    nodes: [
+      {
+        id: "mainline_errand",
+        eventId: "second_errand",
+        label: "第二委托",
+        afterNodes: ["mystic_beyonder"],
+      },
+      {
+        id: "mainline_church",
+        eventId: "church_voice",
+        label: "教会的声音",
+        afterNodes: ["mainline_errand"],
+      },
+      {
+        id: "mainline_loss",
+        eventId: "losing_control",
+        label: "失控前兆",
+        afterNodes: ["mainline_church"],
+      },
+      {
+        id: "mainline_truth",
+        eventId: "truth_choice",
+        label: "真相抉择",
+        afterNodes: ["mainline_loss"],
+      },
+    ],
+  },
 };
 
 const eventGraphNodes = Object.values(eventGraphs).flatMap((graph) =>
@@ -1775,6 +1805,158 @@ const events = [
       },
     ],
   },
+  {
+    id: "second_errand",
+    title: "第二件委托",
+    locations: ["east", "market", "station"],
+    requiresTags: ["初涉非凡"],
+    minDay: 30,
+    onceTag: "完成第二件委托",
+    text: "深衣人再次出现，交给你第二件委托：今夜子时，把一封信放在教堂地窖铁门口。他说“这次不要看信的内容”。",
+    chance: 35,
+    weight: 4,
+    choices: [
+      {
+        label: "照做",
+        result: "你把信放在铁门口，转身离开时听见门内有人低声念着什么。你开始做奇怪的梦。",
+        effects: { corruption: 3, madness: 5, stress: 5 },
+        addTags: ["完成第二件委托"],
+        addClues: [
+          {
+            id: "second_errand_clue",
+            title: "教堂地窖的交接",
+            text: "深衣人通过你向教堂地窖递过一封信，门内有人在夜里念诵。",
+          },
+        ],
+      },
+      {
+        label: "拒绝",
+        result: "你拒绝了。深衣人没有勉强，但你看得出他记住了这次拒绝。",
+        effects: { stress: 2 },
+        addTags: ["拒绝深衣人"],
+      },
+    ],
+  },
+  {
+    id: "church_voice",
+    title: "教会的声音",
+    locations: ["church"],
+    requiresClues: ["second_errand_clue", "church_coin"],
+    minDay: 36,
+    onceTag: "与教士深谈",
+    text: "奥尔森教士找到你，语气比往常更沉：他说他注意到你“最近睡得不好”。他在等你开口。",
+    chance: 38,
+    weight: 4,
+    choices: [
+      {
+        label: "坦白一切",
+        result: "你把深衣人的委托和盘托出。教士沉默良久，说：你做的没错，但这条路越走，越难回头。",
+        effects: { stress: -6, spirituality: 3, madness: -5 },
+        trustEffects: { priest: 6 },
+        addTags: ["与教士深谈", "向教士坦白"],
+        addClues: [
+          {
+            id: "priest_accepts",
+            title: "教士的接纳",
+            text: "奥尔森教士知道了深衣人的存在，愿意在必要时庇护你。",
+          },
+        ],
+      },
+      {
+        label: "遮掩过去",
+        result: "你说只是没睡好。教士没有追问，但你感觉那道目光在你身上停得太久。",
+        effects: { stress: 3, madness: 2 },
+        addTags: ["与教士深谈"],
+      },
+    ],
+  },
+  {
+    id: "losing_control",
+    title: "失控前兆",
+    locations: ["north", "east"],
+    requiresClues: ["second_errand_clue"],
+    minDay: 42,
+    minMadness: 40,
+    onceTag: "度过失控之夜",
+    text: "午夜你惊醒，发现自己正站在窗边，手里握着那把教堂旧硬币。你不记得自己是怎么走到这里的。",
+    chance: 45,
+    weight: 5,
+    choices: [
+      {
+        label: "去教堂求助",
+        result: "你连夜敲开教堂的门。教士为你守了一夜，可怕的东西没有再来。",
+        effects: { madness: -15, spirituality: 4, stress: -5 },
+        trustEffects: { priest: 4 },
+        addTags: ["度过失控之夜"],
+        addClues: [
+          {
+            id: "survived_night",
+            title: "度过失控之夜",
+            text: "你在教士的看护下度过了一夜，但你知道自己离失控并不远。",
+          },
+        ],
+      },
+      {
+        label: "独自硬扛",
+        result: "你握住旧硬币坐到天亮。什么也没发生，但你知道自己撑不过第二次。",
+        effects: { madness: 5, stress: 8, stamina: -6 },
+        addTags: ["独自硬扛一夜"],
+      },
+    ],
+  },
+  {
+    id: "truth_choice",
+    title: "真相抉择",
+    locations: ["east", "north"],
+    requiresClues: ["second_errand_clue"],
+    minDay: 48,
+    onceTag: "做出非凡抉择",
+    text: "你终于拼出深衣人的身份——他不是普通掮客，某个非凡组织正借廷根的地窖做交换。他递来一张名片，说：加入，或者离开，都随你。",
+    chance: 50,
+    weight: 6,
+    choices: [
+      {
+        label: "加入组织",
+        result: "你接过名片。他说会在合适的时机教你怎么“用双手握住命运”。",
+        effects: { corruption: 5, madness: 8, mysticism: 3 },
+        addTags: ["做出非凡抉择", "加入神秘组织"],
+        addClues: [
+          {
+            id: "joined_org",
+            title: "神秘组织的邀请",
+            text: "深衣人代表某个组织接纳了你，承诺教你接触非凡的方法。",
+          },
+        ],
+      },
+      {
+        label: "投向教会",
+        result: "你把名片交给教士。教士收下后说：你会成为教会的线人，但从此你的每一步都会有人看着。",
+        effects: { spirituality: 5, stress: 4 },
+        trustEffects: { priest: 6 },
+        addTags: ["做出非凡抉择", "成为教会线人"],
+        addClues: [
+          {
+            id: "church_ally",
+            title: "教会的线人",
+            text: "你选择站在黑夜教会一边，从此知晓一些不该知晓的事。",
+          },
+        ],
+      },
+      {
+        label: "抽身退回",
+        result: "你推开名片，说你要做普通人。他笑了：你以为现在还来得及吗？",
+        effects: { stress: 6, spirituality: 2 },
+        addTags: ["做出非凡抉择", "试图抽身"],
+        addClues: [
+          {
+            id: "step_back",
+            title: "试图回到普通生活",
+            text: "你想切断与非凡的一切联系，但有些东西一旦接触就不会放过你。",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const initialState = {
@@ -1800,6 +1982,7 @@ const initialState = {
     mysticism: 0,
     spirituality: 5,
     corruption: 0,
+    madness: 0,
   },
   careerId: "student",
   locationId: "north",
@@ -2223,6 +2406,9 @@ function canEventTriggerAt(event, locationId) {
   if (event.jobs && !event.jobs.includes(getCareer().name)) {
     return false;
   }
+  if (event.minMadness !== undefined && (state.stats.madness || 0) < event.minMadness) {
+    return false;
+  }
   return true;
 }
 
@@ -2387,7 +2573,28 @@ function worldTick() {
   updateNpcLives(state);
   tickEconomy();
   tickLocations();
+  tickMadness();
   updateStoryArcs();
+}
+
+function tickMadness() {
+  // 非凡代价：隐藏的疯狂值，UI 只显阶段不显数值
+  let drift = (state.stats.corruption || 0) / 10 * 0.5;
+  if (state.stats.stress > 60) drift += 0.3;
+  if (state.stats.spirituality >= 60) drift -= 0.5;
+  else if (state.stats.spirituality >= 25) drift -= 0.2;
+  state.stats.madness = Math.max(
+    0,
+    Math.min(100, Math.round((state.stats.madness || 0) + drift)),
+  );
+}
+
+function getMadnessStage() {
+  const m = state.stats.madness || 0;
+  if (m >= 70) return "濒危";
+  if (m >= 40) return "不安";
+  if (m >= 20) return "恍惚";
+  return "平稳";
 }
 
 function updateContactSchedules(targetState) {
@@ -2515,12 +2722,18 @@ function completeEventGraphNode(eventId) {
 function getEventGraphSummary() {
   const ordinaryTotal = eventGraphNodes.filter((node) => node.type === "ordinary").length;
   const abnormalTotal = eventGraphNodes.filter((node) => node.type === "abnormal").length;
-  const mysticTotal = eventGraphNodes.filter((node) => node.type === "mystic").length;
+  const mysticTotal = eventGraphNodes.filter(
+    (node) => node.type === "mystic" && node.graphId === "非凡接触",
+  ).length;
+  const mainlineTotal = eventGraphNodes.filter(
+    (node) => node.type === "mystic" && node.graphId === "廷根的暗流",
+  ).length;
   const completed = new Set(state.world.eventGraph.completedNodes || []);
   return {
     ordinaryTotal,
     abnormalTotal,
     mysticTotal,
+    mainlineTotal,
     ordinaryDone: eventGraphNodes.filter(
       (node) => node.type === "ordinary" && completed.has(node.id),
     ).length,
@@ -2528,7 +2741,10 @@ function getEventGraphSummary() {
       (node) => node.type === "abnormal" && completed.has(node.id),
     ).length,
     mysticDone: eventGraphNodes.filter(
-      (node) => node.type === "mystic" && completed.has(node.id),
+      (node) => node.type === "mystic" && node.graphId === "非凡接触" && completed.has(node.id),
+    ).length,
+    mainlineDone: eventGraphNodes.filter(
+      (node) => node.type === "mystic" && node.graphId === "廷根的暗流" && completed.has(node.id),
     ).length,
   };
 }
@@ -3107,6 +3323,9 @@ function renderWorld() {
   ).textContent = `${graphSummary.abnormalDone}/${graphSummary.abnormalTotal}`;
   document.getElementById("mysticGraphCount").textContent =
     `${graphSummary.mysticDone}/${graphSummary.mysticTotal}`;
+  document.getElementById("mainlineGraphCount").textContent =
+    `${graphSummary.mainlineDone}/${graphSummary.mainlineTotal}`;
+  document.getElementById("madnessStage").textContent = getMadnessStage();
   document.getElementById("npcScheduleCount").textContent =
     `${npcSummary.scheduled}/${npcSummary.total}`;
 }

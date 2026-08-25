@@ -756,5 +756,186 @@
         "condition": { "min_day": 25 }
       }
     ]
+  },
+  {
+    "id": "hidden_current",
+    "title": "廷根的暗流",
+    "type": "mystic",
+    "start_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "text": "初涉非凡之后，你开始注意到日常之下有另一层秩序。",
+        "chance": 0,
+        "weight": 1,
+        "after_nodes": ["contact_beyonder"]
+      },
+      {
+        "id": "second_errand",
+        "text": "深衣人再次出现，交给你第二件委托：今夜子时，把一封信放在教堂地窖铁门口。他说“这次不要看信的内容”。",
+        "chance": 35,
+        "weight": 4,
+        "locations": ["east", "market", "station"],
+        "min_day": 30,
+        "requires_tags_any": ["初涉非凡"],
+        "choices": [
+          {
+            "label": "照做",
+            "result": "你把信放在铁门口，转身离开时听见门内有人低声念着什么。你开始做奇怪的梦。",
+            "effects": { "corruption": 3, "madness": 5, "stress": 5 },
+            "add_tags": ["完成第二件委托"],
+            "add_clues": [
+              {
+                "id": "second_errand_clue",
+                "title": "教堂地窖的交接",
+                "text": "深衣人通过你向教堂地窖递过一封信，门内有人在夜里念诵。"
+              }
+            ]
+          },
+          {
+            "label": "拒绝",
+            "result": "你拒绝了。深衣人没有勉强，但你看得出他记住了这次拒绝。",
+            "effects": { "stress": 2 },
+            "add_tags": ["拒绝深衣人"]
+          }
+        ]
+      },
+      {
+        "id": "church_voice",
+        "text": "奥尔森教士找到你，语气比往常更沉：他说他注意到你“最近睡得不好”。他在等你开口。",
+        "chance": 38,
+        "weight": 4,
+        "locations": ["church"],
+        "min_day": 36,
+        "requires_clues": ["second_errand_clue", "church_coin"],
+        "choices": [
+          {
+            "label": "坦白一切",
+            "result": "你把深衣人的委托和盘托出。教士沉默良久，说：你做的没错，但这条路越走，越难回头。",
+            "effects": { "stress": -6, "spirituality": 3, "madness": -5 },
+            "trust_effects": { "olson_priest": 6 },
+            "add_tags": ["向教士坦白"],
+            "add_clues": [
+              {
+                "id": "priest_accepts",
+                "title": "教士的接纳",
+                "text": "奥尔森教士知道了深衣人的存在，愿意在必要时庇护你。"
+              }
+            ]
+          },
+          {
+            "label": "遮掩过去",
+            "result": "你说只是没睡好。教士没有追问，但你感觉那道目光在你身上停得太久。",
+            "effects": { "stress": 3, "madness": 2 },
+            "add_tags": ["隐瞒教士"]
+          }
+        ]
+      },
+      {
+        "id": "losing_control",
+        "text": "午夜你惊醒，发现自己正站在窗边，手里握着那把教堂旧硬币。你不记得自己是怎么走到这里的。",
+        "chance": 45,
+        "weight": 5,
+        "locations": ["north", "east"],
+        "min_day": 42,
+        "requires_clues": ["second_errand_clue"],
+        "min_madness": 40,
+        "choices": [
+          {
+            "label": "去教堂求助",
+            "result": "你连夜敲开教堂的门。教士为你守了一夜，可怕的东西没有再来。",
+            "effects": { "madness": -15, "spirituality": 4, "stress": -5 },
+            "trust_effects": { "olson_priest": 4 },
+            "add_tags": ["度过失控之夜"],
+            "add_clues": [
+              {
+                "id": "survived_night",
+                "title": "度过失控之夜",
+                "text": "你在教士的看护下度过了一夜，但你知道自己离失控并不远。"
+              }
+            ]
+          },
+          {
+            "label": "独自硬扛",
+            "result": "你握住旧硬币坐到天亮。什么也没发生，但你知道自己撑不过第二次。",
+            "effects": { "madness": 5, "stress": 8, "stamina": -6 },
+            "add_tags": ["独自硬扛一夜"]
+          }
+        ]
+      },
+      {
+        "id": "truth_choice",
+        "text": "你终于拼出深衣人的身份——他不是普通掮客，某个非凡组织正借廷根的地窖做交换。他递来一张名片，说：加入，或者离开，都随你。",
+        "chance": 50,
+        "weight": 6,
+        "locations": ["east", "north"],
+        "min_day": 48,
+        "requires_clues": ["second_errand_clue"],
+        "choices": [
+          {
+            "label": "加入组织",
+            "result": "你接过名片。他说会在合适的时机教你怎么“用双手握住命运”。",
+            "effects": { "corruption": 5, "madness": 8, "mysticism": 3 },
+            "add_tags": ["加入神秘组织"],
+            "add_clues": [
+              {
+                "id": "joined_org",
+                "title": "神秘组织的邀请",
+                "text": "深衣人代表某个组织接纳了你，承诺教你接触非凡的方法。"
+              }
+            ]
+          },
+          {
+            "label": "投向教会",
+            "result": "你把名片交给教士。教士收下后说：你会成为教会的线人，但从此你的每一步都会有人看着。",
+            "effects": { "spirituality": 5, "stress": 4 },
+            "trust_effects": { "olson_priest": 6 },
+            "add_tags": ["成为教会线人"],
+            "add_clues": [
+              {
+                "id": "church_ally",
+                "title": "教会的线人",
+                "text": "你选择站在黑夜教会一边，从此知晓一些不该知晓的事。"
+              }
+            ]
+          },
+          {
+            "label": "抽身退回",
+            "result": "你推开名片，说你要做普通人。他笑了：你以为现在还来得及吗？",
+            "effects": { "stress": 6, "spirituality": 2 },
+            "add_tags": ["试图抽身"],
+            "add_clues": [
+              {
+                "id": "step_back",
+                "title": "试图回到普通生活",
+                "text": "你想切断与非凡的一切联系，但有些东西一旦接触就不会放过你。"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "second_errand",
+        "condition": { "min_day": 30 }
+      },
+      {
+        "from": "second_errand",
+        "to": "church_voice",
+        "condition": { "tag": "完成第二件委托" }
+      },
+      {
+        "from": "church_voice",
+        "to": "losing_control",
+        "condition": { "min_day": 42 }
+      },
+      {
+        "from": "losing_control",
+        "to": "truth_choice",
+        "condition": { "min_day": 48 }
+      }
+    ]
   }
 ]

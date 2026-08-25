@@ -61,6 +61,7 @@ class Character:
     mysticism_knowledge: int = 0
     spirituality: int = 5
     corruption: int = 0
+    madness: int = 0
     tags: list[str] = field(default_factory=list)
 
     def clamp(self) -> None:
@@ -73,6 +74,7 @@ class Character:
             "mysticism_knowledge",
             "spirituality",
             "corruption",
+            "madness",
         ]:
             value = getattr(self, field_name)
             setattr(self, field_name, max(0, min(100, value)))
@@ -107,6 +109,7 @@ class Character:
             "mysticism_knowledge": self.mysticism_knowledge,
             "spirituality": self.spirituality,
             "corruption": self.corruption,
+            "madness": self.madness,
             "tags": list(self.tags),
         }
 
@@ -130,6 +133,7 @@ class Character:
             mysticism_knowledge=int(data.get("mysticism_knowledge", 0)),
             spirituality=int(data.get("spirituality", 5)),
             corruption=int(data.get("corruption", 0)),
+            madness=int(data.get("madness", 0)),
             tags=list(data.get("tags", [])),
         )
 

@@ -106,8 +106,39 @@ class WorldEngine:
         self.update_weather(state)
         self.update_economy(state)
         self.update_city(state)
+        self.update_madness(state)
         self.event_system.auto_advance(state)
         self.npc_system.tick(state)
+
+    def update_madness(self, state: GameState) -> None:
+        """非凡代价：疯狂值（隐藏）随污染上涨，压力和灵性（锚）调节。
+
+        规则（每天漂移）：
+        - corruption（污染）每 10 点 → 每日 +0.5 疯狂
+        - stress 高于 60 → 每日 +0.3
+        - spirituality ≥ 25（灵性作为锚）→ 每日 -0.2 压制
+        - spirituality ≥ 60（强锚）→ 每日 -0.5
+        """
+        character = state.character
+        drift = character.corruption / 10 * 0.5
+        if character.stress > 60:
+            drift += 0.3
+        if character.spirituality >= 60:
+            drift -= 0.5
+        elif character.spirituality >= 25:
+            drift -= 0.2
+        character.madness = max(0, min(100, round(character.madness + drift)))
+
+    def madness_stage(self, state: GameState) -> str:
+        """精神状况阶段文案（隐藏数值，只给感受）。"""
+        madness = state.character.madness
+        if madness >= 70:
+            return "濒危"
+        if madness >= 40:
+            return "不安"
+        if madness >= 20:
+            return "恍惚"
+        return "平稳"
 
     def update_weather(self, state: GameState) -> None:
         weathers = ["阴天", "小雨", "雾", "晴朗"]
