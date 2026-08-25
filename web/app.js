@@ -874,8 +874,8 @@ const events = [
     title: "墙角符号",
     locations: ["east", "market"],
     text: "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
-    chance: 8,
-    weight: 1,
+    chance: 24,
+    weight: 3,
     minDay: 5,
     choices: [
       {
@@ -1167,8 +1167,8 @@ const events = [
     requiresClues: ["wall_symbol"],
     onceTag: "被跟踪经历",
     text: "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
-    chance: 26,
-    weight: 2,
+    chance: 30,
+    weight: 3,
     minDay: 10,
     choices: [
       {

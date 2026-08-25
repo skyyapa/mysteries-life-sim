@@ -372,3 +372,50 @@ def test_cooldown_survives_save_roundtrip(tmp_path, monkeypatch):
     loaded = load_game("cool.json")
 
     assert loaded.world.event_last_triggered["ordinary_rain"] == 12
+
+
+def test_abnormal_chain_edges_not_self_locking():
+    """回归：异常失踪链的边条件不能要求“由目标节点自己产生的标签”。
+
+    历史 bug：abnormal_overlap → abnormal_symbol 的边条件曾是
+    {"tag": "见过神秘符号"}，但该标签只有触发 abnormal_symbol 才会产生，
+    导致链在报纸重叠后永久卡死，墙角符号/身后脚步永远不会出现。
+    """
+    engine = WorldEngine(seed=1)
+    graph = engine.event_system.graphs["abnormal_disappearance"]
+
+    edges = {e.from_node: e.condition for e in graph.edges}
+    # 每条边条件都不应包含目标节点自身才能产生的 tag
+    followup = edges["abnormal_overlap"]
+    assert "tag" not in followup, "报纸重叠→墙角符号 不应要求符号自身的 tag"
+
+    symbol_out = edges["abnormal_symbol"]
+    assert symbol_out == {"min_day": 10}
+
+    followed_out = edges["abnormal_followed"]
+    assert followed_out == {"min_day": 14}
+
+
+def test_abnormal_chain_reaches_symbol_and_followed():
+    """完整链条：前置触发后，符号与脚步节点依次可达。"""
+    engine = WorldEngine(seed=3)
+    state = engine.new_game()
+    event_system = engine.event_system
+    graph = event_system.graphs["abnormal_disappearance"]
+
+    # 模拟：已见过失踪启事（第 6 天），报纸重叠已触发并推进
+    state.days_lived = 10
+    state.character.tags.append("见过失踪启事")
+    state.clues.append("newspaper_overlap")
+    state.event_nodes["abnormal_disappearance"] = "abnormal_symbol"
+
+    avail = [n.id for _, n in event_system.available_nodes(state)]
+    assert "abnormal_symbol" in avail
+
+    # 触发符号，推进到身后脚步
+    symbolic = graph.nodes["abnormal_symbol"]
+    event_system.apply(graph, symbolic, state)
+    assert state.event_nodes["abnormal_disappearance"] == "abnormal_followed"
+
+    state.days_lived = 12
+    assert "abnormal_followed" in [n.id for _, n in event_system.available_nodes(state)]

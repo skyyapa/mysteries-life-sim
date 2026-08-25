@@ -27,8 +27,8 @@
   {
     "id": "strange_symbol",
     "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
-    "chance": 8,
-    "weight": 1,
+    "chance": 24,
+    "weight": 3,
     "conditions": { "min_day": 5, "location": "east" },
     "effects": { "mysticism": 2, "stress": 3 },
     "add_tags": ["见过神秘符号"]
@@ -122,8 +122,8 @@
   {
     "id": "east_followed",
     "text": "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
-    "chance": 26,
-    "weight": 2,
+    "chance": 30,
+    "weight": 3,
     "conditions": { "min_day": 10, "location": "east" },
     "effects": { "stress": 4, "stamina": -3 }
   },

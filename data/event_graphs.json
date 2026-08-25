@@ -550,9 +550,9 @@
       {
         "id": "abnormal_symbol",
         "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
-        "chance": 8,
-        "weight": 1,
-        "locations": ["east", "market"],
+        "chance": 24,
+        "weight": 3,
+        "locations": ["east", "market", "north"],
         "min_day": 5,
         "after_nodes": ["abnormal_overlap"],
         "choices": [
@@ -574,8 +574,8 @@
       {
         "id": "abnormal_followed",
         "text": "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
-        "chance": 26,
-        "weight": 2,
+        "chance": 30,
+        "weight": 3,
         "locations": ["east"],
         "min_day": 10,
         "requires_clues": ["wall_symbol"],
@@ -634,7 +634,7 @@
       {
         "from": "abnormal_overlap",
         "to": "abnormal_symbol",
-        "condition": { "tag": "见过神秘符号" }
+        "condition": { "min_day": 5 }
       },
       {
         "from": "abnormal_symbol",
