@@ -1,0 +1,56 @@
+{
+  "study": {
+    "name": "学习",
+    "description": "把一天花在学校、书本和笔记上。",
+    "days": 1,
+    "summary": "你认真学习了一整天，脑子有些疲惫，但知识确实增长了。",
+    "effects": {
+      "intelligence": 2,
+      "stamina": -8,
+      "stress": 4
+    }
+  },
+  "work": {
+    "name": "工作",
+    "description": "做临时文书、跑腿或店铺帮工，换取一点收入。",
+    "days": 1,
+    "summary": "你做了一天普通工作，收入不多，却足以维持体面生活。",
+    "effects": {
+      "money": 18,
+      "stamina": -12,
+      "stress": 5
+    }
+  },
+  "rest": {
+    "name": "休息",
+    "description": "减少外出，恢复身体和精神。",
+    "days": 1,
+    "summary": "你让自己慢下来，睡眠和热茶让状态恢复了一些。",
+    "effects": {
+      "health": 4,
+      "stamina": 18,
+      "stress": -10
+    }
+  },
+  "social": {
+    "name": "社交",
+    "description": "拜访熟人、参加聚会，或与邻居闲谈。",
+    "days": 1,
+    "summary": "你和几位熟人聊了很久，对这座城市的日常有了更多感觉。",
+    "effects": {
+      "charisma": 2,
+      "money": -6,
+      "stress": -4
+    }
+  },
+  "wander": {
+    "name": "闲逛",
+    "description": "在城市街头走走，看看有没有新的机会。",
+    "days": 1,
+    "summary": "你在廷根的街道上走了很久，煤烟、马车和报童的叫卖声混在一起。",
+    "effects": {
+      "stamina": -6,
+      "stress": -1
+    }
+  }
+}

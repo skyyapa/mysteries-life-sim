@@ -1,0 +1,60 @@
+[
+  {
+    "id": "rainy_cold",
+    "text": "傍晚突然下起冷雨，你没来得及躲开，回家后感到一阵寒意。",
+    "chance": 18,
+    "weight": 3,
+    "effects": {
+      "health": -3,
+      "stamina": -2
+    }
+  },
+  {
+    "id": "cheap_book",
+    "text": "旧书摊上有一本便宜的历史读物，你犹豫片刻还是买了下来。",
+    "chance": 12,
+    "weight": 2,
+    "effects": {
+      "money": -5,
+      "intelligence": 1
+    }
+  },
+  {
+    "id": "church_bell",
+    "text": "黑夜教堂的钟声在雾气中响起，你短暂地感到安心。",
+    "chance": 10,
+    "weight": 2,
+    "effects": {
+      "stress": -3
+    }
+  },
+  {
+    "id": "strange_symbol",
+    "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
+    "chance": 8,
+    "weight": 1,
+    "conditions": {
+      "min_day": 5,
+      "location": "廷根"
+    },
+    "effects": {
+      "mysticism_knowledge": 1,
+      "stress": 2
+    },
+    "add_tags": [
+      "见过神秘符号"
+    ]
+  },
+  {
+    "id": "landlord_pressure",
+    "text": "房东提醒你下周要交房租，语气礼貌，但没有商量余地。",
+    "chance": 15,
+    "weight": 2,
+    "conditions": {
+      "min_day": 8
+    },
+    "effects": {
+      "stress": 4
+    }
+  }
+]

@@ -1,0 +1,10 @@
+[project]
+name = "mysteries-life-sim"
+version = "0.1.0"
+description = "V0.1 foundation for a rule-driven life simulator in a mystery-world setting."
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

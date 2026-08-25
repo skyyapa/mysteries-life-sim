@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>人生模拟器 V0.17.1</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="side-panel">
+        <section class="identity">
+          <p class="era">人生模拟器 V0.17.1</p>
+          <h1 id="characterName">埃文·莫里斯</h1>
+          <p><span id="characterAge">17</span>岁 · <span id="careerName">文法学校学生</span></p>
+          <p>鲁恩王国 · 廷根 · <span id="locationName">北区</span></p>
+        </section>
+
+        <section class="finance-panel">
+          <p class="panel-title">生活</p>
+          <div><span>月薪</span><strong id="salary">0</strong></div>
+          <div><span>房租</span><strong id="rent">45</strong></div>
+          <div><span>已付房租</span><strong id="rentPaid">0</strong></div>
+          <div><span>每日开销</span><strong id="dailyCost">3</strong></div>
+          <div><span>预计结余</span><strong id="monthlyBalance">0</strong></div>
+          <div><span>本月工作</span><strong id="workDays">0</strong></div>
+        </section>
+
+        <section class="background-panel">
+          <p class="panel-title">出身</p>
+          <div><span>家庭</span><strong id="familyName">下层中产</strong></div>
+          <div><span>阶层</span><strong id="className">普通市民</strong></div>
+          <div><span>倾向</span><strong id="traitName">谨慎</strong></div>
+        </section>
+
+        <section class="life-panel">
+          <p class="panel-title">日常</p>
+          <div><span>营养</span><strong id="nutrition">70</strong></div>
+          <div><span>睡眠</span><strong id="sleep">70</strong></div>
+          <div><span>安稳</span><strong id="comfort">50</strong></div>
+          <div><span>疲劳</span><strong id="fatigue">20</strong></div>
+          <div><span>生活状态</span><strong id="lifeStatus">尚可</strong></div>
+        </section>
+
+        <section class="skills-panel">
+          <p class="panel-title">能力</p>
+          <div><span>学识</span><strong id="literacySkill">0</strong></div>
+          <div><span>职业经验</span><strong id="professionSkill">0</strong></div>
+          <div><span>社交经验</span><strong id="socialSkill">0</strong></div>
+          <div><span>街区经验</span><strong id="streetwiseSkill">0</strong></div>
+        </section>
+
+        <section class="location-panel">
+          <p class="panel-title">地点</p>
+          <div>
+            <span>当前位置</span>
+            <strong id="currentLocation">北区</strong>
+          </div>
+          <div>
+            <span>当地熟悉</span>
+            <strong id="locationReputation">0</strong>
+          </div>
+          <div>
+            <span>调查风险</span>
+            <strong id="investigationExposure">0</strong>
+          </div>
+          <div>
+            <span>风险等级</span>
+            <strong id="investigationRiskLabel" class="risk-badge">平稳</strong>
+          </div>
+          <div>
+            <span>地区危险</span>
+            <strong id="locationRisk">0</strong>
+          </div>
+          <div>
+            <span>调查冷却</span>
+            <strong id="investigationCooldown">0</strong>
+          </div>
+          <p id="locationDescription" class="location-description"></p>
+        </section>
+
+        <section class="world-panel">
+          <p class="panel-title">世界</p>
+          <div><span>城市紧张</span><strong id="cityTension">0</strong></div>
+          <div><span>经济压力</span><strong id="economyPressure">0</strong></div>
+          <div><span>异常失踪</span><strong id="disappearanceArc">尚未开始</strong></div>
+          <div><span>普通事件图</span><strong id="ordinaryGraphCount">0/10</strong></div>
+          <div><span>异常事件图</span><strong id="abnormalGraphCount">0/5</strong></div>
+          <div><span>NPC日程</span><strong id="npcScheduleCount">0/20</strong></div>
+        </section>
+
+        <section class="tags-panel">
+          <p class="panel-title">经历</p>
+          <div id="tags" class="tags"></div>
+        </section>
+
+        <section class="clues-panel">
+          <p class="panel-title">线索</p>
+          <div id="clues" class="clues"></div>
+        </section>
+
+        <section class="deductions-panel">
+          <p class="panel-title">结论</p>
+          <div id="deductions" class="deductions"></div>
+        </section>
+
+        <section class="contacts-panel">
+          <p class="panel-title">关系</p>
+          <div id="contacts" class="contacts"></div>
+        </section>
+      </aside>
+
+      <section class="play-area">
+        <header class="top-bar">
+          <div>
+            <p class="label">当前时间</p>
+            <h2 id="date">第五纪 1348年1月1日</h2>
+          </div>
+          <div class="day-pill" id="dayCount">第 1 天</div>
+        </header>
+
+        <section class="status-strip" aria-label="角色状态">
+          <div><span>健康</span><strong id="health">80</strong></div>
+          <div><span>体力</span><strong id="stamina">70</strong></div>
+          <div><span>智力</span><strong id="intelligence">55</strong></div>
+          <div><span>魅力</span><strong id="charisma">50</strong></div>
+          <div><span>金钱</span><strong id="money">120</strong></div>
+          <div><span>压力</span><strong id="stress">20</strong></div>
+          <div><span>神秘</span><strong id="mysticism">0</strong></div>
+          <div><span>灵性</span><strong id="spirituality">5</strong></div>
+          <div><span>污染</span><strong id="corruption">0</strong></div>
+        </section>
+
+        <section class="story-window" aria-live="polite">
+          <div id="storyLog" class="story-log"></div>
+        </section>
+
+        <section class="city-map" aria-label="廷根地图">
+          <div class="map-header">
+            <div>
+              <p class="panel-title">廷根地图</p>
+              <span id="mapSummary">北区 · NPC 0 · 事件 0</span>
+            </div>
+            <button id="toggleMap" class="secondary map-toggle" type="button">打开地图</button>
+          </div>
+          <div id="mapNodes" class="map-nodes"></div>
+        </section>
+
+        <section id="eventPanel" class="event-panel hidden" aria-live="polite">
+          <p class="panel-title">遭遇事件</p>
+          <h3 id="eventTitle"></h3>
+          <p id="eventText"></p>
+          <div id="eventChoices" class="event-choices"></div>
+        </section>
+
+        <section class="actions" aria-label="行动">
+          <button data-action="study">学习</button>
+          <button data-action="work">工作</button>
+          <button data-action="rest">休息</button>
+          <button data-action="social">社交</button>
+          <button data-action="wander">闲逛</button>
+          <button data-action="investigate">调查</button>
+          <button data-action="deduce">推理</button>
+        </section>
+
+        <footer class="footer-actions">
+          <div class="career-actions" aria-label="职业">
+            <button class="secondary" data-career="student">学生</button>
+            <button class="secondary" data-career="apprentice">学徒</button>
+            <button class="secondary" data-career="clerk">文员</button>
+            <button class="secondary" data-career="temp_worker">临工</button>
+          </div>
+          <button id="autoDay" class="secondary">自动一天</button>
+          <button id="autoMonth" class="secondary">自动30天</button>
+          <button id="newLife" class="secondary">生成新人生</button>
+          <button id="resetGame" class="danger">重新开始</button>
+        </footer>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
