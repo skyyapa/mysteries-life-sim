@@ -135,5 +135,41 @@
     "conditions": { "min_day": 14 },
     "effects": { "stress": -5, "spirituality": 2 },
     "add_tags": ["向教会举报"]
+  },
+  {
+    "id": "priest_coin",
+    "text": "奥尔森教士在教堂后室单独见你。他沉默了很久，把一枚褐色的旧硬币放在桌上——比看上去更沉。",
+    "chance": 60,
+    "weight": 4,
+    "conditions": { "min_day": 16, "location": "church" },
+    "effects": { "spirituality": 3, "mysticism": 2, "stress": 3 },
+    "add_tags": ["拿到教堂旧币"]
+  },
+  {
+    "id": "east_deep_night",
+    "text": "你没有告诉任何人，独自在午夜走进了东区的深巷。雾气里，你看见一扇门缝透出不属于蜡烛的微光。",
+    "chance": 55,
+    "weight": 4,
+    "conditions": { "min_day": 16, "location": "east" },
+    "effects": { "mysticism": 3, "stress": 7, "stamina": -6 },
+    "add_tags": ["深夜探过东区"]
+  },
+  {
+    "id": "symbol_dream",
+    "text": "夜里你梦见自己走在一条没有灯的地下通道里，两边的墙上画满了同样的符号，一直延伸到看不见的深处。",
+    "chance": 65,
+    "weight": 4,
+    "conditions": { "min_day": 20 },
+    "effects": { "spirituality": 4, "stress": 5, "stamina": -4 },
+    "add_tags": ["做过符号之梦"]
+  },
+  {
+    "id": "first_beyonder",
+    "text": "一个穿深色大衣的陌生人拦住你，准确说出了你最近追查的事。他说可以“帮”你，只需要你替他做一点小事。",
+    "chance": 70,
+    "weight": 5,
+    "conditions": { "min_day": 25 },
+    "effects": { "mysticism": 5, "spirituality": 4, "corruption": 1, "stress": 6 },
+    "add_tags": ["初涉非凡"]
   }
 ]

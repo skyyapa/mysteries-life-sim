@@ -242,3 +242,27 @@ def test_mystic_chain_reachable_via_real_play_path():
     assert engine.event_system.conditions_met(
         mystic.nodes["contact_priest"].conditions, state
     )
+
+
+def test_web_sync_mystic_graph_has_four_stages():
+    """Web 版与 Python 版非凡接触图结构同步：
+    失踪案抉择后 →（举报或追查）→ 教会旧币/梦境 → 初次接触非凡者。
+    """
+    engine = WorldEngine(seed=1)
+    graph = engine.event_system.graphs["mystic_contact"]
+
+    assert graph.start_node == "start"
+    assert set(graph.nodes) == {"start", "contact_priest", "dream_first", "contact_beyonder"}
+
+    # 链边：start → contact_priest → dream_first → contact_beyonder
+    edges = {(e.from_node, e.to_node) for e in graph.edges}
+    assert edges == {
+        ("start", "contact_priest"),
+        ("contact_priest", "dream_first"),
+        ("dream_first", "contact_beyonder"),
+    }
+
+    # 入口节点接受两条线（举报 / 追查），终点给出初涉非凡标签
+    assert "向教会举报" in graph.nodes["contact_priest"].conditions.get("any_tag", [])
+    assert "决定追到底" in graph.nodes["contact_priest"].conditions.get("any_tag", [])
+    assert "初涉非凡" in graph.nodes["contact_beyonder"].add_tags

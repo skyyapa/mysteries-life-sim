@@ -628,6 +628,9 @@ const storyArcLabels = {
   reported: "已举报",
   concealed: "已隐瞒",
   committed: "追查到底",
+  coin: "拿到旧币",
+  dream: "符号之梦",
+  first_contact: "初涉非凡",
 };
 
 const eventGraphs = {
@@ -675,6 +678,35 @@ const eventGraphs = {
         eventId: "disappearance_decision",
         label: "失踪案选择",
         afterNodes: ["abnormal_followed"],
+      },
+    ],
+  },
+  mysticContact: {
+    title: "非凡接触",
+    type: "mystic",
+    nodes: [
+      {
+        id: "mystic_coin",
+        eventId: "priest_coin",
+        label: "教堂旧币",
+        afterNodes: ["abnormal_decision"],
+      },
+      {
+        id: "mystic_deep",
+        eventId: "east_deep_night",
+        label: "深夜东区",
+        afterNodes: ["abnormal_decision"],
+      },
+      {
+        id: "mystic_dream",
+        eventId: "symbol_dream",
+        label: "符号之梦",
+      },
+      {
+        id: "mystic_beyonder",
+        eventId: "first_beyonder",
+        label: "初涉非凡",
+        afterNodes: ["mystic_dream"],
       },
     ],
   },
@@ -1275,6 +1307,137 @@ const events = [
         exposureChange: 8,
         trustEffects: { newsboy: 4 },
         addTags: ["做出失踪案选择", "决定追到底"],
+      },
+    ],
+  },
+  {
+    id: "priest_coin",
+    title: "教堂的旧硬币",
+    locations: ["church"],
+    requiresTags: ["向教会举报"],
+    onceTag: "拿到教堂旧币",
+    text: "奥尔森教士在教堂后室单独见你。他沉默了很久，把一枚褐色的旧硬币放在桌上——比看上去更沉。",
+    chance: 60,
+    weight: 4,
+    minDay: 16,
+    choices: [
+      {
+        label: "收下硬币",
+        result: "你伸手拿起硬币。教士说：如果有一天你开始做奇怪的梦，就带着它回来。",
+        effects: { spirituality: 3, mysticism: 2, stress: 3 },
+        trustEffects: { priest: 3 },
+        addTags: ["拿到教堂旧币"],
+        addClues: [
+          {
+            id: "church_coin",
+            title: "教士给的旧硬币",
+            text: "一枚看似普通的旧硬币，比看上去更沉，似乎与灵性有关。",
+          },
+        ],
+      },
+      {
+        label: "只问问题",
+        result: "你没有碰硬币，只问它是什么。教士没有回答，但你看得出他松了口气，也看得出他有些失望。",
+        effects: { mysticism: 1, spirituality: 1 },
+        trustEffects: { priest: -1 },
+      },
+    ],
+  },
+  {
+    id: "east_deep_night",
+    title: "深夜东区",
+    locations: ["east"],
+    requiresTags: ["决定追到底"],
+    onceTag: "深夜探过东区",
+    text: "你没有告诉任何人，独自在午夜走进了东区的深巷。雾气里，你看见一扇门缝透出不属于蜡烛的微光。",
+    chance: 55,
+    weight: 4,
+    minDay: 16,
+    choices: [
+      {
+        label: "凑近那扇门",
+        result: "你凑近门缝，看见里面的人在纸上画着与墙角符号一模一样的东西。你记住了这个画面。",
+        effects: { mysticism: 3, stress: 7, stamina: -6 },
+        exposureChange: 10,
+        addTags: ["深夜探过东区"],
+        addClues: [
+          {
+            id: "deep_night_route",
+            title: "深夜东区的可疑仪式",
+            text: "午夜东区有人在举行与墙角符号相关的仪式，位置你已经记住。",
+          },
+        ],
+      },
+      {
+        label: "立刻离开",
+        result: "理智把你拽了回去。你快步离开东区，但那个符号的影子在你脑子里转了一整夜。",
+        effects: { stress: 4, stamina: -3 },
+        addTags: ["深夜探过东区"],
+      },
+    ],
+  },
+  {
+    id: "symbol_dream",
+    title: "符号之梦",
+    locations: ["north", "east", "church"],
+    requiresAnyClue: ["church_coin", "deep_night_route"],
+    onceTag: "做过符号之梦",
+    text: "夜里你梦见自己走在一条没有灯的地下通道里，两边的墙上画满了同样的符号，一直延伸到看不见的深处。",
+    chance: 65,
+    weight: 4,
+    minDay: 20,
+    choices: [
+      {
+        label: "在梦里记住路线",
+        result: "你强迫自己记住每一个拐弯。醒来时窗外天还没亮，而你记得通道的尽头是一扇铁门。",
+        effects: { spirituality: 4, stress: 5, stamina: -4 },
+        addTags: ["做过符号之梦"],
+        addClues: [
+          {
+            id: "dream_route",
+            title: "梦中的地下通道",
+            text: "你记住了梦中的路线，墙上的符号与东区墙角那个几乎一模一样，尽头有一扇铁门。",
+          },
+        ],
+      },
+      {
+        label: "强迫自己醒来",
+        result: "你在梦里掐了自己一下，猛地惊醒。路线模糊了，但你知道那不是普通的梦。",
+        effects: { spirituality: 2, stress: 3 },
+        addTags: ["做过符号之梦"],
+      },
+    ],
+  },
+  {
+    id: "first_beyonder",
+    title: "初涉非凡",
+    locations: ["east", "market", "station"],
+    requiresClues: ["dream_route"],
+    onceTag: "初涉非凡",
+    text: "一个穿深色大衣的陌生人拦住你，准确说出了你最近追查的事。他说可以“帮”你，只需要你替他做一点小事。",
+    chance: 70,
+    weight: 5,
+    minDay: 25,
+    choices: [
+      {
+        label: "答应帮忙",
+        result: "你接下委托：把一封信塞进东区某扇铁门下的缝隙。你第一次真正触碰到了非凡世界的门槛。",
+        effects: { mysticism: 5, spirituality: 4, corruption: 1, stress: 6 },
+        exposureChange: 12,
+        addTags: ["初涉非凡"],
+        addClues: [
+          {
+            id: "beyonder_first_contact",
+            title: "第一位非凡者",
+            text: "有人知道你在追查异常，并提出用委托交换帮助。非凡世界确实存在。",
+          },
+        ],
+      },
+      {
+        label: "婉言拒绝",
+        result: "你退后一步拒绝了他。陌生人并不生气，只是笑着说：你会再来的。",
+        effects: { spirituality: 1, stress: 3 },
+        addTags: ["初涉非凡"],
       },
     ],
   },
@@ -1904,6 +2067,15 @@ function updateStoryArcs(targetState = state) {
   if (tags.includes("决定追到底")) {
     next = "committed";
   }
+  if (clueIds.has("church_coin") || clueIds.has("deep_night_route")) {
+    next = "coin";
+  }
+  if (tags.includes("做过符号之梦")) {
+    next = "dream";
+  }
+  if (tags.includes("初涉非凡")) {
+    next = "first_contact";
+  }
 
   if (next !== previous) {
     arc.node = next;
@@ -1941,15 +2113,20 @@ function completeEventGraphNode(eventId) {
 function getEventGraphSummary() {
   const ordinaryTotal = eventGraphNodes.filter((node) => node.type === "ordinary").length;
   const abnormalTotal = eventGraphNodes.filter((node) => node.type === "abnormal").length;
+  const mysticTotal = eventGraphNodes.filter((node) => node.type === "mystic").length;
   const completed = new Set(state.world.eventGraph.completedNodes || []);
   return {
     ordinaryTotal,
     abnormalTotal,
+    mysticTotal,
     ordinaryDone: eventGraphNodes.filter(
       (node) => node.type === "ordinary" && completed.has(node.id),
     ).length,
     abnormalDone: eventGraphNodes.filter(
       (node) => node.type === "abnormal" && completed.has(node.id),
+    ).length,
+    mysticDone: eventGraphNodes.filter(
+      (node) => node.type === "mystic" && completed.has(node.id),
     ).length,
   };
 }
@@ -2395,6 +2572,8 @@ function renderWorld() {
   document.getElementById(
     "abnormalGraphCount",
   ).textContent = `${graphSummary.abnormalDone}/${graphSummary.abnormalTotal}`;
+  document.getElementById("mysticGraphCount").textContent =
+    `${graphSummary.mysticDone}/${graphSummary.mysticTotal}`;
   document.getElementById("npcScheduleCount").textContent =
     `${npcSummary.scheduled}/${npcSummary.total}`;
 }
