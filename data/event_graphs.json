@@ -1,0 +1,453 @@
+[
+  {
+    "id": "ordinary_life",
+    "title": "普通生活",
+    "type": "ordinary",
+    "start_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "text": "普通的一天在廷根展开，街巷、煤烟和钟声和往常一样。",
+        "chance": 0,
+        "weight": 1,
+        "add_tags": []
+      },
+      {
+        "id": "ordinary_rain",
+        "text": "傍晚突然下起冷雨，你没来得及躲开，回家后感到一阵寒意。",
+        "chance": 18,
+        "weight": 3,
+        "choices": [
+          {
+            "label": "赶紧回家",
+            "result": "你缩紧外套一路快走，虽然狼狈，但没有继续在雨里消耗体力。",
+            "effects": { "health": -2, "stamina": -1 }
+          },
+          {
+            "label": "找地方避雨",
+            "result": "你躲进一家小店，花了几便士买热饮，身体舒服了些。",
+            "effects": { "money": -4, "stress": -2 }
+          }
+        ]
+      },
+      {
+        "id": "ordinary_book",
+        "text": "旧书摊上有一本便宜的历史读物，你犹豫片刻还是买了下来。",
+        "chance": 12,
+        "weight": 2,
+        "locations": ["market", "north"],
+        "choices": [
+          {
+            "label": "买下来",
+            "result": "书页发黄，但里面关于鲁恩旧贵族的段落很有意思。",
+            "effects": { "money": -5, "intelligence": 2 },
+            "add_tags": ["买过旧书"]
+          }
+        ]
+      },
+      {
+        "id": "ordinary_bell",
+        "text": "黑夜教堂的钟声在雾气中响起，你短暂地感到安心。",
+        "chance": 10,
+        "weight": 2,
+        "locations": ["church", "north"],
+        "choices": [
+          {
+            "label": "进入教堂",
+            "result": "你在长椅上坐了一会儿，安静让脑子里的杂音淡了下去。",
+            "effects": { "stress": -5, "spirituality": 1 },
+            "add_tags": ["去过黑夜教堂"]
+          }
+        ]
+      },
+      {
+        "id": "ordinary_rent",
+        "text": "房东提醒你下周要交房租，语气礼貌，但没有商量余地。",
+        "chance": 15,
+        "weight": 2,
+        "locations": ["east", "north"],
+        "min_day": 8,
+        "repeatable": true,
+        "choices": [
+          {
+            "label": "提前支付",
+            "result": "你提前付清一部分房租，钱包薄了，但心里踏实不少。",
+            "effects": { "money": -30, "stress": -4 },
+            "add_tags": ["房租已缓解"]
+          },
+          {
+            "label": "请求宽限",
+            "result": "房东答应多给你几天，但你能感觉到对方的耐心有限。",
+            "effects": { "charisma": 1, "stress": 5 },
+            "add_tags": ["欠下房租压力"]
+          }
+        ]
+      },
+      {
+        "id": "ordinary_pickpocket",
+        "text": "人群突然推搡起来，你感觉有人碰了一下你的外套口袋。",
+        "chance": 18,
+        "weight": 3,
+        "locations": ["market"],
+        "min_day": 4,
+        "choices": [
+          {
+            "label": "立刻抓住对方",
+            "result": "你抓住了一个瘦小青年，对方挣扎着逃走，只掉下一枚旧纽扣。",
+            "effects": { "stamina": -4, "stress": 3 },
+            "add_tags": ["捡到旧纽扣"],
+            "add_clues": [
+              {
+                "id": "old_button",
+                "title": "刻痕旧纽扣",
+                "text": "纽扣背面有细小刻痕，像是某个团体的暗记。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ordinary_overtime",
+        "text": "掌柜或上司临时要求你多留一会儿。活不算难，但这一天会被拖得很长。",
+        "chance": 18,
+        "weight": 2,
+        "locations": ["north", "market", "east"],
+        "min_day": 6,
+        "choices": [
+          {
+            "label": "留下加班",
+            "result": "你把额外的活做完，回家时街灯已经亮起。对方记住了你的可靠。",
+            "effects": { "stamina": -8, "stress": 4, "money": 4 },
+            "add_tags": ["认真加班"]
+          }
+        ]
+      },
+      {
+        "id": "ordinary_exam",
+        "text": "老师突然安排了一次小测验。题目不算刁钻，但足够看出最近有没有用功。",
+        "chance": 16,
+        "weight": 2,
+        "locations": ["north"],
+        "min_day": 7,
+        "choices": [
+          {
+            "label": "认真答题",
+            "result": "你答得不错。老师多看了你一眼，像是记住了这个名字。",
+            "effects": { "intelligence": 2, "stress": 2 },
+            "add_tags": ["课堂表现不错"]
+          }
+        ]
+      },
+      {
+        "id": "ordinary_neighbor_soup",
+        "text": "莎伦太太敲门送来一碗热汤，说是多煮了一些。屋里一下子有了生活的气味。",
+        "chance": 18,
+        "weight": 2,
+        "locations": ["north"],
+        "min_day": 5,
+        "requires_contacts": { "sha_ren_neighbor": 18 },
+        "choices": [
+          {
+            "label": "道谢收下",
+            "result": "热汤让胃里舒服了些。你们顺便聊了几句楼里的琐事。",
+            "effects": { "health": 2, "stress": -3 },
+            "trust_effects": { "sha_ren_neighbor": 2 }
+          }
+        ]
+      },
+      {
+        "id": "ordinary_market_price",
+        "text": "面包、煤油和廉价肉的价格都涨了一点。摊贩说最近货运不稳，谁也没办法。",
+        "chance": 20,
+        "weight": 3,
+        "locations": ["market"],
+        "min_day": 12,
+        "choices": [
+          {
+            "label": "照常购买",
+            "result": "你咬牙按原计划买下生活用品。钱少了，但晚饭至少没有缩水。",
+            "effects": { "money": -6, "stress": 1 }
+          }
+        ]
+      },
+      {
+        "id": "ordinary_home_leak",
+        "text": "夜里雨声变得不对劲。你发现屋角正在渗水，床边的地板已经湿了一片。",
+        "chance": 14,
+        "weight": 2,
+        "locations": ["north", "east"],
+        "min_day": 15,
+        "choices": [
+          {
+            "label": "找人修理",
+            "result": "修理工动作很快，收费也很快。至少今晚不用担心雨水滴到床上。",
+            "effects": { "money": -10, "stress": -2 }
+          }
+        ]
+      }
+    ],
+    "edges": []
+  },
+  {
+    "id": "abnormal_disappearance",
+    "title": "异常失踪",
+    "type": "abnormal",
+    "start_node": "abnormal_notice",
+    "nodes": [
+      {
+        "id": "abnormal_notice",
+        "text": "车站布告栏前围着几个人，一张失踪寻人启事被雨水泡得卷边。",
+        "chance": 22,
+        "weight": 3,
+        "locations": ["station"],
+        "min_day": 3,
+        "choices": [
+          {
+            "label": "仔细阅读",
+            "result": "你记下了失踪者的姓氏。那名字似乎在哪份报纸上见过。",
+            "effects": { "intelligence": 1, "stress": 1 },
+            "add_tags": ["见过失踪启事"],
+            "add_clues": [
+              {
+                "id": "missing_notice",
+                "title": "车站失踪启事",
+                "text": "失踪者姓氏和一份旧报纸上的边角消息隐约对得上。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abnormal_overlap",
+        "text": "你在报纸边角看到一则短讯：有人在东区附近失踪，警方只说还在调查。",
+        "chance": 24,
+        "weight": 3,
+        "locations": ["north", "market"],
+        "min_day": 6,
+        "requires_any_clue": ["missing_notice", "old_button"],
+        "choices": [
+          {
+            "label": "剪下报纸",
+            "result": "你把那块报纸折好收起。几条毫不起眼的消息开始互相牵连。",
+            "effects": { "mysticism": 1, "intelligence": 1, "stress": 2 },
+            "add_clues": [
+              {
+                "id": "newspaper_overlap",
+                "title": "互相重叠的失踪消息",
+                "text": "车站启事、旧纽扣和报纸短讯之间可能有联系。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abnormal_symbol",
+        "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
+        "chance": 8,
+        "weight": 1,
+        "locations": ["east", "market"],
+        "min_day": 5,
+        "after_nodes": ["abnormal_overlap"],
+        "choices": [
+          {
+            "label": "记下形状",
+            "result": "你把符号草草画在纸上。它不像装饰，更像某种标记。",
+            "effects": { "mysticism": 2, "stress": 3 },
+            "add_tags": ["见过神秘符号"],
+            "add_clues": [
+              {
+                "id": "wall_symbol",
+                "title": "被抹去的墙角符号",
+                "text": "你记下了一个不像装饰的符号，但暂时不知道它代表什么。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abnormal_followed",
+        "text": "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
+        "chance": 26,
+        "weight": 2,
+        "locations": ["east"],
+        "min_day": 10,
+        "requires_clues": ["wall_symbol"],
+        "choices": [
+          {
+            "label": "拐进人多的街道",
+            "result": "你混进人群，脚步声消失了。你的掌心出了汗。",
+            "effects": { "stress": 4, "stamina": -3 },
+            "add_clues": [
+              {
+                "id": "being_followed",
+                "title": "东区被跟踪",
+                "text": "接近墙角符号之后，你似乎被某人注意到了。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "abnormal_decision",
+        "text": "失踪启事、旧纽扣、报纸短讯和东区线索终于串成一条线。现在你必须决定，自己在这件事里到底站在哪里。",
+        "chance": 46,
+        "weight": 5,
+        "locations": ["north", "church", "station"],
+        "min_day": 14,
+        "requires_any_clue": ["newspaper_overlap", "wall_symbol", "being_followed"],
+        "choices": [
+          {
+            "label": "举报给教会",
+            "result": "你把整理好的线索交给黑夜教堂。教士没有承诺什么，但你看见他立刻锁上了后室的门。",
+            "effects": { "stress": -5, "spirituality": 2 },
+            "add_tags": ["做出失踪案选择", "向教会举报"],
+            "add_clues": [
+              {
+                "id": "church_archive",
+                "title": "教会档案的缺页记录",
+                "text": "教会档案显示东区异常有连续记录，但关键页码缺失。"
+              }
+            ]
+          },
+          {
+            "label": "调查到底",
+            "result": "你没有把线索交出去，也没有停手。这个决定让你更接近真相，也更接近危险。",
+            "effects": { "intelligence": 2, "mysticism": 2, "stress": 6 },
+            "add_tags": ["做出失踪案选择", "决定追到底"]
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "abnormal_notice",
+        "to": "abnormal_overlap",
+        "condition": { "tag": "见过失踪启事" }
+      },
+      {
+        "from": "abnormal_overlap",
+        "to": "abnormal_symbol",
+        "condition": { "tag": "见过神秘符号" }
+      },
+      {
+        "from": "abnormal_symbol",
+        "to": "abnormal_followed",
+        "condition": { "min_day": 10 }
+      },
+      {
+        "from": "abnormal_followed",
+        "to": "abnormal_decision",
+        "condition": { "min_day": 14 }
+      }
+    ]
+  },
+  {
+    "id": "mystic_contact",
+    "title": "非凡接触",
+    "type": "mystic",
+    "start_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "text": "你在失踪案的边缘停留得太久，有些东西开始反过来注意你。",
+        "chance": 0,
+        "weight": 1,
+        "after_nodes": ["abnormal_decision"]
+      },
+      {
+        "id": "contact_priest",
+        "text": "奥尔森教士在教堂后室单独见你。他沉默很久，最后把一枚褐色的旧硬币放在桌上。",
+        "chance": 30,
+        "weight": 3,
+        "locations": ["church"],
+        "min_day": 16,
+        "requires_tags_any": ["向教会举报", "决定追到底"],
+        "choices": [
+          {
+            "label": "收下硬币",
+            "result": "硬币比看上去更沉。教士说：如果有一天你开始做奇怪的梦，就带着它回来。",
+            "effects": { "spirituality": 3, "mysticism": 2, "stress": 3 },
+            "add_tags": ["拿到教堂旧币"],
+            "add_clues": [
+              {
+                "id": "church_coin",
+                "title": "教士给的旧硬币",
+                "text": "一枚看似普通的旧硬币，比看上去更沉，似乎与灵性有关。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dream_first",
+        "text": "夜里你梦见自己在一条没有灯的地下通道里行走，墙上画满了同样的符号。",
+        "chance": 34,
+        "weight": 3,
+        "min_day": 20,
+        "requires_tags_any": ["拿到教堂旧币", "见过神秘符号"],
+        "choices": [
+          {
+            "label": "在梦里记住路线",
+            "result": "醒来时你记得通道的每一个拐弯。窗外天还没亮。",
+            "effects": { "spirituality": 4, "stress": 5, "stamina": -4 },
+            "add_tags": ["做过符号之梦"],
+            "add_clues": [
+              {
+                "id": "dream_route",
+                "title": "梦中的地下通道",
+                "text": "你记住了梦中的路线，墙体符号与东区墙角那个几乎一样。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "contact_beyonder",
+        "text": "一位穿深色大衣的陌生人主动拦住你，准确说出了你最近在追查的事。他表示愿意“帮”你，只需要你替他做一点小事。",
+        "chance": 36,
+        "weight": 4,
+        "locations": ["east", "market", "station"],
+        "min_day": 25,
+        "requires_clues": ["dream_route"],
+        "choices": [
+          {
+            "label": "答应帮忙",
+            "result": "你接下了他的委托：把一封信放到东区某扇铁门下的缝隙里。你第一次触碰到异常世界的门槛。",
+            "effects": { "mysticism": 5, "spirituality": 4, "corruption": 1, "stress": 6 },
+            "add_tags": ["初涉非凡"],
+            "add_clues": [
+              {
+                "id": "beyonder_first_contact",
+                "title": "第一位非凡者",
+                "text": "有人知道了你在追查异常，并提出用委托交换帮助。异常世界确实存在。"
+              }
+            ]
+          },
+          {
+            "label": "婉言拒绝",
+            "result": "你退后一步拒绝了。陌生人并不生气，只笑着说：你会再来的。",
+            "effects": { "stress": 3, "spirituality": 1 },
+            "add_tags": ["拒绝初次的接触"]
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "contact_priest",
+        "condition": { "min_day": 16 }
+      },
+      {
+        "from": "contact_priest",
+        "to": "dream_first",
+        "condition": { "tag": "拿到教堂旧币" }
+      },
+      {
+        "from": "dream_first",
+        "to": "contact_beyonder",
+        "condition": { "min_day": 25 }
+      }
+    ]
+  }
+]

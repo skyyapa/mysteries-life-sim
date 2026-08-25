@@ -4,57 +4,136 @@
     "text": "傍晚突然下起冷雨，你没来得及躲开，回家后感到一阵寒意。",
     "chance": 18,
     "weight": 3,
-    "effects": {
-      "health": -3,
-      "stamina": -2
-    }
+    "effects": { "health": -3, "stamina": -2 }
   },
   {
     "id": "cheap_book",
     "text": "旧书摊上有一本便宜的历史读物，你犹豫片刻还是买了下来。",
     "chance": 12,
     "weight": 2,
-    "effects": {
-      "money": -5,
-      "intelligence": 1
-    }
+    "conditions": { "location": "market" },
+    "effects": { "money": -5, "intelligence": 2 },
+    "add_tags": ["买过旧书"]
   },
   {
     "id": "church_bell",
     "text": "黑夜教堂的钟声在雾气中响起，你短暂地感到安心。",
     "chance": 10,
     "weight": 2,
-    "effects": {
-      "stress": -3
-    }
+    "conditions": { "location": "church" },
+    "effects": { "stress": -5, "spirituality": 1 },
+    "add_tags": ["去过黑夜教堂"]
   },
   {
     "id": "strange_symbol",
     "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
     "chance": 8,
     "weight": 1,
-    "conditions": {
-      "min_day": 5,
-      "location": "廷根"
-    },
-    "effects": {
-      "mysticism_knowledge": 1,
-      "stress": 2
-    },
-    "add_tags": [
-      "见过神秘符号"
-    ]
+    "conditions": { "min_day": 5, "location": "east" },
+    "effects": { "mysticism": 2, "stress": 3 },
+    "add_tags": ["见过神秘符号"]
   },
   {
     "id": "landlord_pressure",
     "text": "房东提醒你下周要交房租，语气礼貌，但没有商量余地。",
     "chance": 15,
     "weight": 2,
-    "conditions": {
-      "min_day": 8
-    },
-    "effects": {
-      "stress": 4
-    }
+    "conditions": { "min_day": 8 },
+    "effects": { "money": -30, "stress": -4 },
+    "add_tags": ["房租已缓解"]
+  },
+  {
+    "id": "station_notice",
+    "text": "车站布告栏前围着几个人，一张失踪寻人启事被雨水泡得卷边。",
+    "chance": 22,
+    "weight": 3,
+    "conditions": { "min_day": 3, "location": "station" },
+    "effects": { "intelligence": 1, "stress": 1 },
+    "add_tags": ["见过失踪启事"]
+  },
+  {
+    "id": "work_overtime",
+    "text": "掌柜或上司临时要求你多留一会儿。活不算难，但这一天会被拖得很长。",
+    "chance": 18,
+    "weight": 2,
+    "conditions": { "min_day": 6 },
+    "effects": { "stamina": -8, "stress": 4, "money": 4 },
+    "add_tags": ["认真加班"]
+  },
+  {
+    "id": "study_exam",
+    "text": "老师突然安排了一次小测验。题目不算刁钻，但足够看出最近有没有用功。",
+    "chance": 16,
+    "weight": 2,
+    "conditions": { "min_day": 7, "location": "north" },
+    "effects": { "intelligence": 2, "stress": 2 },
+    "add_tags": ["课堂表现不错"]
+  },
+  {
+    "id": "neighbor_soup",
+    "text": "莎伦太太敲门送来一碗热汤，说是多煮了一些。屋里一下子有了生活的气味。",
+    "chance": 18,
+    "weight": 2,
+    "conditions": { "min_day": 5, "location": "north" },
+    "effects": { "health": 2, "stress": -3 }
+  },
+  {
+    "id": "market_price_rise",
+    "text": "面包、煤油和廉价肉的价格都涨了一点。摊贩说最近货运不稳，谁也没办法。",
+    "chance": 20,
+    "weight": 3,
+    "conditions": { "min_day": 12, "location": "market" },
+    "effects": { "money": -6, "stress": 1 }
+  },
+  {
+    "id": "home_leak",
+    "text": "夜里雨声变得不对劲。你发现屋角正在渗水，床边的地板已经湿了一片。",
+    "chance": 14,
+    "weight": 2,
+    "conditions": { "min_day": 15 },
+    "effects": { "money": -10, "stress": -2 }
+  },
+  {
+    "id": "market_pickpocket",
+    "text": "人群突然推搡起来，你感觉有人碰了一下你的外套口袋。",
+    "chance": 18,
+    "weight": 3,
+    "conditions": { "min_day": 4, "location": "market" },
+    "effects": { "stamina": -4, "stress": 3 },
+    "add_tags": ["捡到旧纽扣"]
+  },
+  {
+    "id": "newspaper_overlap",
+    "text": "你在报纸边角看到一则短讯：有人在东区附近失踪，警方只说还在调查。",
+    "chance": 24,
+    "weight": 3,
+    "conditions": { "min_day": 6 },
+    "effects": { "mysticism": 1, "intelligence": 1, "stress": 2 }
+  },
+  {
+    "id": "church_warning",
+    "text": "一位教士注意到你手里的纸片，平静地提醒你：有些事情不要独自追查。",
+    "chance": 28,
+    "weight": 3,
+    "conditions": { "min_day": 8, "location": "church" },
+    "effects": { "mysticism": 2, "spirituality": 1, "stress": 2 },
+    "add_tags": ["被教士提醒"]
+  },
+  {
+    "id": "east_followed",
+    "text": "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
+    "chance": 26,
+    "weight": 2,
+    "conditions": { "min_day": 10, "location": "east" },
+    "effects": { "stress": 4, "stamina": -3 }
+  },
+  {
+    "id": "disappearance_decision",
+    "text": "失踪启事、旧纽扣、报纸短讯和东区线索终于串成一条线。现在你必须决定，自己在这件事里到底站在哪里。",
+    "chance": 46,
+    "weight": 5,
+    "conditions": { "min_day": 14 },
+    "effects": { "stress": -5, "spirituality": 2 },
+    "add_tags": ["向教会举报"]
   }
 ]

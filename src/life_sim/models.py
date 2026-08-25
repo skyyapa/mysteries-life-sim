@@ -32,6 +32,15 @@ class WorldDate:
             "day": self.day,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> WorldDate:
+        return cls(
+            era=data.get("era", "第五纪"),
+            year=int(data.get("year", 1348)),
+            month=int(data.get("month", 1)),
+            day=int(data.get("day", 1)),
+        )
+
 
 @dataclass
 class Character:
@@ -98,6 +107,28 @@ class Character:
             "tags": list(self.tags),
         }
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Character:
+        return cls(
+            name=data["name"],
+            age=int(data["age"]),
+            gender=data["gender"],
+            birthplace=data["birthplace"],
+            family=data["family"],
+            job=data.get("job", "无业"),
+            location=data.get("location", "廷根"),
+            health=int(data.get("health", 80)),
+            stamina=int(data.get("stamina", 70)),
+            intelligence=int(data.get("intelligence", 55)),
+            charisma=int(data.get("charisma", 50)),
+            money=int(data.get("money", 120)),
+            stress=int(data.get("stress", 20)),
+            mysticism_knowledge=int(data.get("mysticism_knowledge", 0)),
+            spirituality=int(data.get("spirituality", 5)),
+            corruption=int(data.get("corruption", 0)),
+            tags=list(data.get("tags", [])),
+        )
+
 
 @dataclass
 class JournalEntry:
@@ -116,18 +147,189 @@ class JournalEntry:
             "event": self.event,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> JournalEntry:
+        return cls(
+            date=data["date"],
+            action=data["action"],
+            summary=data["summary"],
+            changes=dict(data.get("changes", {})),
+            event=data.get("event"),
+        )
+
 
 @dataclass
-class GameState:
-    date: WorldDate
-    character: Character
-    journal: list[JournalEntry] = field(default_factory=list)
-    days_lived: int = 0
+class NPCScheduleEntry:
+    time: str
+    location: str
+    activity: str
+    fatigue_change: int = 0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "time": self.time,
+            "location": self.location,
+            "activity": self.activity,
+            "fatigue_change": self.fatigue_change,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> NPCScheduleEntry:
+        return cls(
+            time=data["time"],
+            location=data["location"],
+            activity=data["activity"],
+            fatigue_change=int(data.get("fatigue_change", 0)),
+        )
+
+
+@dataclass
+class NPC:
+    id: str
+    name: str
+    job: str
+    goal: str
+    home: str
+    location: str
+    fatigue: int = 30
+    money: int = 0
+    current_time: str = "08:00"
+    current_activity: str = "开始一天"
+    schedule: list[NPCScheduleEntry] = field(default_factory=list)
+
+    def clamp(self) -> None:
+        self.fatigue = max(0, min(100, self.fatigue))
+
+    def apply_schedule_entry(self, entry: NPCScheduleEntry) -> None:
+        self.current_time = entry.time
+        self.location = entry.location
+        self.current_activity = entry.activity
+        self.fatigue += entry.fatigue_change
+        self.clamp()
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "job": self.job,
+            "goal": self.goal,
+            "home": self.home,
+            "location": self.location,
+            "fatigue": self.fatigue,
+            "money": self.money,
+            "current_time": self.current_time,
+            "current_activity": self.current_activity,
+            "schedule": [entry.to_dict() for entry in self.schedule],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> NPC:
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            job=data["job"],
+            goal=data["goal"],
+            home=data["home"],
+            location=data.get("location", data["home"]),
+            fatigue=int(data.get("fatigue", 30)),
+            money=int(data.get("money", 0)),
+            current_time=data.get("current_time", "08:00"),
+            current_activity=data.get("current_activity", "开始一天"),
+            schedule=[
+                NPCScheduleEntry.from_dict(entry) for entry in data.get("schedule", [])
+            ],
+        )
+
+
+@dataclass
+class WorldState:
+    date: WorldDate = field(default_factory=WorldDate)
+    weather: str = "阴天"
+    economy: dict[str, int] = field(default_factory=lambda: {"pressure": 0})
+    city: dict[str, int] = field(default_factory=lambda: {"tension": 0})
+    organizations: dict[str, dict[str, int]] = field(
+        default_factory=lambda: {"黑夜教会": {"attention": 0}}
+    )
+    event_nodes: dict[str, str] = field(default_factory=dict)
+    npcs: dict[str, NPC] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "date": self.date.to_dict(),
+            "weather": self.weather,
+            "economy": dict(self.economy),
+            "city": dict(self.city),
+            "organizations": {
+                name: dict(values) for name, values in self.organizations.items()
+            },
+            "event_nodes": dict(self.event_nodes),
+            "npcs": {npc_id: npc.to_dict() for npc_id, npc in self.npcs.items()},
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> WorldState:
+        return cls(
+            date=WorldDate.from_dict(data.get("date", {})),
+            weather=data.get("weather", "阴天"),
+            economy=dict(data.get("economy", {"pressure": 0})),
+            city=dict(data.get("city", {"tension": 0})),
+            organizations=dict(data.get("organizations", {"黑夜教会": {"attention": 0}})),
+            event_nodes=dict(data.get("event_nodes", {})),
+            npcs={
+                npc_id: NPC.from_dict(npc)
+                for npc_id, npc in data.get("npcs", {}).items()
+            },
+        )
+
+
+@dataclass
+class GameState:
+    character: Character
+    world: WorldState = field(default_factory=WorldState)
+    journal: list[JournalEntry] = field(default_factory=list)
+    days_lived: int = 0
+    clues: list[str] = field(default_factory=list)
+    deductions: list[str] = field(default_factory=list)
+
+    @property
+    def date(self) -> WorldDate:
+        return self.world.date
+
+    @property
+    def event_nodes(self) -> dict[str, str]:
+        return self.world.event_nodes
+
+    @property
+    def npcs(self) -> dict[str, NPC]:
+        return self.world.npcs
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
             "character": self.character.to_dict(),
+            "world": self.world.to_dict(),
             "journal": [entry.to_dict() for entry in self.journal],
             "days_lived": self.days_lived,
+            "clues": list(self.clues),
+            "deductions": list(self.deductions),
         }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> GameState:
+        world_data = data.get("world", {})
+        if "date" in data and "date" not in world_data:
+            world_data = {
+                **world_data,
+                "date": data.get("date", {}),
+                "event_nodes": data.get("event_nodes", {}),
+                "npcs": data.get("npcs", {}),
+            }
+        return cls(
+            character=Character.from_dict(data["character"]),
+            world=WorldState.from_dict(world_data),
+            journal=[
+                JournalEntry.from_dict(entry) for entry in data.get("journal", [])
+            ],
+            days_lived=int(data.get("days_lived", 0)),
+            clues=list(data.get("clues", [])),
+            deductions=list(data.get("deductions", [])),
+        )

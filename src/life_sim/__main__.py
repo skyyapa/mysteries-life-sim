@@ -11,7 +11,7 @@ def main() -> None:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
-    parser = argparse.ArgumentParser(description="人生模拟器 V0.1")
+    parser = argparse.ArgumentParser(description="人生模拟器 V0.17.1")
     parser.add_argument("--auto", type=int, default=0, help="自动模拟指定天数")
     parser.add_argument("--seed", type=int, default=1348, help="随机种子")
     parser.add_argument("--name", default="埃文·莫里斯", help="角色姓名")
@@ -20,7 +20,7 @@ def main() -> None:
     engine = LifeEngine(seed=args.seed)
     state = engine.new_game(name=args.name)
 
-    print("人生模拟器 V0.1")
+    print("人生模拟器 V0.17.1")
     print(f"角色：{state.character.name}，{state.character.age}岁，{state.character.job}")
     print(f"地点：{state.character.location}，时间：{state.date.label()}")
     print()

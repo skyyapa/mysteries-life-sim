@@ -16,3 +16,9 @@ def save_game(state: GameState, name: str = "autosave.json") -> Path:
     with path.open("w", encoding="utf-8") as file:
         json.dump(state.to_dict(), file, ensure_ascii=False, indent=2)
     return path
+
+
+def load_game(name: str = "autosave.json") -> GameState:
+    path = SAVE_DIR / name
+    with path.open("r", encoding="utf-8") as file:
+        return GameState.from_dict(json.load(file))

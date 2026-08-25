@@ -14,7 +14,7 @@
     "name": "工作",
     "description": "做临时文书、跑腿或店铺帮工，换取一点收入。",
     "days": 1,
-    "summary": "你做了一天普通工作，收入不多，却足以维持体面生活。",
+    "summary": "你把一天交给了工作，账本上的数字因此稍微好看了一些。",
     "effects": {
       "money": 18,
       "stamina": -12,
@@ -51,6 +51,26 @@
     "effects": {
       "stamina": -6,
       "stress": -1
+    }
+  },
+  "investigate": {
+    "name": "调查",
+    "description": "结合线索与关系，主动推进对异常事件的追查。",
+    "days": 1,
+    "summary": "你试着把零碎线索串起来，并向合适的人打听消息。",
+    "effects": {
+      "stamina": -8,
+      "stress": 3
+    }
+  },
+  "deduce": {
+    "name": "推理",
+    "description": "把已收集的线索摊开，尝试组合出背后真正的联系。",
+    "days": 1,
+    "summary": "你把收集到的线索摊开，试图找出它们之间真正的联系。",
+    "effects": {
+      "stamina": -5,
+      "stress": 2
     }
   }
 }

@@ -13,3 +13,11 @@ def load_json(name: str) -> Any:
     path = DATA_DIR / name
     with path.open("r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def load_optional_json(name: str) -> Any | None:
+    path = DATA_DIR / name
+    if not path.exists():
+        return None
+    with path.open("r", encoding="utf-8") as file:
+        return json.load(file)

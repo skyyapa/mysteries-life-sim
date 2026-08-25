@@ -1,0 +1,1118 @@
+[
+  {
+    "id": "tom_tavern",
+    "name": "汤姆",
+    "job": "酒馆老板",
+    "goal": "赚钱",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 30,
+    "money": 80,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "市场区",
+        "activity": "采购酒水和面包",
+        "fatigue_change": 5
+      },
+      {
+        "time": "12:00",
+        "location": "北区",
+        "activity": "简单吃午饭",
+        "fatigue_change": -2
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "招待下班后的客人",
+        "fatigue_change": 12
+      },
+      {
+        "time": "23:00",
+        "location": "北区",
+        "activity": "关门回家",
+        "fatigue_change": -8
+      }
+    ]
+  },
+  {
+    "id": "toby_newsboy",
+    "name": "托比",
+    "job": "报童",
+    "goal": "攒钱换一双新鞋",
+    "home": "市场区",
+    "location": "市场区",
+    "fatigue": 25,
+    "money": 8,
+    "schedule": [
+      {
+        "time": "06:00",
+        "location": "市场区",
+        "activity": "沿街卖报",
+        "fatigue_change": 8
+      },
+      {
+        "time": "09:00",
+        "location": "廷根车站",
+        "activity": "在车站等晨报",
+        "fatigue_change": 6
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "替摊主跑腿",
+        "fatigue_change": 5
+      },
+      {
+        "time": "15:00",
+        "location": "北区",
+        "activity": "给住户送报",
+        "fatigue_change": 6
+      },
+      {
+        "time": "18:00",
+        "location": "市场区",
+        "activity": "在市场打听消息",
+        "fatigue_change": 4
+      },
+      {
+        "time": "21:00",
+        "location": "廷根车站",
+        "activity": "追着晚班列车卖报",
+        "fatigue_change": 5
+      },
+      {
+        "time": "23:00",
+        "location": "市场区",
+        "activity": "回市场区睡觉",
+        "fatigue_change": -10
+      }
+    ]
+  },
+  {
+    "id": "olson_priest",
+    "name": "奥尔森教士",
+    "job": "黑夜教士",
+    "goal": "维持教区安稳",
+    "home": "黑夜教堂",
+    "location": "黑夜教堂",
+    "fatigue": 20,
+    "money": 20,
+    "schedule": [
+      {
+        "time": "07:00",
+        "location": "黑夜教堂",
+        "activity": "主持日常祈祷",
+        "fatigue_change": 3
+      },
+      {
+        "time": "10:00",
+        "location": "黑夜教堂",
+        "activity": "整理教堂档案",
+        "fatigue_change": 3
+      },
+      {
+        "time": "13:00",
+        "location": "黑夜教堂",
+        "activity": "接待信徒",
+        "fatigue_change": 4
+      },
+      {
+        "time": "15:00",
+        "location": "北区",
+        "activity": "探访北区住户",
+        "fatigue_change": 5
+      },
+      {
+        "time": "18:00",
+        "location": "黑夜教堂",
+        "activity": "处理教区事务",
+        "fatigue_change": 4
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "守夜祈祷",
+        "fatigue_change": 3
+      },
+      {
+        "time": "23:00",
+        "location": "黑夜教堂",
+        "activity": "安静休息",
+        "fatigue_change": -8
+      }
+    ]
+  },
+  {
+    "id": "sha_ren_neighbor",
+    "name": "莎伦太太",
+    "job": "邻居",
+    "goal": "照看好楼里的街坊",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 18,
+    "money": 15,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "在家整理房间",
+        "fatigue_change": 3
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "照看走廊和邻居",
+        "fatigue_change": 3
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "去市场采买",
+        "fatigue_change": 6
+      },
+      {
+        "time": "15:00",
+        "location": "北区",
+        "activity": "和街坊聊天",
+        "fatigue_change": 2
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "清点家用",
+        "fatigue_change": 3
+      },
+      {
+        "time": "20:00",
+        "location": "黑夜教堂",
+        "activity": "去教堂祈祷",
+        "fatigue_change": 2
+      },
+      {
+        "time": "23:00",
+        "location": "北区",
+        "activity": "在家休息",
+        "fatigue_change": -8
+      }
+    ]
+  },
+  {
+    "id": "harvey_landlord",
+    "name": "哈维先生",
+    "job": "房东",
+    "goal": "收齐每月的租金",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 22,
+    "money": 200,
+    "schedule": [
+      {
+        "time": "09:00",
+        "location": "北区",
+        "activity": "查看出租屋",
+        "fatigue_change": 3
+      },
+      {
+        "time": "11:00",
+        "location": "市场区",
+        "activity": "去市场收账",
+        "fatigue_change": 5
+      },
+      {
+        "time": "13:00",
+        "location": "北区",
+        "activity": "整理租金账本",
+        "fatigue_change": 2
+      },
+      {
+        "time": "15:00",
+        "location": "东区",
+        "activity": "催收便宜公寓租金",
+        "fatigue_change": 6
+      },
+      {
+        "time": "17:00",
+        "location": "北区",
+        "activity": "拜访住户",
+        "fatigue_change": 4
+      },
+      {
+        "time": "19:00",
+        "location": "市场区",
+        "activity": "和中介谈价格",
+        "fatigue_change": 4
+      },
+      {
+        "time": "22:00",
+        "location": "北区",
+        "activity": "在家休息",
+        "fatigue_change": -6
+      }
+    ]
+  },
+  {
+    "id": "reymond_boss",
+    "name": "雷蒙德主管",
+    "job": "事务所主管",
+    "goal": "维持事务所的体面和效率",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 24,
+    "money": 150,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "审阅文书",
+        "fatigue_change": 4
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "安排文员工作",
+        "fatigue_change": 3
+      },
+      {
+        "time": "13:00",
+        "location": "市场区",
+        "activity": "拜访客户",
+        "fatigue_change": 5
+      },
+      {
+        "time": "15:00",
+        "location": "北区",
+        "activity": "核对账册",
+        "fatigue_change": 4
+      },
+      {
+        "time": "17:00",
+        "location": "廷根车站",
+        "activity": "等待外地信件",
+        "fatigue_change": 3
+      },
+      {
+        "time": "19:00",
+        "location": "北区",
+        "activity": "处理积压档案",
+        "fatigue_change": 4
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "参加礼拜",
+        "fatigue_change": 2
+      }
+    ]
+  },
+  {
+    "id": "bakeland_shopkeeper",
+    "name": "贝克兰德太太",
+    "job": "杂货店主",
+    "goal": "把店铺经营下去",
+    "home": "市场区",
+    "location": "市场区",
+    "fatigue": 26,
+    "money": 60,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "市场区",
+        "activity": "看守柜台",
+        "fatigue_change": 4
+      },
+      {
+        "time": "10:00",
+        "location": "市场区",
+        "activity": "清点货架",
+        "fatigue_change": 3
+      },
+      {
+        "time": "12:00",
+        "location": "廷根车站",
+        "activity": "接收货物",
+        "fatigue_change": 6
+      },
+      {
+        "time": "14:00",
+        "location": "市场区",
+        "activity": "和顾客议价",
+        "fatigue_change": 4
+      },
+      {
+        "time": "16:00",
+        "location": "北区",
+        "activity": "给熟客送货",
+        "fatigue_change": 5
+      },
+      {
+        "time": "19:00",
+        "location": "市场区",
+        "activity": "盘点账本",
+        "fatigue_change": 3
+      },
+      {
+        "time": "21:00",
+        "location": "市场区",
+        "activity": "收摊休息",
+        "fatigue_change": -6
+      }
+    ]
+  },
+  {
+    "id": "jonas_baker",
+    "name": "乔纳斯",
+    "job": "面包师",
+    "goal": "让面包炉一直有生意",
+    "home": "市场区",
+    "location": "市场区",
+    "fatigue": 32,
+    "money": 40,
+    "schedule": [
+      {
+        "time": "05:00",
+        "location": "市场区",
+        "activity": "凌晨揉面",
+        "fatigue_change": 8
+      },
+      {
+        "time": "07:00",
+        "location": "市场区",
+        "activity": "烘烤黑麦面包",
+        "fatigue_change": 7
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "给学校送面包",
+        "fatigue_change": 5
+      },
+      {
+        "time": "13:00",
+        "location": "市场区",
+        "activity": "照看炉火",
+        "fatigue_change": 5
+      },
+      {
+        "time": "16:00",
+        "location": "东区",
+        "activity": "低价处理隔夜面包",
+        "fatigue_change": 6
+      },
+      {
+        "time": "19:00",
+        "location": "市场区",
+        "activity": "准备周末订单",
+        "fatigue_change": 4
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "捐出剩余面包",
+        "fatigue_change": 2
+      }
+    ]
+  },
+  {
+    "id": "martin_porter",
+    "name": "马丁",
+    "job": "搬运工",
+    "goal": "多接几趟活",
+    "home": "东区",
+    "location": "廷根车站",
+    "fatigue": 35,
+    "money": 10,
+    "schedule": [
+      {
+        "time": "07:00",
+        "location": "廷根车站",
+        "activity": "搬运行李",
+        "fatigue_change": 8
+      },
+      {
+        "time": "09:00",
+        "location": "廷根车站",
+        "activity": "卸下货箱",
+        "fatigue_change": 8
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "替商贩搬货",
+        "fatigue_change": 7
+      },
+      {
+        "time": "15:00",
+        "location": "廷根车站",
+        "activity": "等候晚班列车",
+        "fatigue_change": 4
+      },
+      {
+        "time": "18:00",
+        "location": "东区",
+        "activity": "回东区住处",
+        "fatigue_change": 6
+      },
+      {
+        "time": "20:00",
+        "location": "廷根车站",
+        "activity": "修整手推车",
+        "fatigue_change": 3
+      },
+      {
+        "time": "22:00",
+        "location": "市场区",
+        "activity": "喝一杯廉价啤酒",
+        "fatigue_change": 4
+      }
+    ]
+  },
+  {
+    "id": "wood_coachman",
+    "name": "伍德车夫",
+    "job": "出租马车夫",
+    "goal": "多拉几趟体面的客人",
+    "home": "廷根车站",
+    "location": "廷根车站",
+    "fatigue": 28,
+    "money": 30,
+    "schedule": [
+      {
+        "time": "07:00",
+        "location": "廷根车站",
+        "activity": "等候乘客",
+        "fatigue_change": 3
+      },
+      {
+        "time": "09:00",
+        "location": "北区",
+        "activity": "送客去北区",
+        "fatigue_change": 5
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "在市场补给草料",
+        "fatigue_change": 4
+      },
+      {
+        "time": "15:00",
+        "location": "廷根车站",
+        "activity": "接夜车乘客",
+        "fatigue_change": 5
+      },
+      {
+        "time": "18:00",
+        "location": "东区",
+        "activity": "绕路避开拥堵",
+        "fatigue_change": 5
+      },
+      {
+        "time": "20:00",
+        "location": "北区",
+        "activity": "给常客送信",
+        "fatigue_change": 4
+      },
+      {
+        "time": "22:00",
+        "location": "廷根车站",
+        "activity": "修整马具",
+        "fatigue_change": 3
+      }
+    ]
+  },
+  {
+    "id": "lucy_washerwoman",
+    "name": "露西",
+    "job": "洗衣女工",
+    "goal": "攒钱把弟弟送进学校",
+    "home": "东区",
+    "location": "东区",
+    "fatigue": 30,
+    "money": 12,
+    "schedule": [
+      {
+        "time": "07:00",
+        "location": "东区",
+        "activity": "在院里洗衣",
+        "fatigue_change": 7
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "给住户送回衣物",
+        "fatigue_change": 6
+      },
+      {
+        "time": "12:00",
+        "location": "东区",
+        "activity": "晾晒床单",
+        "fatigue_change": 4
+      },
+      {
+        "time": "14:00",
+        "location": "市场区",
+        "activity": "购买肥皂",
+        "fatigue_change": 4
+      },
+      {
+        "time": "16:00",
+        "location": "东区",
+        "activity": "替工友缝补衣服",
+        "fatigue_change": 5
+      },
+      {
+        "time": "19:00",
+        "location": "北区",
+        "activity": "收取脏衣篮",
+        "fatigue_change": 5
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "参加晚祷",
+        "fatigue_change": 2
+      }
+    ]
+  },
+  {
+    "id": "alfred_factory_worker",
+    "name": "阿尔弗雷德",
+    "job": "工厂工人",
+    "goal": "保住工厂的活计",
+    "home": "东区",
+    "location": "东区",
+    "fatigue": 40,
+    "money": 5,
+    "schedule": [
+      {
+        "time": "06:00",
+        "location": "东区",
+        "activity": "赶去工厂",
+        "fatigue_change": 6
+      },
+      {
+        "time": "08:00",
+        "location": "东区",
+        "activity": "在车间做工",
+        "fatigue_change": 9
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "购买晚饭",
+        "fatigue_change": 5
+      },
+      {
+        "time": "15:00",
+        "location": "东区",
+        "activity": "排队领工钱",
+        "fatigue_change": 4
+      },
+      {
+        "time": "18:00",
+        "location": "东区",
+        "activity": "修补靴子",
+        "fatigue_change": 4
+      },
+      {
+        "time": "20:00",
+        "location": "市场区",
+        "activity": "找零工消息",
+        "fatigue_change": 4
+      },
+      {
+        "time": "22:00",
+        "location": "东区",
+        "activity": "睡到很晚",
+        "fatigue_change": -5
+      }
+    ]
+  },
+  {
+    "id": "erin_doctor",
+    "name": "艾琳医生",
+    "job": "诊所医生",
+    "goal": "治好每个普通人的病",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 26,
+    "money": 45,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "接诊病人",
+        "fatigue_change": 6
+      },
+      {
+        "time": "11:00",
+        "location": "东区",
+        "activity": "去东区出诊",
+        "fatigue_change": 6
+      },
+      {
+        "time": "13:00",
+        "location": "北区",
+        "activity": "整理药柜",
+        "fatigue_change": 3
+      },
+      {
+        "time": "15:00",
+        "location": "市场区",
+        "activity": "采购药材",
+        "fatigue_change": 4
+      },
+      {
+        "time": "17:00",
+        "location": "北区",
+        "activity": "写病历",
+        "fatigue_change": 4
+      },
+      {
+        "time": "19:00",
+        "location": "东区",
+        "activity": "探望长期病人",
+        "fatigue_change": 5
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "与教士交谈",
+        "fatigue_change": 2
+      }
+    ]
+  },
+  {
+    "id": "miller_constable",
+    "name": "米勒巡警",
+    "job": "巡警",
+    "goal": "让东区的夜晚更安静",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 25,
+    "money": 35,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "沿街巡逻",
+        "fatigue_change": 5
+      },
+      {
+        "time": "10:00",
+        "location": "市场区",
+        "activity": "处理市场争执",
+        "fatigue_change": 5
+      },
+      {
+        "time": "13:00",
+        "location": "廷根车站",
+        "activity": "查看车站布告",
+        "fatigue_change": 4
+      },
+      {
+        "time": "15:00",
+        "location": "东区",
+        "activity": "短暂巡查东区",
+        "fatigue_change": 6
+      },
+      {
+        "time": "17:00",
+        "location": "北区",
+        "activity": "回警署写报告",
+        "fatigue_change": 4
+      },
+      {
+        "time": "19:00",
+        "location": "市场区",
+        "activity": "询问摊贩",
+        "fatigue_change": 4
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "在教堂外值守",
+        "fatigue_change": 3
+      }
+    ]
+  },
+  {
+    "id": "carter_teacher",
+    "name": "卡特老师",
+    "job": "学校教师",
+    "goal": "多教出几个有用的人",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 24,
+    "money": 28,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "准备课程",
+        "fatigue_change": 3
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "批改作业",
+        "fatigue_change": 4
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "购买墨水",
+        "fatigue_change": 3
+      },
+      {
+        "time": "14:00",
+        "location": "北区",
+        "activity": "辅导学生",
+        "fatigue_change": 5
+      },
+      {
+        "time": "16:00",
+        "location": "廷根车站",
+        "activity": "寄出信件",
+        "fatigue_change": 3
+      },
+      {
+        "time": "19:00",
+        "location": "北区",
+        "activity": "整理教案",
+        "fatigue_change": 3
+      },
+      {
+        "time": "21:00",
+        "location": "黑夜教堂",
+        "activity": "参加礼拜",
+        "fatigue_change": 2
+      }
+    ]
+  },
+  {
+    "id": "percival_librarian",
+    "name": "珀西瓦尔",
+    "job": "图书管理员",
+    "goal": "管好图书室的记性",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 22,
+    "money": 18,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "整理书架",
+        "fatigue_change": 3
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "登记借阅记录",
+        "fatigue_change": 3
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "寻找旧书",
+        "fatigue_change": 4
+      },
+      {
+        "time": "14:00",
+        "location": "北区",
+        "activity": "修补破损书页",
+        "fatigue_change": 3
+      },
+      {
+        "time": "16:00",
+        "location": "廷根车站",
+        "activity": "接收外地期刊",
+        "fatigue_change": 3
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "清点禁借书目",
+        "fatigue_change": 3
+      },
+      {
+        "time": "21:00",
+        "location": "北区",
+        "activity": "安静读书",
+        "fatigue_change": -4
+      }
+    ]
+  },
+  {
+    "id": "marianne_seamstress",
+    "name": "玛丽安",
+    "job": "裁缝",
+    "goal": "攒钱在东区开一间小铺",
+    "home": "市场区",
+    "location": "市场区",
+    "fatigue": 27,
+    "money": 22,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "市场区",
+        "activity": "修改衣袖",
+        "fatigue_change": 4
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "给客户量尺寸",
+        "fatigue_change": 4
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "采购布料",
+        "fatigue_change": 4
+      },
+      {
+        "time": "14:00",
+        "location": "东区",
+        "activity": "探望妹妹",
+        "fatigue_change": 3
+      },
+      {
+        "time": "16:00",
+        "location": "市场区",
+        "activity": "赶制订单",
+        "fatigue_change": 6
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "送还礼服",
+        "fatigue_change": 4
+      },
+      {
+        "time": "21:00",
+        "location": "市场区",
+        "activity": "整理针线盒",
+        "fatigue_change": 3
+      }
+    ]
+  },
+  {
+    "id": "fairn_courier",
+    "name": "费恩",
+    "job": "信使",
+    "goal": "把每封信准时送到",
+    "home": "廷根车站",
+    "location": "廷根车站",
+    "fatigue": 28,
+    "money": 14,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "廷根车站",
+        "activity": "分拣信件",
+        "fatigue_change": 4
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "投递公文",
+        "fatigue_change": 6
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "给商铺送信",
+        "fatigue_change": 5
+      },
+      {
+        "time": "14:00",
+        "location": "东区",
+        "activity": "寻找收信人",
+        "fatigue_change": 6
+      },
+      {
+        "time": "16:00",
+        "location": "廷根车站",
+        "activity": "登记退信",
+        "fatigue_change": 3
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "送急件",
+        "fatigue_change": 5
+      },
+      {
+        "time": "20:00",
+        "location": "市场区",
+        "activity": "听商人抱怨",
+        "fatigue_change": 3
+      }
+    ]
+  },
+  {
+    "id": "quincy_beggar",
+    "name": "老昆西",
+    "job": "流浪者",
+    "goal": "活着等到明天",
+    "home": "东区",
+    "location": "东区",
+    "fatigue": 30,
+    "money": 2,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "东区",
+        "activity": "靠墙晒太阳",
+        "fatigue_change": 0
+      },
+      {
+        "time": "10:00",
+        "location": "市场区",
+        "activity": "在人群边乞讨",
+        "fatigue_change": 4
+      },
+      {
+        "time": "12:00",
+        "location": "黑夜教堂",
+        "activity": "领取救济汤",
+        "fatigue_change": -2
+      },
+      {
+        "time": "14:00",
+        "location": "东区",
+        "activity": "躲在桥洞下",
+        "fatigue_change": 2
+      },
+      {
+        "time": "17:00",
+        "location": "廷根车站",
+        "activity": "翻找遗落行李",
+        "fatigue_change": 5
+      },
+      {
+        "time": "20:00",
+        "location": "市场区",
+        "activity": "听醉汉说话",
+        "fatigue_change": 3
+      },
+      {
+        "time": "22:00",
+        "location": "东区",
+        "activity": "很早睡下",
+        "fatigue_change": -6
+      }
+    ]
+  },
+  {
+    "id": "enoch_book_vendor",
+    "name": "伊诺克",
+    "job": "旧书贩",
+    "goal": "找到一本能卖出大价钱的书",
+    "home": "市场区",
+    "location": "市场区",
+    "fatigue": 23,
+    "money": 25,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "市场区",
+        "activity": "摆出旧书摊",
+        "fatigue_change": 4
+      },
+      {
+        "time": "10:00",
+        "location": "北区",
+        "activity": "收购旧教材",
+        "fatigue_change": 5
+      },
+      {
+        "time": "12:00",
+        "location": "市场区",
+        "activity": "整理书箱",
+        "fatigue_change": 3
+      },
+      {
+        "time": "14:00",
+        "location": "廷根车站",
+        "activity": "等待外地书包裹",
+        "fatigue_change": 3
+      },
+      {
+        "time": "16:00",
+        "location": "市场区",
+        "activity": "低声推荐冷门书",
+        "fatigue_change": 3
+      },
+      {
+        "time": "18:00",
+        "location": "北区",
+        "activity": "拜访藏书人",
+        "fatigue_change": 4
+      },
+      {
+        "time": "20:00",
+        "location": "市场区",
+        "activity": "收摊清账",
+        "fatigue_change": 3
+      }
+    ]
+  },
+  {
+    "id": "green_night_watchman",
+    "name": "格林守夜人",
+    "job": "守夜人",
+    "goal": "让夜里少一点坏事",
+    "home": "北区",
+    "location": "北区",
+    "fatigue": 35,
+    "money": 20,
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "北区",
+        "activity": "白天补觉",
+        "fatigue_change": -6
+      },
+      {
+        "time": "17:00",
+        "location": "市场区",
+        "activity": "黄昏巡街",
+        "fatigue_change": 5
+      },
+      {
+        "time": "19:00",
+        "location": "东区",
+        "activity": "避开深巷巡逻",
+        "fatigue_change": 6
+      },
+      {
+        "time": "21:00",
+        "location": "廷根车站",
+        "activity": "查看末班车",
+        "fatigue_change": 4
+      },
+      {
+        "time": "23:00",
+        "location": "北区",
+        "activity": "敲响夜间报时",
+        "fatigue_change": 4
+      },
+      {
+        "time": "01:00",
+        "location": "市场区",
+        "activity": "劝走醉客",
+        "fatigue_change": 5
+      },
+      {
+        "time": "04:00",
+        "location": "北区",
+        "activity": "交接巡夜记录",
+        "fatigue_change": 4
+      }
+    ]
+  }
+]

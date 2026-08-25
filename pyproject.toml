@@ -1,7 +1,7 @@
 [project]
 name = "mysteries-life-sim"
-version = "0.1.0"
-description = "V0.1 foundation for a rule-driven life simulator in a mystery-world setting."
+version = "0.17.1"
+description = "V0.17 rule-driven life simulator in a mystery-world setting (Tingen, 1348)."
 requires-python = ">=3.10"
 dependencies = []
 
