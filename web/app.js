@@ -2048,6 +2048,7 @@ const initialState = {
     mapOpen: false,
     focusedContactId: null,
     autoLife: true,
+    autoPlay: false,
   },
   tags: [],
   clues: [],
@@ -2073,7 +2074,7 @@ const ids = [
 const cappedStatIds = ids.filter((id) => id !== "money");
 
 document.querySelectorAll("[data-action]").forEach((button) => {
-  button.addEventListener("click", () => takeAction(button.dataset.action));
+  button.addEventListener("click", () => manualAction(button.dataset.action));
 });
 
 document.querySelectorAll("[data-career]").forEach((button) => {
@@ -2085,17 +2086,8 @@ document.getElementById("autoDay").addEventListener("click", () => {
     render();
     return; // 事件等待玩家选择
   }
-  // 连续自动生活：主角自己过日，遇到事件或跑满 14 天暂停
-  let advanced = 0;
-  while (advanced < 14 && !state.pendingEvent) {
-    liveAutomaticDay();
-    advanced += 1;
-  }
-  saveState();
-  render();
-  if (state.pendingEvent) {
-    showSaveToast("遇到事件——轮到你做选择了");
-  }
+  // 一次点击进入/恢复自动连播：直到事件或跑满一批
+  runAutoLifeLoop();
 });
 
 document.getElementById("autoMonth").addEventListener("click", () => {
@@ -2277,6 +2269,11 @@ function resolveEvent(choiceIndex, shouldRender = true) {
 
   if (shouldRender) {
     render();
+  }
+
+  // 自动连播模式下，事件解决后自动恢复生活（无需再点「继续生活」）
+  if (state.ui.autoPlay && !state.pendingEvent) {
+    setTimeout(runAutoLifeLoop, 60);
   }
 }
 
@@ -2591,6 +2588,35 @@ function liveAutomaticDay() {
   const actionId = pickAutoAction();
   takeAction(actionId, false); // silent：不逐次渲染
   return !state.pendingEvent; // true = 今天没触发事件，可继续自动
+}
+
+const AUTO_BATCH_DAYS = 30;
+
+/** 自动连播：从当前状态一口气过日，直到遇到事件（保留 autoPlay）或跑满一批。 */
+function runAutoLifeLoop() {
+  state.ui.autoPlay = true;
+  let advanced = 0;
+  while (advanced < AUTO_BATCH_DAYS && !state.pendingEvent && state.ui.autoPlay) {
+    liveAutomaticDay();
+    advanced += 1;
+  }
+  saveState();
+  render();
+  if (state.pendingEvent) {
+    showSaveToast("遇到事件——轮到你做选择了");
+    // autoPlay 保持开启：玩家选完会自动继续生活
+  } else {
+    state.ui.autoPlay = false;
+    if (advanced >= AUTO_BATCH_DAYS) {
+      showSaveToast(`已连续生活 ${AUTO_BATCH_DAYS} 天，稍作休息——点「继续生活」接着过`);
+    }
+  }
+}
+
+/** 手动干预：退出自动连播，执行指定行动。 */
+function manualAction(actionId) {
+  state.ui.autoPlay = false;
+  takeAction(actionId);
 }
 
 function advanceDay() {
@@ -3816,6 +3842,7 @@ function normalizeState(savedState) {
     ui: {
       ...initialState.ui,
       ...(savedState.ui || {}),
+      autoPlay: false, // 自动连播是运行时状态，不随存档恢复
     },
   };
   updateContactSchedules(normalized);
