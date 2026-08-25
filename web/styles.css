@@ -498,6 +498,53 @@ button:active {
   font-weight: 700;
 }
 
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.life-badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.95;
+}
+
+.life-badge.on {
+  background: rgba(120, 150, 200, 0.18);
+  border: 1px solid rgba(140, 170, 220, 0.55);
+  color: #bcd2ef;
+}
+
+.life-badge.off {
+  background: rgba(208, 179, 106, 0.16);
+  border: 1px solid rgba(208, 179, 106, 0.5);
+  color: #f4d989;
+}
+
+.primary-btn {
+  background: rgba(208, 179, 106, 0.28);
+  border-color: rgba(208, 179, 106, 0.75);
+  color: #fff2c3;
+  font-weight: 700;
+  padding: 10px 22px;
+}
+
+.primary-btn:hover {
+  background: rgba(208, 179, 106, 0.42);
+}
+
+.actions-hint {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(244, 239, 230, 0.55);
+}
+
 .status-strip {
   position: sticky;
   top: 0;

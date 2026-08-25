@@ -2047,6 +2047,7 @@ const initialState = {
   ui: {
     mapOpen: false,
     focusedContactId: null,
+    autoLife: true,
   },
   tags: [],
   clues: [],
@@ -2081,24 +2082,45 @@ document.querySelectorAll("[data-career]").forEach((button) => {
 
 document.getElementById("autoDay").addEventListener("click", () => {
   if (state.pendingEvent) {
-    resolveEvent(0);
-    return;
+    render();
+    return; // 事件等待玩家选择
   }
-  takeAction(pickAutoAction());
+  // 连续自动生活：主角自己过日，遇到事件或跑满 14 天暂停
+  let advanced = 0;
+  while (advanced < 14 && !state.pendingEvent) {
+    liveAutomaticDay();
+    advanced += 1;
+  }
+  saveState();
+  render();
+  if (state.pendingEvent) {
+    showSaveToast("遇到事件——轮到你做选择了");
+  }
 });
 
 document.getElementById("autoMonth").addEventListener("click", () => {
+  // 快速过一个月：主角自动生活，遇到事件立即停下交给玩家
   for (let index = 0; index < 30; index += 1) {
     if (state.pendingEvent) {
-      resolveEvent(0, false);
+      break;
     }
     takeAction(pickAutoAction(), false);
   }
+  saveState();
   render();
+  if (state.pendingEvent) {
+    showSaveToast("遇到事件——轮到你做选择了");
+  }
 });
 
 document.getElementById("newLife").addEventListener("click", () => {
   state = createRandomState();
+  saveState();
+  render();
+});
+
+document.getElementById("toggleAutoLife").addEventListener("click", () => {
+  state.ui.autoLife = !state.ui.autoLife;
   saveState();
   render();
 });
@@ -2533,6 +2555,7 @@ function canApplyDeduction(rule) {
 }
 
 function pickAutoAction() {
+  // 生存优先：身体撑不住就休息，没钱就工作，压力爆表就社交
   if (state.stats.health < 45 || state.stats.stamina < 35) {
     return "rest";
   }
@@ -2542,8 +2565,32 @@ function pickAutoAction() {
   if (state.stats.stress > 70) {
     return "social";
   }
+  // 有线索优先调查/推理，推进异常与主线
+  if (state.clues.length >= 2 && state.stats.money >= 40 && state.stats.corruption >= 3) {
+    if (getInvestigationCooldown() <= 0 && Math.random() < 0.45) {
+      return "investigate";
+    }
+  }
+  if (state.clues.length >= 2 && state.deductions.length < 4 && Math.random() < 0.25) {
+    return "deduce";
+  }
+  // 有余钱时定期存款
+  if (state.stats.money >= 40 && state.finance.savings < 120 && Math.random() < 0.12) {
+    return "save";
+  }
+  // 日常节奏
   const pool = ["study", "work", "rest", "social", "wander"];
   return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/** 自动生活：主角自己过一天；若触发待处理事件则停下等待玩家选择。 */
+function liveAutomaticDay() {
+  if (state.pendingEvent) {
+    return false; // 事件待玩家选择
+  }
+  const actionId = pickAutoAction();
+  takeAction(actionId, false); // silent：不逐次渲染
+  return !state.pendingEvent; // true = 今天没触发事件，可继续自动
 }
 
 function advanceDay() {
@@ -3197,6 +3244,19 @@ function formatDate() {
   return `第五纪 ${state.year}年${state.month}月${state.day}日`;
 }
 
+function renderAutoLifeBadge() {
+  const badge = document.getElementById("autoLifeBadge");
+  const toggle = document.getElementById("toggleAutoLife");
+  if (!badge || !toggle) {
+    return;
+  }
+  const autoOn = state.ui.autoLife;
+  badge.textContent = autoOn ? "◇ 自动生活" : "● 手动模式";
+  badge.classList.toggle("on", autoOn);
+  badge.classList.toggle("off", !autoOn);
+  toggle.textContent = autoOn ? "当前：自动生活" : "当前：手动（点行动按钮）";
+}
+
 function render() {
   renderCharacter();
   ids.forEach((id) => {
@@ -3204,6 +3264,7 @@ function render() {
   });
   document.getElementById("date").textContent = formatDate();
   document.getElementById("dayCount").textContent = `第 ${state.daysLived + 1} 天`;
+  renderAutoLifeBadge();
   renderCareer();
   renderLife();
   renderLocation();

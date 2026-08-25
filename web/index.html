@@ -120,7 +120,10 @@
             <p class="label">当前时间</p>
             <h2 id="date">第五纪 1348年1月1日</h2>
           </div>
-          <div class="day-pill" id="dayCount">第 1 天</div>
+          <div class="top-bar-right">
+            <span id="autoLifeBadge" class="life-badge">自动生活</span>
+            <div class="day-pill" id="dayCount">第 1 天</div>
+          </div>
         </header>
 
         <section class="status-strip" aria-label="角色状态">
@@ -158,6 +161,7 @@
         </section>
 
         <section class="actions" aria-label="行动">
+          <p class="actions-hint">自动生活模式下，主角自己安排日常；<br>按「继续生活」推进，遇事件由你抉择。也可直接点下方按钮手动干预某一天。</p>
           <button data-action="study">学习</button>
           <button data-action="work">工作</button>
           <button data-action="rest">休息</button>
@@ -176,8 +180,9 @@
             <button class="secondary" data-career="clerk">文员</button>
             <button class="secondary" data-career="temp_worker">临工</button>
           </div>
-          <button id="autoDay" class="secondary">自动一天</button>
-          <button id="autoMonth" class="secondary">自动30天</button>
+          <button id="autoDay" class="primary-btn">继续生活</button>
+          <button id="autoMonth" class="secondary">快速过一个月</button>
+          <button id="toggleAutoLife" class="secondary">当前：自动生活</button>
           <button id="newLife" class="secondary">生成新人生</button>
           <button id="openSaves" class="secondary">存档 / 读档</button>
           <button id="resetGame" class="danger">重新开始</button>

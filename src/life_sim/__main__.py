@@ -45,24 +45,23 @@ def run_auto(engine: LifeEngine, state, days: int) -> None:
 
 
 def run_interactive(engine: LifeEngine, state) -> None:
-    while state.days_lived < 30:
-        print_status(state)
-        actions = engine.available_actions()
-        for index, action_id in enumerate(actions, start=1):
-            action = engine.actions[action_id]
-            print(f"{index}. {action['name']} - {action['description']}")
+    """自动生活模式：主角自己过日，玩家按回车继续，输入 q 结束。
 
-        raw = input("> 选择今天的行动，或输入 q 结束：").strip()
-        if raw.lower() == "q":
-            break
-        if not raw.isdigit() or not 1 <= int(raw) <= len(actions):
-            print("请输入有效编号。")
-            continue
-
-        action_id = actions[int(raw) - 1]
+    与网页版一致：日常由系统自动选择，玩家只负责在关键时刻停下思考。
+    """
+    print("（自动生活模式：主角自己安排日常，按回车继续，q 结束）")
+    while state.days_lived < 360:
+        before = state.days_lived
+        action_id = engine.auto_action(state)
         entry = engine.take_action(state, action_id)
-        print(f"{entry.summary}")
-        print()
+        print(f"[{entry.date}] {entry.action}：{entry.summary}")
+
+        if state.days_lived - before >= 7:
+            print_status(state)
+            raw = input("> 回车继续生活，或输入 q 结束：").strip()
+            if raw.lower() == "q":
+                break
+    print_status(state)
 
 
 def print_status(state) -> None:
