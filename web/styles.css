@@ -279,6 +279,42 @@ button:active {
   font-size: 14px;
 }
 
+.tier-label {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 600;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  vertical-align: 1px;
+  letter-spacing: 0.03em;
+}
+
+.tier-stranger {
+  color: rgba(244, 239, 230, 0.45);
+  border: 1px solid rgba(244, 239, 230, 0.14);
+}
+
+.tier-acquaintance {
+  color: #c9c1b2;
+  border: 1px solid rgba(201, 193, 178, 0.35);
+}
+
+.tier-friend {
+  color: #b9d6c2;
+  border: 1px solid rgba(185, 214, 194, 0.4);
+}
+
+.tier-intimate {
+  color: #f4d989;
+  border: 1px solid rgba(244, 217, 137, 0.5);
+}
+
+.tier-close {
+  color: #ffb8a8;
+  border: 1px solid rgba(255, 184, 168, 0.55);
+}
+
 .play-area {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;

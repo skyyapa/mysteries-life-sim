@@ -441,6 +441,56 @@
             "effects": { "intelligence": 1 }
           }
         ]
+      },
+      {
+        "id": "ordinary_friend_errand",
+        "text": "莎伦太太犹豫了很久，托你替她给城另一头的亲戚带一封信。她说这封信不该走邮局。",
+        "chance": 18,
+        "weight": 2,
+        "locations": ["north", "market", "east"],
+        "min_day": 8,
+        "cooldown": 60,
+        "requires_contacts": { "sha_ren_neighbor": 40 },
+        "choices": [
+          {
+            "label": "答应捎带",
+            "result": "你把信送到。亲戚一家很感激，回赠了你几个自家烘的馅饼。",
+            "effects": { "charisma": 2, "stress": -2, "money": 1 },
+            "trust_effects": { "sha_ren_neighbor": 5 },
+            "add_tags": ["帮朋友办过私事"]
+          },
+          {
+            "label": "婉言推辞",
+            "result": "你说自己最近忙不过来。她没说什么，但你知道这份信任打了折扣。",
+            "effects": { "stress": 1 },
+            "trust_effects": { "sha_ren_neighbor": -3 }
+          }
+        ]
+      },
+      {
+        "id": "ordinary_confession",
+        "text": "夜已经深了。莎伦太太坐在你对面，忽然问你：最近是不是有什么事，一个人扛着很累吧？",
+        "chance": 22,
+        "weight": 2,
+        "locations": ["north", "market", "church"],
+        "min_day": 20,
+        "cooldown": 70,
+        "requires_contacts": { "sha_ren_neighbor": 70 },
+        "choices": [
+          {
+            "label": "说出实情",
+            "result": "你把最近追查的事挑能说的说了。她听完没有追问，只说你白天记得好好吃饭。",
+            "effects": { "stress": -8, "spirituality": 1 },
+            "trust_effects": { "sha_ren_neighbor": 6 },
+            "add_tags": ["向挚友倾吐过真心"]
+          },
+          {
+            "label": "笑着说没事",
+            "result": "你摇头说一切都好。她的眼神说明她并不信，但她没有拆穿。",
+            "effects": { "stress": 1 },
+            "trust_effects": { "sha_ren_neighbor": 1 }
+          }
+        ]
       }
     ],
     "edges": []

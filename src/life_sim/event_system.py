@@ -16,6 +16,7 @@ class EventNode:
     conditions: dict[str, Any] = field(default_factory=dict)
     add_tags: list[str] = field(default_factory=list)
     add_clues: list[str] = field(default_factory=list)
+    trust_effects: dict[str, int] = field(default_factory=dict)
     cooldown: int = 0
 
 
@@ -65,6 +66,18 @@ def season_of_month(month: int) -> str:
         if month in months:
             return season
     return "winter"
+
+
+def get_relationship_tier(trust: int) -> str:
+    if trust >= 80:
+        return "挚友"
+    if trust >= 60:
+        return "密友"
+    if trust >= 40:
+        return "朋友"
+    if trust >= 20:
+        return "熟人"
+    return "生面孔"
 
 
 def map_effect_keys(effects: dict[str, int]) -> dict[str, int]:
@@ -161,6 +174,10 @@ class EventSystem:
         for clue in node.add_clues:
             if clue not in state.clues:
                 state.clues.append(clue)
+        for npc_id, amount in node.trust_effects.items():
+            npc = state.npcs.get(npc_id)
+            if npc is not None:
+                npc.trust = max(0, min(100, npc.trust + amount))
         if node.cooldown > 0:
             state.world.event_last_triggered[node.id] = state.days_lived
         self.advance(graph, state)
@@ -222,10 +239,12 @@ class EventSystem:
         if any_clue is not None and not any(c in state.clues for c in any_clue):
             return False
 
-        contacts = conditions.get("contacts")
-        if contacts is not None:
-            if not all(npc_id in state.npcs for npc_id in contacts):
-                return False
+        contact = conditions.get("contacts")
+        if contact is not None:
+            for npc_id, min_trust in contact.items():
+                npc = state.npcs.get(npc_id)
+                if npc is None or npc.trust < min_trust:
+                    return False
 
         min_stat = conditions.get("min_stat", {})
         for stat_name, value in min_stat.items():
@@ -259,12 +278,15 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
         effects = dict(node.get("effects", {}))
         add_tags = list(node.get("add_tags", []))
         add_clues = [clue["id"] for clue in node.get("add_clues", [])]
+        trust_effects = dict(node.get("trust_effects", {}))
+        cooldown = int(node.get("cooldown", 0))
         choices = node.get("choices", [])
         if choices and not effects:
             primary = choices[0]
             effects = dict(primary.get("effects", {}))
             add_tags = list(primary.get("add_tags", []))
             add_clues = [clue["id"] for clue in primary.get("add_clues", [])]
+            trust_effects = dict(primary.get("trust_effects", {}))
         nodes[node["id"]] = EventNode(
             id=node["id"],
             text=node["text"],
@@ -274,7 +296,8 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
             conditions=normalize_conditions(node),
             add_tags=add_tags,
             add_clues=add_clues,
-            cooldown=int(node.get("cooldown", 0)),
+            trust_effects=trust_effects,
+            cooldown=cooldown,
         )
     edges = [
         EventEdge(
@@ -318,8 +341,8 @@ def normalize_conditions(node: dict[str, Any]) -> dict[str, Any]:
     if "requires_tags_any" in node:
         conditions["any_tag"] = list(node["requires_tags_any"])
     if "requires_contacts" in node:
-        # 信任门槛在规则引擎中暂不建模，仅要求对应联系人存在于世界。
-        conditions["contacts"] = list(node["requires_contacts"].keys())
+        # 信任门槛：{npc_id: min_trust} 保留完整映射，conditions_met 按真实信任校验。
+        conditions["contacts"] = dict(node["requires_contacts"])
 
     if "season" in node:
         conditions["season"] = node["season"]

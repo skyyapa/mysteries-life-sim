@@ -659,6 +659,8 @@ const eventGraphs = {
       { id: "ordinary_illness", eventId: "illness", label: "染上风寒", repeatable: true },
       { id: "ordinary_broken_boots", eventId: "broken_boots", label: "靴子开线", repeatable: true },
       { id: "ordinary_bank_counter", eventId: "bank_counter", label: "银行柜台", repeatable: true },
+      { id: "ordinary_friend_errand", eventId: "friend_private_errand", label: "朋友的私事" },
+      { id: "ordinary_confession", eventId: "confession_event", label: "深夜倾吐" },
     ],
   },
   abnormalDisappearance: {
@@ -1721,6 +1723,58 @@ const events = [
       },
     ],
   },
+  {
+    id: "friend_private_errand",
+    title: "朋友的私事",
+    locations: ["north", "market", "east"],
+    requiresContacts: { neighbor: 40 },
+    onceTag: "帮朋友办过私事",
+    text: "莎伦太太犹豫了很久，托你替她给城另一头的亲戚带一封信。她说这封信不该走邮局。",
+    chance: 18,
+    weight: 2,
+    minDay: 8,
+    choices: [
+      {
+        label: "答应捎带",
+        result: "你把信送到。亲戚一家很感激，回赠了你几个自家烘的馅饼。",
+        effects: { charisma: 2, stress: -2, money: 1 },
+        trustEffects: { neighbor: 5 },
+        addTags: ["帮朋友办过私事"],
+      },
+      {
+        label: "婉言推辞",
+        result: "你说自己最近忙不过来。她没说什么，但你知道这份信任打了折扣。",
+        effects: { stress: 1 },
+        trustEffects: { neighbor: -3 },
+      },
+    ],
+  },
+  {
+    id: "confession_event",
+    title: "深夜里的话",
+    locations: ["north", "market", "church"],
+    requiresContacts: { neighbor: 70 },
+    onceTag: "向挚友倾吐过真心",
+    text: "夜已经深了。莎伦太太坐在你对面，忽然问你：最近是不是有什么事，一个人扛着很累吧？",
+    chance: 22,
+    weight: 2,
+    minDay: 20,
+    choices: [
+      {
+        label: "说出实情",
+        result: "你把最近追查的事挑能说的说了。她听完没有追问，只说你白天记得好好吃饭。",
+        effects: { stress: -8, spirituality: 1 },
+        trustEffects: { neighbor: 6 },
+        addTags: ["向挚友倾吐过真心"],
+      },
+      {
+        label: "笑着说没事",
+        result: "你摇头说一切都好。她的眼神说明她并不信，但她没有拆穿。",
+        effects: { stress: 1 },
+        trustEffects: { neighbor: 1 },
+      },
+    ],
+  },
 ];
 
 const initialState = {
@@ -2612,6 +2666,22 @@ function changeTrust(contactId, amount) {
   contact.trust = Math.max(0, Math.min(100, contact.trust + amount));
 }
 
+function getRelationshipTier(trust) {
+  if (trust >= 80) return "挚友";
+  if (trust >= 60) return "密友";
+  if (trust >= 40) return "朋友";
+  if (trust >= 20) return "熟人";
+  return "生面孔";
+}
+
+function getRelationshipTierId(trust) {
+  if (trust >= 80) return "close";
+  if (trust >= 60) return "intimate";
+  if (trust >= 40) return "friend";
+  if (trust >= 20) return "acquaintance";
+  return "stranger";
+}
+
 function improveLocalContacts(amount) {
   Object.entries(state.contacts).forEach(([contactId, contact]) => {
     if (getContactLocation(contact) === state.locationId) {
@@ -2652,7 +2722,36 @@ function applyDailyLife(actionId) {
   const changes = changesByAction[actionId] || { life: {}, skills: {} };
   changeLife(changes.life);
   changeSkills(changes.skills);
-  return applyLifePressure();
+
+  let flavor = "";
+  if (actionId === "social") {
+    // 社交时，与同地点的联系人互动，按关系层次获得不同深度
+    const localContacts = Object.values(state.contacts).filter(
+      (contact) => getContactLocation(contact) === state.locationId,
+    );
+    if (localContacts.length > 0) {
+      improveLocalContacts(actionId === "social" ? 1 : 0);
+      const bestTier = Math.max(...localContacts.map((c) => c.trust));
+      const tierId = getRelationshipTierId(bestTier);
+      if (tierId === "stranger") {
+        flavor = "大多是生面孔，你礼貌地问候了几句。";
+      } else if (tierId === "acquaintance") {
+        flavor = "和几个熟人聊了聊天气和煤价。";
+      } else if (tierId === "friend") {
+        changeLife({ comfort: 2 });
+        flavor = "有朋友在你身边喝酒大笑，这一晚不算难过。";
+      } else if (tierId === "intimate") {
+        changeLife({ comfort: 4, stress: -2 });
+        flavor = "密友看得出你脸色不好，把热茶推到你面前。";
+      } else {
+        changeLife({ comfort: 5, stress: -3 });
+        flavor = "你与挚友并肩坐了很久，不需要说太多话。";
+      }
+    } else {
+      flavor = "这里没有熟面孔，你独自坐了一会儿。";
+    }
+  }
+  return applyLifePressure() + (flavor ? ` ${flavor}` : "");
 }
 
 function changeLife(changes) {
@@ -3045,14 +3144,16 @@ function renderContacts() {
       const contactLocationId = getContactLocation(contact);
       const location = locations[contactLocationId] || locations.north;
       const nearby = contactLocationId === state.locationId ? " nearby" : "";
+      const tier = getRelationshipTier(contact.trust);
+      const tierClass = `tier-${getRelationshipTierId(contact.trust)}`;
       return `
         <article class="contact${nearby}">
           <div>
-            <strong>${contact.name}</strong>
+            <strong>${contact.name} <em class="tier-label ${tierClass}">${tier}</em></strong>
             <span>${contact.role} · ${location.name}</span>
             <span>${contact.currentActivity || "维持日常生活"}</span>
           </div>
-          <b>${contact.trust}</b>
+          <b class="trust-num">${contact.trust}</b>
         </article>
       `;
     })

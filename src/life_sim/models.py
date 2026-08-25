@@ -197,12 +197,14 @@ class NPC:
     location: str
     fatigue: int = 30
     money: int = 0
+    trust: int = 0
     current_time: str = "08:00"
     current_activity: str = "开始一天"
     schedule: list[NPCScheduleEntry] = field(default_factory=list)
 
     def clamp(self) -> None:
         self.fatigue = max(0, min(100, self.fatigue))
+        self.trust = max(0, min(100, self.trust))
 
     def apply_schedule_entry(self, entry: NPCScheduleEntry) -> None:
         self.current_time = entry.time
@@ -221,6 +223,7 @@ class NPC:
             "location": self.location,
             "fatigue": self.fatigue,
             "money": self.money,
+            "trust": self.trust,
             "current_time": self.current_time,
             "current_activity": self.current_activity,
             "schedule": [entry.to_dict() for entry in self.schedule],
@@ -237,6 +240,7 @@ class NPC:
             location=data.get("location", data["home"]),
             fatigue=int(data.get("fatigue", 30)),
             money=int(data.get("money", 0)),
+            trust=int(data.get("trust", 0)),
             current_time=data.get("current_time", "08:00"),
             current_activity=data.get("current_activity", "开始一天"),
             schedule=[

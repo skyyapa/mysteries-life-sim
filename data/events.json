@@ -270,5 +270,23 @@
     "conditions": { "min_day": 5, "location": "north" },
     "effects": { "money": -10, "savings": 10, "stress": -1 },
     "add_tags": []
+  },
+  {
+    "id": "friend_private_errand",
+    "text": "莎伦太太犹豫了很久，托你替她给城另一头的亲戚带一封信。她说这封信不该走邮局。",
+    "chance": 18,
+    "weight": 2,
+    "conditions": { "min_day": 8 },
+    "effects": { "charisma": 2, "stress": -2, "money": 1 },
+    "add_tags": ["帮朋友办过私事"]
+  },
+  {
+    "id": "confession_event",
+    "text": "夜已经深了。莎伦太太坐在你对面，忽然问你：最近是不是有什么事，一个人扛着很累吧？",
+    "chance": 22,
+    "weight": 2,
+    "conditions": { "min_day": 20 },
+    "effects": { "stress": -8, "spirituality": 1 },
+    "add_tags": ["向挚友倾吐过真心"]
   }
 ]

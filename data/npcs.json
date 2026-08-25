@@ -33,7 +33,8 @@
         "activity": "关门回家",
         "fatigue_change": -8
       }
-    ]
+    ],
+    "trust": 10
   },
   {
     "id": "toby_newsboy",
@@ -87,7 +88,8 @@
         "activity": "回市场区睡觉",
         "fatigue_change": -10
       }
-    ]
+    ],
+    "trust": 12
   },
   {
     "id": "olson_priest",
@@ -141,7 +143,8 @@
         "activity": "安静休息",
         "fatigue_change": -8
       }
-    ]
+    ],
+    "trust": 8
   },
   {
     "id": "sha_ren_neighbor",
@@ -195,7 +198,8 @@
         "activity": "在家休息",
         "fatigue_change": -8
       }
-    ]
+    ],
+    "trust": 18
   },
   {
     "id": "harvey_landlord",
@@ -249,7 +253,8 @@
         "activity": "在家休息",
         "fatigue_change": -6
       }
-    ]
+    ],
+    "trust": 6
   },
   {
     "id": "reymond_boss",
@@ -303,7 +308,8 @@
         "activity": "参加礼拜",
         "fatigue_change": 2
       }
-    ]
+    ],
+    "trust": 5
   },
   {
     "id": "bakeland_shopkeeper",
@@ -357,7 +363,8 @@
         "activity": "收摊休息",
         "fatigue_change": -6
       }
-    ]
+    ],
+    "trust": 10
   },
   {
     "id": "jonas_baker",
@@ -411,7 +418,8 @@
         "activity": "捐出剩余面包",
         "fatigue_change": 2
       }
-    ]
+    ],
+    "trust": 9
   },
   {
     "id": "martin_porter",
@@ -465,7 +473,8 @@
         "activity": "喝一杯廉价啤酒",
         "fatigue_change": 4
       }
-    ]
+    ],
+    "trust": 7
   },
   {
     "id": "wood_coachman",
@@ -519,7 +528,8 @@
         "activity": "修整马具",
         "fatigue_change": 3
       }
-    ]
+    ],
+    "trust": 6
   },
   {
     "id": "lucy_washerwoman",
@@ -573,7 +583,8 @@
         "activity": "参加晚祷",
         "fatigue_change": 2
       }
-    ]
+    ],
+    "trust": 11
   },
   {
     "id": "alfred_factory_worker",
@@ -627,7 +638,8 @@
         "activity": "睡到很晚",
         "fatigue_change": -5
       }
-    ]
+    ],
+    "trust": 8
   },
   {
     "id": "erin_doctor",
@@ -681,7 +693,8 @@
         "activity": "与教士交谈",
         "fatigue_change": 2
       }
-    ]
+    ],
+    "trust": 9
   },
   {
     "id": "miller_constable",
@@ -735,7 +748,8 @@
         "activity": "在教堂外值守",
         "fatigue_change": 3
       }
-    ]
+    ],
+    "trust": 4
   },
   {
     "id": "carter_teacher",
@@ -789,7 +803,8 @@
         "activity": "参加礼拜",
         "fatigue_change": 2
       }
-    ]
+    ],
+    "trust": 12
   },
   {
     "id": "percival_librarian",
@@ -843,7 +858,8 @@
         "activity": "安静读书",
         "fatigue_change": -4
       }
-    ]
+    ],
+    "trust": 7
   },
   {
     "id": "marianne_seamstress",
@@ -897,7 +913,8 @@
         "activity": "整理针线盒",
         "fatigue_change": 3
       }
-    ]
+    ],
+    "trust": 10
   },
   {
     "id": "fairn_courier",
@@ -951,7 +968,8 @@
         "activity": "听商人抱怨",
         "fatigue_change": 3
       }
-    ]
+    ],
+    "trust": 6
   },
   {
     "id": "quincy_beggar",
@@ -1005,7 +1023,8 @@
         "activity": "很早睡下",
         "fatigue_change": -6
       }
-    ]
+    ],
+    "trust": 5
   },
   {
     "id": "enoch_book_vendor",
@@ -1059,7 +1078,8 @@
         "activity": "收摊清账",
         "fatigue_change": 3
       }
-    ]
+    ],
+    "trust": 8
   },
   {
     "id": "green_night_watchman",
@@ -1113,6 +1133,7 @@
         "activity": "交接巡夜记录",
         "fatigue_change": 4
       }
-    ]
+    ],
+    "trust": 5
   }
 ]
