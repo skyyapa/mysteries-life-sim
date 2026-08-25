@@ -174,10 +174,33 @@
           <button id="autoDay" class="secondary">自动一天</button>
           <button id="autoMonth" class="secondary">自动30天</button>
           <button id="newLife" class="secondary">生成新人生</button>
+          <button id="openSaves" class="secondary">存档 / 读档</button>
           <button id="resetGame" class="danger">重新开始</button>
         </footer>
       </section>
     </main>
+
+    <section id="savePanel" class="save-panel hidden" aria-label="存档管理">
+      <div class="save-panel-header">
+        <p class="panel-title">存档管理</p>
+        <button id="closeSaves" class="secondary" type="button">关闭</button>
+      </div>
+      <p class="save-hint">
+        自动存档在每次行动后写入；手动存档可保留多个分岔人生，覆盖或删除由你决定。
+      </p>
+      <div class="save-slot-actions">
+        <button id="saveToNewSlot" class="secondary" type="button">保存到新槽位</button>
+        <button id="overwriteSlot" class="secondary" type="button">覆盖所选槽位</button>
+        <button id="reloadSlot" class="secondary" type="button">读档</button>
+        <button id="deleteSlot" class="danger" type="button">删除所选存档</button>
+      </div>
+      <p class="save-hint">
+        “保存到新槽位”始终新建；“覆盖/读档/删除”需要先点击下方槽位选中。每次行动后自动存档也会写入。
+      </p>
+      <div id="saveSlotList" class="save-slot-list"></div>
+    </section>
+
+    <div id="saveToast" class="save-toast" aria-live="polite"></div>
 
     <script src="./app.js"></script>
   </body>

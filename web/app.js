@@ -2729,6 +2729,179 @@ function saveState() {
   localStorage.setItem("mysteries-life-v20", JSON.stringify(state));
 }
 
+/* ---- 多槽位手动存档 ---- */
+
+const SLOT_KEY_PREFIX = "mysteries-slot-";
+const SLOT_META_KEY = "mysteries-slot-meta";
+let selectedSlot = null;
+
+function slotKey(slotId) {
+  return `${SLOT_KEY_PREFIX}${slotId}`;
+}
+
+function getSlotMeta() {
+  try {
+    return JSON.parse(localStorage.getItem(SLOT_META_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function setSlotMeta(meta) {
+  localStorage.setItem(SLOT_META_KEY, JSON.stringify(meta));
+}
+
+function listSlots() {
+  const meta = getSlotMeta();
+  const ids = Object.keys(meta)
+    .map(Number)
+    .sort((a, b) => a - b);
+  return ids.map((id) => ({ id, ...meta[id] }));
+}
+
+function nextEmptySlot() {
+  const meta = getSlotMeta();
+  let id = 1;
+  while (meta[id]) {
+    id += 1;
+  }
+  return id;
+}
+
+function saveToSlot(slotId) {
+  const meta = getSlotMeta();
+  const entry = {
+    savedAt: formatDate(),
+    name: state.character.name,
+    day: state.daysLived,
+    date: `${state.year}年${state.month}月${state.day}日`,
+    money: state.stats.money,
+    job: getCareer().name,
+  };
+  meta[slotId] = entry;
+  setSlotMeta(meta);
+  localStorage.setItem(slotKey(slotId), JSON.stringify(state));
+  return entry;
+}
+
+function loadSlot(slotId) {
+  const raw = localStorage.getItem(slotKey(slotId));
+  if (!raw) {
+    showSaveToast("该槽位没有存档");
+    return null;
+  }
+  try {
+    state = normalizeState(JSON.parse(raw));
+    selectedSlot = slotId;
+    saveState();
+    render();
+    renderSavePanel();
+    showSaveToast("已读取存档");
+    return state;
+  } catch {
+    showSaveToast("存档损坏，无法读取");
+    return null;
+  }
+}
+
+function deleteSlot(slotId) {
+  const meta = getSlotMeta();
+  delete meta[slotId];
+  setSlotMeta(meta);
+  localStorage.removeItem(slotKey(slotId));
+  if (selectedSlot === slotId) {
+    selectedSlot = null;
+  }
+  renderSavePanel();
+  showSaveToast("已删除存档");
+}
+
+function saveToNewSlot() {
+  const id = nextEmptySlot();
+  saveToSlot(id);
+  selectedSlot = id;
+  renderSavePanel();
+  showSaveToast(`已保存到槽位 ${id}`);
+}
+
+function showSaveToast(text) {
+  const toast = document.getElementById("saveToast");
+  if (!toast) {
+    return;
+  }
+  toast.textContent = text;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function renderSavePanel() {
+  const list = document.getElementById("saveSlotList");
+  if (!list) {
+    return;
+  }
+  const slots = listSlots();
+  const selectedId = selectedSlot;
+  if (slots.length === 0) {
+    list.innerHTML = `<div class="save-slot-empty">还没有手动存档。<br>先选一个行动推进几天，再回来保存你的分岔人生。</div>`;
+    return;
+  }
+  list.innerHTML = slots
+    .map(
+      (slot) => `
+      <button class="save-slot${slot.id === selectedId ? " selected" : ""}" data-slot-id="${slot.id}" type="button">
+        <div>
+          <div class="save-slot-title">槽位 ${slot.id} · ${slot.name}</div>
+          <div class="save-slot-meta">${slot.date} · 第 ${slot.day + 1} 天 · ${slot.job} · £${slot.money}</div>
+        </div>
+        <span class="save-slot-time">${slot.savedAt}</span>
+      </button>`,
+    )
+    .join("");
+  list.querySelectorAll("[data-slot-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedSlot = Number(button.dataset.slotId);
+      renderSavePanel();
+    });
+  });
+}
+
+function openSavePanel() {
+  renderSavePanel();
+  document.getElementById("savePanel").classList.remove("hidden");
+}
+
+function closeSavePanel() {
+  document.getElementById("savePanel").classList.add("hidden");
+}
+
+document.getElementById("openSaves").addEventListener("click", openSavePanel);
+document.getElementById("closeSaves").addEventListener("click", closeSavePanel);
+document.getElementById("saveToNewSlot").addEventListener("click", saveToNewSlot);
+document.getElementById("overwriteSlot").addEventListener("click", () => {
+  if (selectedSlot) {
+    saveToSlot(selectedSlot);
+    renderSavePanel();
+    showSaveToast(`已覆盖槽位 ${selectedSlot}`);
+  } else {
+    showSaveToast("先在列表中选择一个存档槽位");
+  }
+});
+document.getElementById("reloadSlot").addEventListener("click", () => {
+  if (selectedSlot) {
+    loadSlot(selectedSlot);
+  } else {
+    showSaveToast("先在列表中选择一个存档槽位");
+  }
+});
+document.getElementById("deleteSlot").addEventListener("click", () => {
+  if (selectedSlot) {
+    deleteSlot(selectedSlot);
+  } else {
+    showSaveToast("先在列表中选择一个存档槽位");
+  }
+});
+
 function loadState() {
   const saved =
     localStorage.getItem("mysteries-life-v20") ||

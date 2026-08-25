@@ -620,3 +620,116 @@ button:active {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- 存档面板 ---- */
+.save-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: min(440px, calc(100vw - 48px));
+  max-height: min(560px, calc(100vh - 48px));
+  overflow-y: auto;
+  z-index: 40;
+  padding: 18px 20px;
+  background: #201c1a;
+  border: 1px solid rgba(244, 239, 230, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+}
+
+.save-panel.hidden {
+  display: none;
+}
+
+.save-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.save-hint {
+  font-size: 13px;
+  color: rgba(244, 239, 230, 0.62);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.save-slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.save-slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(244, 239, 230, 0.14);
+  border-radius: 10px;
+  background: rgba(244, 239, 230, 0.04);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  color: #f4efe6;
+}
+
+.save-slot:hover {
+  background: rgba(208, 179, 106, 0.1);
+  border-color: rgba(208, 179, 106, 0.5);
+}
+
+.save-slot.selected {
+  border-color: rgba(208, 179, 106, 0.85);
+  background: rgba(208, 179, 106, 0.16);
+}
+
+.save-slot-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.save-slot-meta {
+  font-size: 12px;
+  color: rgba(244, 239, 230, 0.6);
+  margin-top: 3px;
+}
+
+.save-slot-empty {
+  color: rgba(244, 239, 230, 0.45);
+  font-size: 13px;
+  text-align: center;
+  padding: 22px 0;
+}
+
+.save-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: rgba(208, 179, 106, 0.92);
+  color: #201c1a;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.save-toast.show {
+  opacity: 1;
+}
