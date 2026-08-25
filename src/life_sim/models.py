@@ -56,6 +56,7 @@ class Character:
     intelligence: int = 55
     charisma: int = 50
     money: int = 120
+    savings: int = 0
     stress: int = 20
     mysticism_knowledge: int = 0
     spirituality: int = 5
@@ -76,6 +77,7 @@ class Character:
             value = getattr(self, field_name)
             setattr(self, field_name, max(0, min(100, value)))
         self.money = max(0, self.money)
+        self.savings = max(0, self.savings)
 
     def apply_changes(self, changes: dict[str, int]) -> None:
         for key, delta in changes.items():
@@ -100,6 +102,7 @@ class Character:
             "intelligence": self.intelligence,
             "charisma": self.charisma,
             "money": self.money,
+            "savings": self.savings,
             "stress": self.stress,
             "mysticism_knowledge": self.mysticism_knowledge,
             "spirituality": self.spirituality,
@@ -122,6 +125,7 @@ class Character:
             intelligence=int(data.get("intelligence", 55)),
             charisma=int(data.get("charisma", 50)),
             money=int(data.get("money", 120)),
+            savings=int(data.get("savings", 0)),
             stress=int(data.get("stress", 20)),
             mysticism_knowledge=int(data.get("mysticism_knowledge", 0)),
             spirituality=int(data.get("spirituality", 5)),

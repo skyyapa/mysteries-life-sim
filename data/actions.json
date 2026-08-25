@@ -72,5 +72,27 @@
       "stamina": -5,
       "stress": 2
     }
+  },
+  "save": {
+    "name": "存钱",
+    "description": "去银行把 10 镑存进储蓄账户，积少成多。",
+    "days": 1,
+    "summary": "你把 10 镑存进储蓄银行。利息虽少，但总好过放在口袋里。",
+    "effects": {
+      "money": -10,
+      "savings": 10,
+      "stamina": -3
+    }
+  },
+  "withdraw": {
+    "name": "取钱",
+    "description": "从银行存款取出 10 镑现金应急。",
+    "days": 1,
+    "summary": "你从储蓄银行取出 10 镑现金应急。存款少了一截，但手头宽裕了。",
+    "effects": {
+      "money": 10,
+      "savings": -10,
+      "stamina": -3
+    }
   }
 }

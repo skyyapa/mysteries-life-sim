@@ -243,5 +243,32 @@
     "conditions": { "min_day": 30, "job": "临时工" },
     "effects": { "money": 5, "stress": 6, "charisma": 1 },
     "add_tags": ["据理力争"]
+  },
+  {
+    "id": "illness",
+    "text": "冷风钻进领口，你头重脚轻地熬了半日，晚上开始发低烧。诊所的医生把听诊器贴在你胸口。",
+    "chance": 12,
+    "weight": 2,
+    "conditions": { "min_day": 10 },
+    "effects": { "money": -8, "health": 10, "stress": -2 },
+    "add_tags": []
+  },
+  {
+    "id": "broken_boots",
+    "text": "你低头才发现靴底已经磨穿，冷气直往脚心钻。修鞋摊的老头报价不高，但也不便宜。",
+    "chance": 14,
+    "weight": 2,
+    "conditions": { "min_day": 15 },
+    "effects": { "money": -5, "stress": -1 },
+    "add_tags": []
+  },
+  {
+    "id": "bank_counter",
+    "text": "储蓄银行柜台前排着不长不短的队。牌子上写着：存款月息 2%。排队的人都在盘算着什么。",
+    "chance": 16,
+    "weight": 1,
+    "conditions": { "min_day": 5, "location": "north" },
+    "effects": { "money": -10, "savings": 10, "stress": -1 },
+    "add_tags": []
   }
 ]

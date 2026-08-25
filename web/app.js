@@ -656,6 +656,9 @@ const eventGraphs = {
       { id: "career_apprentice_test", eventId: "career_apprentice_test", label: "师傅考校" },
       { id: "career_clerk_audit", eventId: "career_clerk_audit", label: "月底查账" },
       { id: "career_temp_short", eventId: "career_temp_short", label: "工钱缩水" },
+      { id: "ordinary_illness", eventId: "illness", label: "染上风寒", repeatable: true },
+      { id: "ordinary_broken_boots", eventId: "broken_boots", label: "靴子开线", repeatable: true },
+      { id: "ordinary_bank_counter", eventId: "bank_counter", label: "银行柜台", repeatable: true },
     ],
   },
   abnormalDisappearance: {
@@ -759,6 +762,16 @@ const actions = {
     name: "推理",
     summary: "你把收集到的线索摊开，试图找出它们之间真正的联系。",
     effects: { stamina: -5, stress: 2 },
+  },
+  save: {
+    name: "存钱",
+    summary: "你走进北区的储蓄银行，把 10 镑存进柜台。利息虽少，但总好过放在口袋里。",
+    effects: { stamina: -3 },
+  },
+  withdraw: {
+    name: "取钱",
+    summary: "你到银行取出 10 镑现金应急。存款少了一截，但手头宽裕了。",
+    effects: { stamina: -3 },
   },
 };
 
@@ -1641,6 +1654,73 @@ const events = [
       },
     ],
   },
+  {
+    id: "illness",
+    title: "染上风寒",
+    locations: ["north", "east", "market"],
+    minDay: 10,
+    cooldownDays: 40,
+    text: "冷风钻进领口，你头重脚轻地熬了半日，晚上开始发低烧。诊所的医生把听诊器贴在你胸口。",
+    chance: 12,
+    weight: 2,
+    choices: [
+      {
+        label: "花钱看病",
+        result: "你付了诊费和药费。肉痛，但至少夜里烧退了。",
+        effects: { money: -8, health: 10, stress: -2 },
+      },
+      {
+        label: "硬扛过去",
+        result: "你捂紧被子硬扛。省下了钱，第二天却差点起不来床。",
+        effects: { health: -5, stamina: -6, stress: 3 },
+      },
+    ],
+  },
+  {
+    id: "broken_boots",
+    title: "靴子开线",
+    locations: ["market", "north"],
+    minDay: 15,
+    cooldownDays: 35,
+    text: "你低头才发现靴底已经磨穿，冷气直往脚心钻。修鞋摊的老头报价不高，但也不便宜。",
+    chance: 14,
+    weight: 2,
+    choices: [
+      {
+        label: "修补",
+        result: "老头手法利落，半小时后靴子又结实了。",
+        effects: { money: -5, comfort: 2, stress: -1 },
+      },
+      {
+        label: "凑合穿",
+        result: "你决定再撑一阵。走路时能感觉脚底隔着袜子贴到石板。",
+        effects: { money: 3, health: -2, comfort: -3 },
+      },
+    ],
+  },
+  {
+    id: "bank_counter",
+    title: "银行柜台",
+    locations: ["north"],
+    minDay: 5,
+    cooldownDays: 20,
+    text: "储蓄银行柜台前排着不长不短的队。牌子上写着：存款月息 2%。排队的人都在盘算着什么。",
+    chance: 16,
+    weight: 1,
+    choices: [
+      {
+        label: "存 10 镑",
+        result: "你把 10 镑存了进去。柜员在存折上写下一行字，动作很慢，像是在纪念什么。",
+        effects: { stress: -1 },
+        special: "deposit",
+      },
+      {
+        label: "只看看",
+        result: "你读完了告示，记住了利率，转身离开了银行。",
+        effects: { intelligence: 1 },
+      },
+    ],
+  },
 ];
 
 const initialState = {
@@ -1674,6 +1754,7 @@ const initialState = {
     monthsSurvived: 0,
     rentPaidThisMonth: 0,
     monthlyFlags: {},
+    savings: 0,
   },
   contacts: structuredClone(contactTemplates),
   locationReputation: {
@@ -1822,6 +1903,26 @@ function takeAction(actionId, shouldRender = true) {
   if (actionId === "deduce") {
     text = `${text} ${runDeduction()}`;
   }
+  if (actionId === "save") {
+    const deposited = Math.min(10, state.stats.money);
+    if (deposited > 0) {
+      state.stats.money -= deposited;
+      state.finance.savings += deposited;
+      text = `你把 ${deposited} 镑存进储蓄银行。` + (state.finance.savings >= 30 ? " 柜员认得你了，说你是个攒得下钱的人。" : "");
+    } else {
+      text = "你走到银行门口，摸了摸空荡荡的口袋，只好转身回去。";
+    }
+  }
+  if (actionId === "withdraw") {
+    const withdrawn = Math.min(10, state.finance.savings || 0);
+    if (withdrawn > 0) {
+      state.finance.savings -= withdrawn;
+      state.stats.money += withdrawn;
+      text = `你从储蓄银行取出 ${withdrawn} 镑。`;
+    } else {
+      text = "你的存款是零，银行柜员礼貌地请你让开后面的队伍。";
+    }
+  }
   const event = rollEvent();
   if (event) {
     state.pendingEvent = { ...event, happenedAt: formatDate() };
@@ -1886,6 +1987,12 @@ function resolveEvent(choiceIndex, shouldRender = true) {
   applyExposureChange(choice.exposureChange || 0);
   applyTrustEffects(choice.trustEffects || {});
   applyLocationReputationEffects(choice.locationReputationEffects || {});
+  if (choice.special === "deposit") {
+    // 银行事件：把效果里的现金支出转入存款
+    const deposited = Math.min(10, state.stats.money);
+    state.stats.money -= deposited;
+    state.finance.savings += deposited;
+  }
   if (choice.rentPayment) {
     state.finance.rentPaidThisMonth += choice.rentPayment;
   }
@@ -2393,6 +2500,14 @@ function settleMonth() {
   const remainingRent = Math.max(0, career.rent - state.finance.rentPaidThisMonth);
   let summary = `月度结算：`;
 
+  // 存款利息：月利率 2%，每 50 镑存款每月得 1 镑
+  const savings = state.finance.savings || 0;
+  const interest = Math.floor(savings / 50);
+  if (interest > 0) {
+    state.finance.savings += interest;
+    summary += ` 存款获得利息 ${interest} 镑（共存 ${state.finance.savings} 镑）。`;
+  }
+
   if (career.requiredWorkDays > 0) {
     const ratio = Math.min(1, state.finance.workDaysThisMonth / career.requiredWorkDays);
     salaryPaid = Math.floor(career.salary * ratio);
@@ -2409,7 +2524,17 @@ function settleMonth() {
     summary += " 本月房租已经提前处理完毕。";
   }
 
-  applyEffects({ money: salaryPaid - remainingRent });
+  applyEffects({ money: salaryPaid - remainingRent + interest });
+
+  if (state.stats.money <= 0) {
+    // 现金见底时，从存款支取救急
+    const withdrawn = Math.min(savings, 20);
+    if (withdrawn > 0) {
+      state.finance.savings -= withdrawn;
+      state.stats.money += withdrawn;
+      summary += ` 你从存款支取了 ${withdrawn} 镑救急（存款剩 ${state.finance.savings} 镑）。`;
+    }
+  }
 
   if (state.stats.money <= 0) {
     applyEffects({ stress: 12, health: -3 });
@@ -2833,6 +2958,7 @@ function renderCareer() {
     career.requiredWorkDays > 0
       ? `${state.finance.workDaysThisMonth}/${career.requiredWorkDays}`
       : `${state.finance.workDaysThisMonth}`;
+  document.getElementById("bankSavings").textContent = state.finance.savings || 0;
 
   document.querySelectorAll("[data-career]").forEach((button) => {
     button.classList.toggle("active", button.dataset.career === state.careerId);

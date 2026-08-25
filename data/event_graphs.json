@@ -378,6 +378,69 @@
             "add_tags": ["忍气吞声"]
           }
         ]
+      },
+      {
+        "id": "ordinary_illness",
+        "text": "冷风钻进领口，你头重脚轻地熬了半日，晚上开始发低烧。诊所的医生把听诊器贴在你胸口。",
+        "chance": 12,
+        "weight": 2,
+        "locations": ["north", "east", "market"],
+        "min_day": 10,
+        "cooldown": 40,
+        "choices": [
+          {
+            "label": "花钱看病",
+            "result": "你付了诊费和药费。肉痛，但至少夜里烧退了。",
+            "effects": { "money": -8, "health": 10, "stress": -2 }
+          },
+          {
+            "label": "硬扛过去",
+            "result": "你捂紧被子硬扛。省下了钱，第二天却差点起不来床。",
+            "effects": { "health": -5, "stamina": -6, "stress": 3 }
+          }
+        ]
+      },
+      {
+        "id": "ordinary_broken_boots",
+        "text": "你低头才发现靴底已经磨穿，冷气直往脚心钻。修鞋摊的老头报价不高，但也不便宜。",
+        "chance": 14,
+        "weight": 2,
+        "locations": ["market", "north"],
+        "min_day": 15,
+        "cooldown": 35,
+        "choices": [
+          {
+            "label": "修补",
+            "result": "老头手法利落，半小时后靴子又结实了。",
+            "effects": { "money": -5, "stress": -1 }
+          },
+          {
+            "label": "凑合穿",
+            "result": "你决定再撑一阵。走路时能感觉脚底隔着袜子贴到石板。",
+            "effects": { "money": 3, "health": -2 }
+          }
+        ]
+      },
+      {
+        "id": "ordinary_bank_counter",
+        "text": "储蓄银行柜台前排着不长不短的队。牌子上写着：存款月息 2%。排队的人都在盘算着什么。",
+        "chance": 16,
+        "weight": 1,
+        "locations": ["north"],
+        "min_day": 5,
+        "cooldown": 20,
+        "choices": [
+          {
+            "label": "存 10 镑",
+            "result": "你把 10 镑存了进去。柜员在存折上写下一行字。",
+            "effects": { "money": -10, "savings": 10, "stress": -1 }
+          },
+          {
+            "label": "只看看",
+            "result": "你读完了告示，记住了利率，转身离开了银行。",
+            "effects": { "intelligence": 1 }
+          }
+        ]
       }
     ],
     "edges": []
