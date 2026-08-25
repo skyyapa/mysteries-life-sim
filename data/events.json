@@ -4,181 +4,335 @@
     "text": "傍晚突然下起冷雨，你没来得及躲开，回家后感到一阵寒意。",
     "chance": 18,
     "weight": 3,
-    "effects": { "health": -3, "stamina": -2 }
+    "effects": {
+      "health": -3,
+      "stamina": -2
+    }
   },
   {
     "id": "cheap_book",
     "text": "旧书摊上有一本便宜的历史读物，你犹豫片刻还是买了下来。",
     "chance": 12,
     "weight": 2,
-    "conditions": { "location": "market" },
-    "effects": { "money": -5, "intelligence": 2 },
-    "add_tags": ["买过旧书"]
+    "conditions": {
+      "location": "market"
+    },
+    "effects": {
+      "money": -5,
+      "intelligence": 2
+    },
+    "add_tags": [
+      "买过旧书"
+    ]
   },
   {
     "id": "church_bell",
     "text": "黑夜教堂的钟声在雾气中响起，你短暂地感到安心。",
     "chance": 10,
     "weight": 2,
-    "conditions": { "location": "church" },
-    "effects": { "stress": -5, "spirituality": 1 },
-    "add_tags": ["去过黑夜教堂"]
+    "conditions": {
+      "location": "church"
+    },
+    "effects": {
+      "stress": -5,
+      "spirituality": 1
+    },
+    "add_tags": [
+      "去过黑夜教堂"
+    ]
   },
   {
     "id": "strange_symbol",
     "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
     "chance": 24,
     "weight": 3,
-    "conditions": { "min_day": 5, "location": "east" },
-    "effects": { "mysticism": 2, "stress": 3 },
-    "add_tags": ["见过神秘符号"]
+    "conditions": {
+      "min_day": 5,
+      "location": "east",
+      "max_day": 120
+    },
+    "effects": {
+      "mysticism": 2,
+      "stress": 3
+    },
+    "add_tags": [
+      "见过神秘符号"
+    ]
   },
   {
     "id": "landlord_pressure",
     "text": "房东提醒你下周要交房租，语气礼貌，但没有商量余地。",
     "chance": 15,
     "weight": 2,
-    "conditions": { "min_day": 8 },
-    "effects": { "money": -30, "stress": -4 },
-    "add_tags": ["房租已缓解"]
+    "conditions": {
+      "min_day": 8
+    },
+    "effects": {
+      "money": -30,
+      "stress": -4
+    },
+    "add_tags": [
+      "房租已缓解"
+    ]
   },
   {
     "id": "station_notice",
     "text": "车站布告栏前围着几个人，一张失踪寻人启事被雨水泡得卷边。",
     "chance": 22,
     "weight": 3,
-    "conditions": { "min_day": 3, "location": "station" },
-    "effects": { "intelligence": 1, "stress": 1 },
-    "add_tags": ["见过失踪启事"]
+    "conditions": {
+      "min_day": 3,
+      "location": "station",
+      "max_day": 60
+    },
+    "effects": {
+      "intelligence": 1,
+      "stress": 1
+    },
+    "add_tags": [
+      "见过失踪启事"
+    ]
   },
   {
     "id": "work_overtime",
     "text": "掌柜或上司临时要求你多留一会儿。活不算难，但这一天会被拖得很长。",
     "chance": 18,
     "weight": 2,
-    "conditions": { "min_day": 6 },
-    "effects": { "stamina": -8, "stress": 4, "money": 4 },
-    "add_tags": ["认真加班"]
+    "conditions": {
+      "min_day": 6
+    },
+    "effects": {
+      "stamina": -8,
+      "stress": 4,
+      "money": 4
+    },
+    "add_tags": [
+      "认真加班"
+    ]
   },
   {
     "id": "study_exam",
     "text": "老师突然安排了一次小测验。题目不算刁钻，但足够看出最近有没有用功。",
     "chance": 16,
     "weight": 2,
-    "conditions": { "min_day": 7, "location": "north" },
-    "effects": { "intelligence": 2, "stress": 2 },
-    "add_tags": ["课堂表现不错"]
+    "conditions": {
+      "min_day": 7,
+      "location": "north"
+    },
+    "effects": {
+      "intelligence": 2,
+      "stress": 2
+    },
+    "add_tags": [
+      "课堂表现不错"
+    ]
   },
   {
     "id": "neighbor_soup",
     "text": "莎伦太太敲门送来一碗热汤，说是多煮了一些。屋里一下子有了生活的气味。",
     "chance": 18,
     "weight": 2,
-    "conditions": { "min_day": 5, "location": "north" },
-    "effects": { "health": 2, "stress": -3 }
+    "conditions": {
+      "min_day": 5,
+      "location": "north"
+    },
+    "effects": {
+      "health": 2,
+      "stress": -3
+    }
   },
   {
     "id": "market_price_rise",
     "text": "面包、煤油和廉价肉的价格都涨了一点。摊贩说最近货运不稳，谁也没办法。",
     "chance": 20,
     "weight": 3,
-    "conditions": { "min_day": 12, "location": "market" },
-    "effects": { "money": -6, "stress": 1 }
+    "conditions": {
+      "min_day": 12,
+      "location": "market"
+    },
+    "effects": {
+      "money": -6,
+      "stress": 1
+    }
   },
   {
     "id": "home_leak",
     "text": "夜里雨声变得不对劲。你发现屋角正在渗水，床边的地板已经湿了一片。",
     "chance": 14,
     "weight": 2,
-    "conditions": { "min_day": 15 },
-    "effects": { "money": -10, "stress": -2 }
+    "conditions": {
+      "min_day": 15
+    },
+    "effects": {
+      "money": -10,
+      "stress": -2
+    }
   },
   {
     "id": "market_pickpocket",
     "text": "人群突然推搡起来，你感觉有人碰了一下你的外套口袋。",
     "chance": 18,
     "weight": 3,
-    "conditions": { "min_day": 4, "location": "market" },
-    "effects": { "stamina": -4, "stress": 3 },
-    "add_tags": ["捡到旧纽扣"]
+    "conditions": {
+      "min_day": 4,
+      "location": "market"
+    },
+    "effects": {
+      "stamina": -4,
+      "stress": 3
+    },
+    "add_tags": [
+      "捡到旧纽扣"
+    ]
   },
   {
     "id": "newspaper_overlap",
     "text": "你在报纸边角看到一则短讯：有人在东区附近失踪，警方只说还在调查。",
     "chance": 24,
     "weight": 3,
-    "conditions": { "min_day": 6 },
-    "effects": { "mysticism": 1, "intelligence": 1, "stress": 2 }
+    "conditions": {
+      "min_day": 6,
+      "max_day": 90
+    },
+    "effects": {
+      "mysticism": 1,
+      "intelligence": 1,
+      "stress": 2
+    }
   },
   {
     "id": "church_warning",
     "text": "一位教士注意到你手里的纸片，平静地提醒你：有些事情不要独自追查。",
     "chance": 28,
     "weight": 3,
-    "conditions": { "min_day": 8, "location": "church" },
-    "effects": { "mysticism": 2, "spirituality": 1, "stress": 2 },
-    "add_tags": ["被教士提醒"]
+    "conditions": {
+      "min_day": 8,
+      "location": "church"
+    },
+    "effects": {
+      "mysticism": 2,
+      "spirituality": 1,
+      "stress": 2
+    },
+    "add_tags": [
+      "被教士提醒"
+    ]
   },
   {
     "id": "east_followed",
     "text": "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
     "chance": 30,
     "weight": 3,
-    "conditions": { "min_day": 10, "location": "east" },
-    "effects": { "stress": 4, "stamina": -3 }
+    "conditions": {
+      "min_day": 10,
+      "location": "east",
+      "max_day": 150
+    },
+    "effects": {
+      "stress": 4,
+      "stamina": -3
+    }
   },
   {
     "id": "disappearance_decision",
     "text": "失踪启事、旧纽扣、报纸短讯和东区线索终于串成一条线。现在你必须决定，自己在这件事里到底站在哪里。",
     "chance": 46,
     "weight": 5,
-    "conditions": { "min_day": 14 },
-    "effects": { "stress": -5, "spirituality": 2 },
-    "add_tags": ["向教会举报"]
+    "conditions": {
+      "min_day": 14
+    },
+    "effects": {
+      "stress": -5,
+      "spirituality": 2
+    },
+    "add_tags": [
+      "向教会举报"
+    ]
   },
   {
     "id": "priest_coin",
     "text": "奥尔森教士在教堂后室单独见你。他沉默了很久，把一枚褐色的旧硬币放在桌上——比看上去更沉。",
     "chance": 60,
     "weight": 4,
-    "conditions": { "min_day": 16, "location": "church" },
-    "effects": { "spirituality": 3, "mysticism": 2, "stress": 3 },
-    "add_tags": ["拿到教堂旧币"]
+    "conditions": {
+      "min_day": 16,
+      "location": "church"
+    },
+    "effects": {
+      "spirituality": 3,
+      "mysticism": 2,
+      "stress": 3
+    },
+    "add_tags": [
+      "拿到教堂旧币"
+    ]
   },
   {
     "id": "east_deep_night",
     "text": "你没有告诉任何人，独自在午夜走进了东区的深巷。雾气里，你看见一扇门缝透出不属于蜡烛的微光。",
     "chance": 55,
     "weight": 4,
-    "conditions": { "min_day": 16, "location": "east" },
-    "effects": { "mysticism": 3, "stress": 7, "stamina": -6 },
-    "add_tags": ["深夜探过东区"]
+    "conditions": {
+      "min_day": 16,
+      "location": "east"
+    },
+    "effects": {
+      "mysticism": 3,
+      "stress": 7,
+      "stamina": -6
+    },
+    "add_tags": [
+      "深夜探过东区"
+    ]
   },
   {
     "id": "symbol_dream",
     "text": "夜里你梦见自己走在一条没有灯的地下通道里，两边的墙上画满了同样的符号，一直延伸到看不见的深处。",
     "chance": 65,
     "weight": 4,
-    "conditions": { "min_day": 20 },
-    "effects": { "spirituality": 4, "stress": 5, "stamina": -4 },
-    "add_tags": ["做过符号之梦"]
+    "conditions": {
+      "min_day": 20
+    },
+    "effects": {
+      "spirituality": 4,
+      "stress": 5,
+      "stamina": -4
+    },
+    "add_tags": [
+      "做过符号之梦"
+    ]
   },
   {
     "id": "first_beyonder",
     "text": "一个穿深色大衣的陌生人拦住你，准确说出了你最近追查的事。他说可以“帮”你，只需要你替他做一点小事。",
     "chance": 70,
     "weight": 5,
-    "conditions": { "min_day": 25 },
-    "effects": { "mysticism": 5, "spirituality": 4, "corruption": 1, "stress": 6 },
-    "add_tags": ["初涉非凡"]
+    "conditions": {
+      "min_day": 25
+    },
+    "effects": {
+      "mysticism": 5,
+      "spirituality": 4,
+      "corruption": 1,
+      "stress": 6
+    },
+    "add_tags": [
+      "初涉非凡"
+    ]
   },
   {
     "id": "winter_coal",
     "text": "入冬后煤价涨了一截。卖煤的老汉说，今年运河结冰早，运不进来。",
     "chance": 20,
     "weight": 3,
-    "conditions": { "min_day": 40, "season": "winter" },
-    "effects": { "money": -8, "stress": -2 },
+    "conditions": {
+      "min_day": 40,
+      "season": "winter"
+    },
+    "effects": {
+      "money": -8,
+      "stress": -2
+    },
     "add_tags": []
   },
   {
@@ -186,8 +340,14 @@
     "text": "开春雪水化开，廷根的街道变成泥河。马车陷在坑里，车夫大声咒骂着。",
     "chance": 16,
     "weight": 2,
-    "conditions": { "min_day": 90, "season": "spring" },
-    "effects": { "stamina": -3, "stress": -1 },
+    "conditions": {
+      "min_day": 90,
+      "season": "spring"
+    },
+    "effects": {
+      "stamina": -3,
+      "stress": -1
+    },
     "add_tags": []
   },
   {
@@ -195,8 +355,15 @@
     "text": "夏日的廷根闷热难耐。傍晚的街道晒了一天，空气里全是尘土和散热的气味。",
     "chance": 18,
     "weight": 3,
-    "conditions": { "min_day": 150, "season": "summer" },
-    "effects": { "money": -3, "stress": -3, "health": 1 },
+    "conditions": {
+      "min_day": 150,
+      "season": "summer"
+    },
+    "effects": {
+      "money": -3,
+      "stress": -3,
+      "health": 1
+    },
     "add_tags": []
   },
   {
@@ -204,8 +371,15 @@
     "text": "秋天的集市堆满了苹果、面包和熏鱼。摊贩们难得露出笑脸。",
     "chance": 16,
     "weight": 3,
-    "conditions": { "min_day": 240, "season": "autumn" },
-    "effects": { "money": -4, "health": 2, "stress": -2 },
+    "conditions": {
+      "min_day": 240,
+      "season": "autumn"
+    },
+    "effects": {
+      "money": -4,
+      "health": 2,
+      "stress": -2
+    },
     "add_tags": []
   },
   {
@@ -213,44 +387,86 @@
     "text": "学校宣布，学年末成绩优异者可以获得一份奖学金，足够抵掉几个月的开销。",
     "chance": 16,
     "weight": 2,
-    "conditions": { "min_day": 30, "job": "文法学校学生" },
-    "effects": { "intelligence": 3, "stress": 6, "stamina": -4 },
-    "add_tags": ["争取奖学金"]
+    "conditions": {
+      "min_day": 30,
+      "job": "文法学校学生"
+    },
+    "effects": {
+      "intelligence": 3,
+      "stress": 6,
+      "stamina": -4
+    },
+    "add_tags": [
+      "争取奖学金"
+    ]
   },
   {
     "id": "career_apprentice_test",
     "text": "师傅突然说要考校你最近的功夫。他板着脸，但你知道这是机会。",
     "chance": 16,
     "weight": 2,
-    "conditions": { "min_day": 30, "job": "店铺学徒" },
-    "effects": { "intelligence": 2, "stress": 5, "charisma": 1 },
-    "add_tags": ["师傅认可"]
+    "conditions": {
+      "min_day": 30,
+      "job": "店铺学徒"
+    },
+    "effects": {
+      "intelligence": 2,
+      "stress": 5,
+      "charisma": 1
+    },
+    "add_tags": [
+      "师傅认可"
+    ]
   },
   {
     "id": "career_clerk_audit",
     "text": "事务所月底要查账。主管把一摞厚账本推到你面前，语气很轻：别出错。",
     "chance": 16,
     "weight": 2,
-    "conditions": { "min_day": 30, "job": "事务所文员" },
-    "effects": { "intelligence": 2, "stress": 7, "stamina": -6 },
-    "add_tags": ["账目无误"]
+    "conditions": {
+      "min_day": 30,
+      "job": "事务所文员"
+    },
+    "effects": {
+      "intelligence": 2,
+      "stress": 7,
+      "stamina": -6
+    },
+    "add_tags": [
+      "账目无误"
+    ]
   },
   {
     "id": "career_temp_short",
     "text": "工头发工钱时少给了几先令。他说这是“扣下的一笔管理费”。",
     "chance": 16,
     "weight": 2,
-    "conditions": { "min_day": 30, "job": "临时工" },
-    "effects": { "money": 5, "stress": 6, "charisma": 1 },
-    "add_tags": ["据理力争"]
+    "conditions": {
+      "min_day": 30,
+      "job": "临时工"
+    },
+    "effects": {
+      "money": 5,
+      "stress": 6,
+      "charisma": 1
+    },
+    "add_tags": [
+      "据理力争"
+    ]
   },
   {
     "id": "illness",
     "text": "冷风钻进领口，你头重脚轻地熬了半日，晚上开始发低烧。诊所的医生把听诊器贴在你胸口。",
     "chance": 12,
     "weight": 2,
-    "conditions": { "min_day": 10 },
-    "effects": { "money": -8, "health": 10, "stress": -2 },
+    "conditions": {
+      "min_day": 10
+    },
+    "effects": {
+      "money": -8,
+      "health": 10,
+      "stress": -2
+    },
     "add_tags": []
   },
   {
@@ -258,8 +474,13 @@
     "text": "你低头才发现靴底已经磨穿，冷气直往脚心钻。修鞋摊的老头报价不高，但也不便宜。",
     "chance": 14,
     "weight": 2,
-    "conditions": { "min_day": 15 },
-    "effects": { "money": -5, "stress": -1 },
+    "conditions": {
+      "min_day": 15
+    },
+    "effects": {
+      "money": -5,
+      "stress": -1
+    },
     "add_tags": []
   },
   {
@@ -267,8 +488,15 @@
     "text": "储蓄银行柜台前排着不长不短的队。牌子上写着：存款月息 2%。排队的人都在盘算着什么。",
     "chance": 16,
     "weight": 1,
-    "conditions": { "min_day": 5, "location": "north" },
-    "effects": { "money": -10, "savings": 10, "stress": -1 },
+    "conditions": {
+      "min_day": 5,
+      "location": "north"
+    },
+    "effects": {
+      "money": -10,
+      "savings": 10,
+      "stress": -1
+    },
     "add_tags": []
   },
   {
@@ -276,17 +504,32 @@
     "text": "莎伦太太犹豫了很久，托你替她给城另一头的亲戚带一封信。她说这封信不该走邮局。",
     "chance": 18,
     "weight": 2,
-    "conditions": { "min_day": 8 },
-    "effects": { "charisma": 2, "stress": -2, "money": 1 },
-    "add_tags": ["帮朋友办过私事"]
+    "conditions": {
+      "min_day": 8
+    },
+    "effects": {
+      "charisma": 2,
+      "stress": -2,
+      "money": 1
+    },
+    "add_tags": [
+      "帮朋友办过私事"
+    ]
   },
   {
     "id": "confession_event",
     "text": "夜已经深了。莎伦太太坐在你对面，忽然问你：最近是不是有什么事，一个人扛着很累吧？",
     "chance": 22,
     "weight": 2,
-    "conditions": { "min_day": 20 },
-    "effects": { "stress": -8, "spirituality": 1 },
-    "add_tags": ["向挚友倾吐过真心"]
+    "conditions": {
+      "min_day": 20
+    },
+    "effects": {
+      "stress": -8,
+      "spirituality": 1
+    },
+    "add_tags": [
+      "向挚友倾吐过真心"
+    ]
   }
 ]

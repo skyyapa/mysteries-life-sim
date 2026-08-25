@@ -877,6 +877,7 @@ const events = [
     chance: 24,
     weight: 3,
     minDay: 5,
+    maxDay: 120,
     choices: [
       {
         label: "记下形状",
@@ -932,6 +933,7 @@ const events = [
     chance: 22,
     weight: 3,
     minDay: 3,
+    maxDay: 60,
     choices: [
       {
         label: "仔细阅读",
@@ -1108,6 +1110,7 @@ const events = [
     chance: 24,
     weight: 3,
     minDay: 6,
+    maxDay: 90,
     choices: [
       {
         label: "剪下报纸",
@@ -1170,6 +1173,7 @@ const events = [
     chance: 30,
     weight: 3,
     minDay: 10,
+    maxDay: 150,
     choices: [
       {
         label: "拐进人多的街道",
@@ -2027,6 +2031,7 @@ const initialState = {
     economyPressure: 0,
     cityTension: 0,
     eventLastTriggered: {},
+    expiredTraced: {},
     eventGraph: {
       completedNodes: [],
     },
@@ -2384,6 +2389,9 @@ function canEventTriggerAt(event, locationId) {
   if (event.minDay !== undefined && state.daysLived < event.minDay) {
     return false;
   }
+  if (event.maxDay !== undefined && state.daysLived > event.maxDay) {
+    return false;
+  }
   if (event.locations && !event.locations.includes(locationId)) {
     return false;
   }
@@ -2651,7 +2659,63 @@ function worldTick() {
   tickEconomy();
   tickLocations();
   tickMadness();
+  tickExpiredEvents();
   updateStoryArcs();
+}
+
+/**
+ * 时效与错过痕迹：一次性事件超过 maxDay 后写一条"错过"日志（每事件一次）。
+ * 拟真：车站的启事会撤、旧报纸会被收走、符号会被抹去——没赶上就真的错过了。
+ */
+const EXPIRED_TRACES = {
+  station_notice: "你后来想起，车站布告栏上那张失踪启事不知何时被撤下了。你错过了第一次读它的机会。",
+  newspaper_overlap: "你翻完旧报纸，发现那条东区失踪的短讯早已过时。线索凉了。",
+  strange_symbol: "你再去那条小巷，灰浆已经干透，符号再也看不见了。",
+  east_followed: "那段时间过后，你再也没感受到被注视的目光。你错过了确认被跟踪的机会。",
+  priest_coin: "你很久没去教堂后室，奥尔森教士把那枚旧硬币收了起来。",
+  east_deep_night: "深夜的东区恢复了安静，那扇透出微光的门再也找不到了。",
+  symbol_dream: "那阵子之后，你再也没做过那样的梦。",
+};
+
+function tickExpiredEvents() {
+  if (!state.world.expiredTraced) {
+    state.world.expiredTraced = {};
+  }
+  const traced = state.world.expiredTraced;
+  Object.entries(EXPIRED_TRACES).forEach(([eventId, trace]) => {
+    if (traced[eventId]) {
+      return;
+    }
+    const event = events.find((e) => e.id === eventId);
+    if (!event || event.maxDay === undefined) {
+      return;
+    }
+    // 事件未触发且已过窗口 → 留痕。已触发的判定：
+    // 1) onceTag 已获得；2) 任一 choice 产出的标签已获得；3) 关联图节点已完成
+    let alreadySeen = false;
+    if (event.onceTag && state.tags.includes(event.onceTag)) {
+      alreadySeen = true;
+    }
+    if (!alreadySeen && event.choices) {
+      const choiceTags = event.choices.flatMap((c) => c.addTags || []);
+      if (choiceTags.some((t) => state.tags.includes(t))) {
+        alreadySeen = true;
+      }
+    }
+    if (!alreadySeen) {
+      const graphNode = getEventGraphNode(event.id);
+      if (graphNode && (state.world.eventGraph.completedNodes || []).includes(graphNode.id)) {
+        alreadySeen = true;
+      }
+    }
+    if (alreadySeen) {
+      return;
+    }
+    if (state.daysLived > event.maxDay) {
+      traced[eventId] = state.daysLived;
+      addEntry(formatDate(), `（错过）${trace}`);
+    }
+  });
 }
 
 function tickMadness() {

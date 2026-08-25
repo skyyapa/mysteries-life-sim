@@ -107,8 +107,54 @@ class WorldEngine:
         self.update_economy(state)
         self.update_city(state)
         self.update_madness(state)
+        self.tick_expired_events(state)
         self.event_system.auto_advance(state)
         self.npc_system.tick(state)
+
+    # 事件过期痕迹：耗尽时效的一次性事件留一句"错过"日志（每事件一次）
+    EXPIRED_TRACES = {
+        "abnormal_notice": "你后来想起，车站布告栏上那张失踪启事不知何时被撤下了。你错过了第一次读它的机会。",
+        "abnormal_overlap": "你翻完旧报纸，发现那条东区失踪的短讯早已过时。线索凉了。",
+        "abnormal_symbol": "你再去那条小巷，灰浆已经干透，符号再也看不见了。",
+        "abnormal_followed": "那段时间过后，你再也没感受到被注视的目光。你错过了确认被跟踪的机会。",
+    }
+
+    def tick_expired_events(self, state: GameState) -> None:
+        traced = state.world.expired_traced
+        for graph in self.event_system.graphs.values():
+            for node in graph.nodes.values():
+                max_day = node.conditions.get("max_day")
+                if max_day is None or node.id in traced:
+                    continue
+                if self._node_already_triggered(graph, node, state):
+                    continue
+                if state.days_lived > max_day:
+                    traced[node.id] = state.days_lived
+                    text = self.EXPIRED_TRACES.get(node.id)
+                    if text:
+                        state.journal.append(
+                            JournalEntry(
+                                date=state.date.label(),
+                                action="错过",
+                                summary=f"（错过）{text}",
+                            )
+                        )
+
+    def _node_already_triggered(
+        self, graph: EventGraph, node: EventNode, state: GameState
+    ) -> bool:
+        """节点是否已被触发过。
+
+        - 冷却记录（池图可重复事件）命中即说明触发过
+        - 链图：若链条已推进越过该节点（当前节点不是它且不是起点），说明已触发
+        """
+        if node.id in state.world.event_last_triggered:
+            return True
+        if not graph.is_pool:
+            current_id = state.event_nodes.get(graph.id, graph.start_node)
+            if current_id != graph.start_node and current_id != node.id:
+                return True
+        return False
 
     def update_madness(self, state: GameState) -> None:
         """非凡代价：疯狂值（隐藏）随污染上涨，压力和灵性（锚）调节。

@@ -22,12 +22,18 @@
           {
             "label": "赶紧回家",
             "result": "你缩紧外套一路快走，虽然狼狈，但没有继续在雨里消耗体力。",
-            "effects": { "health": -2, "stamina": -1 }
+            "effects": {
+              "health": -2,
+              "stamina": -1
+            }
           },
           {
             "label": "找地方避雨",
             "result": "你躲进一家小店，花了几便士买热饮，身体舒服了些。",
-            "effects": { "money": -4, "stress": -2 }
+            "effects": {
+              "money": -4,
+              "stress": -2
+            }
           }
         ]
       },
@@ -36,14 +42,22 @@
         "text": "旧书摊上有一本便宜的历史读物，你犹豫片刻还是买了下来。",
         "chance": 12,
         "weight": 2,
-        "locations": ["market", "north"],
+        "locations": [
+          "market",
+          "north"
+        ],
         "cooldown": 25,
         "choices": [
           {
             "label": "买下来",
             "result": "书页发黄，但里面关于鲁恩旧贵族的段落很有意思。",
-            "effects": { "money": -5, "intelligence": 2 },
-            "add_tags": ["买过旧书"]
+            "effects": {
+              "money": -5,
+              "intelligence": 2
+            },
+            "add_tags": [
+              "买过旧书"
+            ]
           }
         ]
       },
@@ -52,14 +66,22 @@
         "text": "黑夜教堂的钟声在雾气中响起，你短暂地感到安心。",
         "chance": 10,
         "weight": 2,
-        "locations": ["church", "north"],
+        "locations": [
+          "church",
+          "north"
+        ],
         "cooldown": 25,
         "choices": [
           {
             "label": "进入教堂",
             "result": "你在长椅上坐了一会儿，安静让脑子里的杂音淡了下去。",
-            "effects": { "stress": -5, "spirituality": 1 },
-            "add_tags": ["去过黑夜教堂"]
+            "effects": {
+              "stress": -5,
+              "spirituality": 1
+            },
+            "add_tags": [
+              "去过黑夜教堂"
+            ]
           }
         ]
       },
@@ -68,7 +90,10 @@
         "text": "房东提醒你下周要交房租，语气礼貌，但没有商量余地。",
         "chance": 15,
         "weight": 2,
-        "locations": ["east", "north"],
+        "locations": [
+          "east",
+          "north"
+        ],
         "min_day": 8,
         "repeatable": true,
         "cooldown": 25,
@@ -76,14 +101,24 @@
           {
             "label": "提前支付",
             "result": "你提前付清一部分房租，钱包薄了，但心里踏实不少。",
-            "effects": { "money": -30, "stress": -4 },
-            "add_tags": ["房租已缓解"]
+            "effects": {
+              "money": -30,
+              "stress": -4
+            },
+            "add_tags": [
+              "房租已缓解"
+            ]
           },
           {
             "label": "请求宽限",
             "result": "房东答应多给你几天，但你能感觉到对方的耐心有限。",
-            "effects": { "charisma": 1, "stress": 5 },
-            "add_tags": ["欠下房租压力"]
+            "effects": {
+              "charisma": 1,
+              "stress": 5
+            },
+            "add_tags": [
+              "欠下房租压力"
+            ]
           }
         ]
       },
@@ -92,15 +127,22 @@
         "text": "人群突然推搡起来，你感觉有人碰了一下你的外套口袋。",
         "chance": 18,
         "weight": 3,
-        "locations": ["market"],
+        "locations": [
+          "market"
+        ],
         "min_day": 4,
         "cooldown": 30,
         "choices": [
           {
             "label": "立刻抓住对方",
             "result": "你抓住了一个瘦小青年，对方挣扎着逃走，只掉下一枚旧纽扣。",
-            "effects": { "stamina": -4, "stress": 3 },
-            "add_tags": ["捡到旧纽扣"],
+            "effects": {
+              "stamina": -4,
+              "stress": 3
+            },
+            "add_tags": [
+              "捡到旧纽扣"
+            ],
             "add_clues": [
               {
                 "id": "old_button",
@@ -116,15 +158,25 @@
         "text": "掌柜或上司临时要求你多留一会儿。活不算难，但这一天会被拖得很长。",
         "chance": 18,
         "weight": 2,
-        "locations": ["north", "market", "east"],
+        "locations": [
+          "north",
+          "market",
+          "east"
+        ],
         "min_day": 6,
         "cooldown": 25,
         "choices": [
           {
             "label": "留下加班",
             "result": "你把额外的活做完，回家时街灯已经亮起。对方记住了你的可靠。",
-            "effects": { "stamina": -8, "stress": 4, "money": 4 },
-            "add_tags": ["认真加班"]
+            "effects": {
+              "stamina": -8,
+              "stress": 4,
+              "money": 4
+            },
+            "add_tags": [
+              "认真加班"
+            ]
           }
         ]
       },
@@ -133,15 +185,22 @@
         "text": "老师突然安排了一次小测验。题目不算刁钻，但足够看出最近有没有用功。",
         "chance": 16,
         "weight": 2,
-        "locations": ["north"],
+        "locations": [
+          "north"
+        ],
         "min_day": 7,
         "cooldown": 25,
         "choices": [
           {
             "label": "认真答题",
             "result": "你答得不错。老师多看了你一眼，像是记住了这个名字。",
-            "effects": { "intelligence": 2, "stress": 2 },
-            "add_tags": ["课堂表现不错"]
+            "effects": {
+              "intelligence": 2,
+              "stress": 2
+            },
+            "add_tags": [
+              "课堂表现不错"
+            ]
           }
         ]
       },
@@ -150,16 +209,25 @@
         "text": "莎伦太太敲门送来一碗热汤，说是多煮了一些。屋里一下子有了生活的气味。",
         "chance": 18,
         "weight": 2,
-        "locations": ["north"],
+        "locations": [
+          "north"
+        ],
         "min_day": 5,
-        "requires_contacts": { "sha_ren_neighbor": 18 },
+        "requires_contacts": {
+          "sha_ren_neighbor": 18
+        },
         "cooldown": 25,
         "choices": [
           {
             "label": "道谢收下",
             "result": "热汤让胃里舒服了些。你们顺便聊了几句楼里的琐事。",
-            "effects": { "health": 2, "stress": -3 },
-            "trust_effects": { "sha_ren_neighbor": 2 }
+            "effects": {
+              "health": 2,
+              "stress": -3
+            },
+            "trust_effects": {
+              "sha_ren_neighbor": 2
+            }
           }
         ]
       },
@@ -168,14 +236,19 @@
         "text": "面包、煤油和廉价肉的价格都涨了一点。摊贩说最近货运不稳，谁也没办法。",
         "chance": 20,
         "weight": 3,
-        "locations": ["market"],
+        "locations": [
+          "market"
+        ],
         "min_day": 12,
         "cooldown": 25,
         "choices": [
           {
             "label": "照常购买",
             "result": "你咬牙按原计划买下生活用品。钱少了，但晚饭至少没有缩水。",
-            "effects": { "money": -6, "stress": 1 }
+            "effects": {
+              "money": -6,
+              "stress": 1
+            }
           }
         ]
       },
@@ -184,14 +257,20 @@
         "text": "夜里雨声变得不对劲。你发现屋角正在渗水，床边的地板已经湿了一片。",
         "chance": 14,
         "weight": 2,
-        "locations": ["north", "east"],
+        "locations": [
+          "north",
+          "east"
+        ],
         "min_day": 15,
         "cooldown": 30,
         "choices": [
           {
             "label": "找人修理",
             "result": "修理工动作很快，收费也很快。至少今晚不用担心雨水滴到床上。",
-            "effects": { "money": -10, "stress": -2 }
+            "effects": {
+              "money": -10,
+              "stress": -2
+            }
           }
         ]
       },
@@ -200,7 +279,10 @@
         "text": "入冬后煤价涨了一截。卖煤的老汉说，今年运河结冰早，运不进来。",
         "chance": 20,
         "weight": 3,
-        "locations": ["market", "north"],
+        "locations": [
+          "market",
+          "north"
+        ],
         "season": "winter",
         "min_day": 40,
         "cooldown": 25,
@@ -208,12 +290,20 @@
           {
             "label": "多囤一点煤",
             "result": "你咬牙多买了一袋煤。钱包薄了，但冬天不用在夜里被冻醒。",
-            "effects": { "money": -8, "comfort": 4, "stress": -2 }
+            "effects": {
+              "money": -8,
+              "comfort": 4,
+              "stress": -2
+            }
           },
           {
             "label": "省着烧",
             "result": "你决定把炭火调到最小。屋里冷了些，但账面撑住了。",
-            "effects": { "money": 3, "comfort": -3, "stress": 2 }
+            "effects": {
+              "money": 3,
+              "comfort": -3,
+              "stress": 2
+            }
           }
         ]
       },
@@ -222,7 +312,11 @@
         "text": "开春雪水化开，廷根的街道变成泥河。马车陷在坑里，车夫大声咒骂着。",
         "chance": 16,
         "weight": 2,
-        "locations": ["market", "east", "station"],
+        "locations": [
+          "market",
+          "east",
+          "station"
+        ],
         "season": "spring",
         "min_day": 90,
         "cooldown": 30,
@@ -230,12 +324,19 @@
           {
             "label": "绕远路",
             "result": "你多走了一刻钟绕开泥坑，靴子保住了。",
-            "effects": { "stamina": -3, "stress": -1 }
+            "effects": {
+              "stamina": -3,
+              "stress": -1
+            }
           },
           {
             "label": "帮忙推车",
             "result": "你帮着推了一把，车夫塞给你几个便士，说你还算可靠。",
-            "effects": { "stamina": -6, "money": 2, "charisma": 1 }
+            "effects": {
+              "stamina": -6,
+              "money": 2,
+              "charisma": 1
+            }
           }
         ]
       },
@@ -244,7 +345,10 @@
         "text": "夏日的廷根闷热难耐。傍晚的街道晒了一天，空气里全是尘土和散热的气味。",
         "chance": 18,
         "weight": 3,
-        "locations": ["north", "east"],
+        "locations": [
+          "north",
+          "east"
+        ],
         "season": "summer",
         "min_day": 150,
         "cooldown": 30,
@@ -252,12 +356,20 @@
           {
             "label": "买一杯凉饮",
             "result": "街角摊子的凉饮很贵，但确实让脑子清醒了一些。",
-            "effects": { "money": -3, "stress": -3, "health": 1 }
+            "effects": {
+              "money": -3,
+              "stress": -3,
+              "health": 1
+            }
           },
           {
             "label": "忍一忍",
             "result": "你省下了钱，但到家时已经头晕眼花。",
-            "effects": { "money": 2, "health": -2, "stamina": -2 }
+            "effects": {
+              "money": 2,
+              "health": -2,
+              "stamina": -2
+            }
           }
         ]
       },
@@ -266,7 +378,9 @@
         "text": "秋天的集市堆满了苹果、面包和熏鱼。摊贩们难得露出笑脸。",
         "chance": 16,
         "weight": 3,
-        "locations": ["market"],
+        "locations": [
+          "market"
+        ],
         "season": "autumn",
         "min_day": 240,
         "cooldown": 30,
@@ -274,12 +388,19 @@
           {
             "label": "买点应季食物",
             "result": "你买了几颗苹果和一袋面粉。物美价廉，心情也跟着好了。",
-            "effects": { "money": -4, "health": 2, "stress": -2 }
+            "effects": {
+              "money": -4,
+              "health": 2,
+              "stress": -2
+            }
           },
           {
             "label": "只是逛逛",
             "result": "你在人群里走了一圈，闻着食物的香气，没花一分钱。",
-            "effects": { "stress": -1, "charisma": 1 }
+            "effects": {
+              "stress": -1,
+              "charisma": 1
+            }
           }
         ]
       },
@@ -288,22 +409,36 @@
         "text": "学校宣布，学年末成绩优异者可以获得一份奖学金，足够抵掉几个月的开销。",
         "chance": 16,
         "weight": 2,
-        "locations": ["north"],
-        "jobs": ["文法学校学生"],
+        "locations": [
+          "north"
+        ],
+        "jobs": [
+          "文法学校学生"
+        ],
         "min_day": 30,
         "cooldown": 60,
         "choices": [
           {
             "label": "报名参赛",
             "result": "你把课余时间都压在备考上。这是一场赌博，但奖品值得一试。",
-            "effects": { "intelligence": 3, "stress": 6, "stamina": -4 },
-            "add_tags": ["争取奖学金"]
+            "effects": {
+              "intelligence": 3,
+              "stress": 6,
+              "stamina": -4
+            },
+            "add_tags": [
+              "争取奖学金"
+            ]
           },
           {
             "label": "量力而行",
             "result": "你决定保住平时的节奏。奖学金很好，但不是唯一的路。",
-            "effects": { "stress": -2 },
-            "add_tags": ["放弃奖学金"]
+            "effects": {
+              "stress": -2
+            },
+            "add_tags": [
+              "放弃奖学金"
+            ]
           }
         ]
       },
@@ -312,22 +447,37 @@
         "text": "师傅突然说要考校你最近的功夫。他板着脸，但你知道这是机会。",
         "chance": 16,
         "weight": 2,
-        "locations": ["market", "north"],
-        "jobs": ["店铺学徒"],
+        "locations": [
+          "market",
+          "north"
+        ],
+        "jobs": [
+          "店铺学徒"
+        ],
         "min_day": 30,
         "cooldown": 60,
         "choices": [
           {
             "label": "全力以赴",
             "result": "你把自己学到的东西全使了出来。师傅没说话，但嘴角动了动。",
-            "effects": { "intelligence": 2, "stress": 5, "charisma": 1 },
-            "add_tags": ["师傅认可"]
+            "effects": {
+              "intelligence": 2,
+              "stress": 5,
+              "charisma": 1
+            },
+            "add_tags": [
+              "师傅认可"
+            ]
           },
           {
             "label": "求稳",
             "result": "你只做了最有把握的部分。不难看，但也不出彩。",
-            "effects": { "stress": -1 },
-            "add_tags": ["应对考试"]
+            "effects": {
+              "stress": -1
+            },
+            "add_tags": [
+              "应对考试"
+            ]
           }
         ]
       },
@@ -336,22 +486,36 @@
         "text": "事务所月底要查账。主管把一摞厚账本推到你面前，语气很轻：别出错。",
         "chance": 16,
         "weight": 2,
-        "locations": ["north"],
-        "jobs": ["事务所文员"],
+        "locations": [
+          "north"
+        ],
+        "jobs": [
+          "事务所文员"
+        ],
         "min_day": 30,
         "cooldown": 60,
         "choices": [
           {
             "label": "连夜核对",
             "result": "你查了三遍，挑出两处小错。主管罕见地对你点了点头。",
-            "effects": { "intelligence": 2, "stress": 7, "stamina": -6 },
-            "add_tags": ["账目无误"]
+            "effects": {
+              "intelligence": 2,
+              "stress": 7,
+              "stamina": -6
+            },
+            "add_tags": [
+              "账目无误"
+            ]
           },
           {
             "label": "按时下班",
             "result": "你照常下班。身体轻松，但你知道明天可能不好过。",
-            "effects": { "stress": -1 },
-            "add_tags": ["账目平常"]
+            "effects": {
+              "stress": -1
+            },
+            "add_tags": [
+              "账目平常"
+            ]
           }
         ]
       },
@@ -360,22 +524,38 @@
         "text": "工头发工钱时少给了几先令。他说这是“扣下的一笔管理费”。",
         "chance": 16,
         "weight": 2,
-        "locations": ["market", "east"],
-        "jobs": ["临时工"],
+        "locations": [
+          "market",
+          "east"
+        ],
+        "jobs": [
+          "临时工"
+        ],
         "min_day": 30,
         "cooldown": 60,
         "choices": [
           {
             "label": "当面质问",
             "result": "你当着众人的面把数目点给他看。工头冷笑，但还是补上了差额。",
-            "effects": { "money": 5, "stress": 6, "charisma": 1 },
-            "add_tags": ["据理力争"]
+            "effects": {
+              "money": 5,
+              "stress": 6,
+              "charisma": 1
+            },
+            "add_tags": [
+              "据理力争"
+            ]
           },
           {
             "label": "忍下这口气",
             "result": "你接过钱走开了。几先令不值得丢掉这份活计。",
-            "effects": { "money": -4, "stress": 2 },
-            "add_tags": ["忍气吞声"]
+            "effects": {
+              "money": -4,
+              "stress": 2
+            },
+            "add_tags": [
+              "忍气吞声"
+            ]
           }
         ]
       },
@@ -384,19 +564,31 @@
         "text": "冷风钻进领口，你头重脚轻地熬了半日，晚上开始发低烧。诊所的医生把听诊器贴在你胸口。",
         "chance": 12,
         "weight": 2,
-        "locations": ["north", "east", "market"],
+        "locations": [
+          "north",
+          "east",
+          "market"
+        ],
         "min_day": 10,
         "cooldown": 40,
         "choices": [
           {
             "label": "花钱看病",
             "result": "你付了诊费和药费。肉痛，但至少夜里烧退了。",
-            "effects": { "money": -8, "health": 10, "stress": -2 }
+            "effects": {
+              "money": -8,
+              "health": 10,
+              "stress": -2
+            }
           },
           {
             "label": "硬扛过去",
             "result": "你捂紧被子硬扛。省下了钱，第二天却差点起不来床。",
-            "effects": { "health": -5, "stamina": -6, "stress": 3 }
+            "effects": {
+              "health": -5,
+              "stamina": -6,
+              "stress": 3
+            }
           }
         ]
       },
@@ -405,19 +597,28 @@
         "text": "你低头才发现靴底已经磨穿，冷气直往脚心钻。修鞋摊的老头报价不高，但也不便宜。",
         "chance": 14,
         "weight": 2,
-        "locations": ["market", "north"],
+        "locations": [
+          "market",
+          "north"
+        ],
         "min_day": 15,
         "cooldown": 35,
         "choices": [
           {
             "label": "修补",
             "result": "老头手法利落，半小时后靴子又结实了。",
-            "effects": { "money": -5, "stress": -1 }
+            "effects": {
+              "money": -5,
+              "stress": -1
+            }
           },
           {
             "label": "凑合穿",
             "result": "你决定再撑一阵。走路时能感觉脚底隔着袜子贴到石板。",
-            "effects": { "money": 3, "health": -2 }
+            "effects": {
+              "money": 3,
+              "health": -2
+            }
           }
         ]
       },
@@ -426,19 +627,27 @@
         "text": "储蓄银行柜台前排着不长不短的队。牌子上写着：存款月息 2%。排队的人都在盘算着什么。",
         "chance": 16,
         "weight": 1,
-        "locations": ["north"],
+        "locations": [
+          "north"
+        ],
         "min_day": 5,
         "cooldown": 20,
         "choices": [
           {
             "label": "存 10 镑",
             "result": "你把 10 镑存了进去。柜员在存折上写下一行字。",
-            "effects": { "money": -10, "savings": 10, "stress": -1 }
+            "effects": {
+              "money": -10,
+              "savings": 10,
+              "stress": -1
+            }
           },
           {
             "label": "只看看",
             "result": "你读完了告示，记住了利率，转身离开了银行。",
-            "effects": { "intelligence": 1 }
+            "effects": {
+              "intelligence": 1
+            }
           }
         ]
       },
@@ -447,23 +656,41 @@
         "text": "莎伦太太犹豫了很久，托你替她给城另一头的亲戚带一封信。她说这封信不该走邮局。",
         "chance": 18,
         "weight": 2,
-        "locations": ["north", "market", "east"],
+        "locations": [
+          "north",
+          "market",
+          "east"
+        ],
         "min_day": 8,
         "cooldown": 60,
-        "requires_contacts": { "sha_ren_neighbor": 40 },
+        "requires_contacts": {
+          "sha_ren_neighbor": 40
+        },
         "choices": [
           {
             "label": "答应捎带",
             "result": "你把信送到。亲戚一家很感激，回赠了你几个自家烘的馅饼。",
-            "effects": { "charisma": 2, "stress": -2, "money": 1 },
-            "trust_effects": { "sha_ren_neighbor": 5 },
-            "add_tags": ["帮朋友办过私事"]
+            "effects": {
+              "charisma": 2,
+              "stress": -2,
+              "money": 1
+            },
+            "trust_effects": {
+              "sha_ren_neighbor": 5
+            },
+            "add_tags": [
+              "帮朋友办过私事"
+            ]
           },
           {
             "label": "婉言推辞",
             "result": "你说自己最近忙不过来。她没说什么，但你知道这份信任打了折扣。",
-            "effects": { "stress": 1 },
-            "trust_effects": { "sha_ren_neighbor": -3 }
+            "effects": {
+              "stress": 1
+            },
+            "trust_effects": {
+              "sha_ren_neighbor": -3
+            }
           }
         ]
       },
@@ -472,23 +699,40 @@
         "text": "夜已经深了。莎伦太太坐在你对面，忽然问你：最近是不是有什么事，一个人扛着很累吧？",
         "chance": 22,
         "weight": 2,
-        "locations": ["north", "market", "church"],
+        "locations": [
+          "north",
+          "market",
+          "church"
+        ],
         "min_day": 20,
         "cooldown": 70,
-        "requires_contacts": { "sha_ren_neighbor": 70 },
+        "requires_contacts": {
+          "sha_ren_neighbor": 70
+        },
         "choices": [
           {
             "label": "说出实情",
             "result": "你把最近追查的事挑能说的说了。她听完没有追问，只说你白天记得好好吃饭。",
-            "effects": { "stress": -8, "spirituality": 1 },
-            "trust_effects": { "sha_ren_neighbor": 6 },
-            "add_tags": ["向挚友倾吐过真心"]
+            "effects": {
+              "stress": -8,
+              "spirituality": 1
+            },
+            "trust_effects": {
+              "sha_ren_neighbor": 6
+            },
+            "add_tags": [
+              "向挚友倾吐过真心"
+            ]
           },
           {
             "label": "笑着说没事",
             "result": "你摇头说一切都好。她的眼神说明她并不信，但她没有拆穿。",
-            "effects": { "stress": 1 },
-            "trust_effects": { "sha_ren_neighbor": 1 }
+            "effects": {
+              "stress": 1
+            },
+            "trust_effects": {
+              "sha_ren_neighbor": 1
+            }
           }
         ]
       }
@@ -506,14 +750,21 @@
         "text": "车站布告栏前围着几个人，一张失踪寻人启事被雨水泡得卷边。",
         "chance": 22,
         "weight": 3,
-        "locations": ["station"],
+        "locations": [
+          "station"
+        ],
         "min_day": 3,
         "choices": [
           {
             "label": "仔细阅读",
             "result": "你记下了失踪者的姓氏。那名字似乎在哪份报纸上见过。",
-            "effects": { "intelligence": 1, "stress": 1 },
-            "add_tags": ["见过失踪启事"],
+            "effects": {
+              "intelligence": 1,
+              "stress": 1
+            },
+            "add_tags": [
+              "见过失踪启事"
+            ],
             "add_clues": [
               {
                 "id": "missing_notice",
@@ -522,21 +773,32 @@
               }
             ]
           }
-        ]
+        ],
+        "max_day": 60
       },
       {
         "id": "abnormal_overlap",
         "text": "你在报纸边角看到一则短讯：有人在东区附近失踪，警方只说还在调查。",
         "chance": 24,
         "weight": 3,
-        "locations": ["north", "market"],
+        "locations": [
+          "north",
+          "market"
+        ],
         "min_day": 6,
-        "requires_any_clue": ["missing_notice", "old_button"],
+        "requires_any_clue": [
+          "missing_notice",
+          "old_button"
+        ],
         "choices": [
           {
             "label": "剪下报纸",
             "result": "你把那块报纸折好收起。几条毫不起眼的消息开始互相牵连。",
-            "effects": { "mysticism": 1, "intelligence": 1, "stress": 2 },
+            "effects": {
+              "mysticism": 1,
+              "intelligence": 1,
+              "stress": 2
+            },
             "add_clues": [
               {
                 "id": "newspaper_overlap",
@@ -545,22 +807,34 @@
               }
             ]
           }
-        ]
+        ],
+        "max_day": 90
       },
       {
         "id": "abnormal_symbol",
         "text": "你在小巷墙角看见一个奇怪符号，很快又被人用灰浆抹去。",
         "chance": 24,
         "weight": 3,
-        "locations": ["east", "market", "north"],
+        "locations": [
+          "east",
+          "market",
+          "north"
+        ],
         "min_day": 5,
-        "after_nodes": ["abnormal_overlap"],
+        "after_nodes": [
+          "abnormal_overlap"
+        ],
         "choices": [
           {
             "label": "记下形状",
             "result": "你把符号草草画在纸上。它不像装饰，更像某种标记。",
-            "effects": { "mysticism": 2, "stress": 3 },
-            "add_tags": ["见过神秘符号"],
+            "effects": {
+              "mysticism": 2,
+              "stress": 3
+            },
+            "add_tags": [
+              "见过神秘符号"
+            ],
             "add_clues": [
               {
                 "id": "wall_symbol",
@@ -569,21 +843,29 @@
               }
             ]
           }
-        ]
+        ],
+        "max_day": 120
       },
       {
         "id": "abnormal_followed",
         "text": "你经过那条小巷时，身后的脚步声忽然和你的步伐保持了同样节奏。",
         "chance": 30,
         "weight": 3,
-        "locations": ["east"],
+        "locations": [
+          "east"
+        ],
         "min_day": 10,
-        "requires_clues": ["wall_symbol"],
+        "requires_clues": [
+          "wall_symbol"
+        ],
         "choices": [
           {
             "label": "拐进人多的街道",
             "result": "你混进人群，脚步声消失了。你的掌心出了汗。",
-            "effects": { "stress": 4, "stamina": -3 },
+            "effects": {
+              "stress": 4,
+              "stamina": -3
+            },
             "add_clues": [
               {
                 "id": "being_followed",
@@ -592,22 +874,37 @@
               }
             ]
           }
-        ]
+        ],
+        "max_day": 150
       },
       {
         "id": "abnormal_decision",
         "text": "失踪启事、旧纽扣、报纸短讯和东区线索终于串成一条线。现在你必须决定，自己在这件事里到底站在哪里。",
         "chance": 46,
         "weight": 5,
-        "locations": ["north", "church", "station"],
+        "locations": [
+          "north",
+          "church",
+          "station"
+        ],
         "min_day": 14,
-        "requires_any_clue": ["newspaper_overlap", "wall_symbol", "being_followed"],
+        "requires_any_clue": [
+          "newspaper_overlap",
+          "wall_symbol",
+          "being_followed"
+        ],
         "choices": [
           {
             "label": "举报给教会",
             "result": "你把整理好的线索交给黑夜教堂。教士没有承诺什么，但你看见他立刻锁上了后室的门。",
-            "effects": { "stress": -5, "spirituality": 2 },
-            "add_tags": ["做出失踪案选择", "向教会举报"],
+            "effects": {
+              "stress": -5,
+              "spirituality": 2
+            },
+            "add_tags": [
+              "做出失踪案选择",
+              "向教会举报"
+            ],
             "add_clues": [
               {
                 "id": "church_archive",
@@ -619,8 +916,15 @@
           {
             "label": "调查到底",
             "result": "你没有把线索交出去，也没有停手。这个决定让你更接近真相，也更接近危险。",
-            "effects": { "intelligence": 2, "mysticism": 2, "stress": 6 },
-            "add_tags": ["做出失踪案选择", "决定追到底"]
+            "effects": {
+              "intelligence": 2,
+              "mysticism": 2,
+              "stress": 6
+            },
+            "add_tags": [
+              "做出失踪案选择",
+              "决定追到底"
+            ]
           }
         ]
       }
@@ -629,22 +933,30 @@
       {
         "from": "abnormal_notice",
         "to": "abnormal_overlap",
-        "condition": { "tag": "见过失踪启事" }
+        "condition": {
+          "tag": "见过失踪启事"
+        }
       },
       {
         "from": "abnormal_overlap",
         "to": "abnormal_symbol",
-        "condition": { "min_day": 5 }
+        "condition": {
+          "min_day": 5
+        }
       },
       {
         "from": "abnormal_symbol",
         "to": "abnormal_followed",
-        "condition": { "min_day": 10 }
+        "condition": {
+          "min_day": 10
+        }
       },
       {
         "from": "abnormal_followed",
         "to": "abnormal_decision",
-        "condition": { "min_day": 14 }
+        "condition": {
+          "min_day": 14
+        }
       }
     ]
   },
@@ -659,22 +971,35 @@
         "text": "你在失踪案的边缘停留得太久，有些东西开始反过来注意你。",
         "chance": 0,
         "weight": 1,
-        "after_nodes": ["abnormal_decision"]
+        "after_nodes": [
+          "abnormal_decision"
+        ]
       },
       {
         "id": "contact_priest",
         "text": "奥尔森教士在教堂后室单独见你。他沉默很久，最后把一枚褐色的旧硬币放在桌上。",
         "chance": 30,
         "weight": 3,
-        "locations": ["church"],
+        "locations": [
+          "church"
+        ],
         "min_day": 16,
-        "requires_tags_any": ["向教会举报", "决定追到底"],
+        "requires_tags_any": [
+          "向教会举报",
+          "决定追到底"
+        ],
         "choices": [
           {
             "label": "收下硬币",
             "result": "硬币比看上去更沉。教士说：如果有一天你开始做奇怪的梦，就带着它回来。",
-            "effects": { "spirituality": 3, "mysticism": 2, "stress": 3 },
-            "add_tags": ["拿到教堂旧币"],
+            "effects": {
+              "spirituality": 3,
+              "mysticism": 2,
+              "stress": 3
+            },
+            "add_tags": [
+              "拿到教堂旧币"
+            ],
             "add_clues": [
               {
                 "id": "church_coin",
@@ -691,13 +1016,22 @@
         "chance": 34,
         "weight": 3,
         "min_day": 20,
-        "requires_tags_any": ["拿到教堂旧币", "见过神秘符号"],
+        "requires_tags_any": [
+          "拿到教堂旧币",
+          "见过神秘符号"
+        ],
         "choices": [
           {
             "label": "在梦里记住路线",
             "result": "醒来时你记得通道的每一个拐弯。窗外天还没亮。",
-            "effects": { "spirituality": 4, "stress": 5, "stamina": -4 },
-            "add_tags": ["做过符号之梦"],
+            "effects": {
+              "spirituality": 4,
+              "stress": 5,
+              "stamina": -4
+            },
+            "add_tags": [
+              "做过符号之梦"
+            ],
             "add_clues": [
               {
                 "id": "dream_route",
@@ -713,15 +1047,28 @@
         "text": "一位穿深色大衣的陌生人主动拦住你，准确说出了你最近在追查的事。他表示愿意“帮”你，只需要你替他做一点小事。",
         "chance": 36,
         "weight": 4,
-        "locations": ["east", "market", "station"],
+        "locations": [
+          "east",
+          "market",
+          "station"
+        ],
         "min_day": 25,
-        "requires_clues": ["dream_route"],
+        "requires_clues": [
+          "dream_route"
+        ],
         "choices": [
           {
             "label": "答应帮忙",
             "result": "你接下了他的委托：把一封信放到东区某扇铁门下的缝隙里。你第一次触碰到异常世界的门槛。",
-            "effects": { "mysticism": 5, "spirituality": 4, "corruption": 1, "stress": 6 },
-            "add_tags": ["初涉非凡"],
+            "effects": {
+              "mysticism": 5,
+              "spirituality": 4,
+              "corruption": 1,
+              "stress": 6
+            },
+            "add_tags": [
+              "初涉非凡"
+            ],
             "add_clues": [
               {
                 "id": "beyonder_first_contact",
@@ -733,8 +1080,13 @@
           {
             "label": "婉言拒绝",
             "result": "你退后一步拒绝了。陌生人并不生气，只笑着说：你会再来的。",
-            "effects": { "stress": 3, "spirituality": 1 },
-            "add_tags": ["拒绝初次的接触"]
+            "effects": {
+              "stress": 3,
+              "spirituality": 1
+            },
+            "add_tags": [
+              "拒绝初次的接触"
+            ]
           }
         ]
       }
@@ -743,17 +1095,23 @@
       {
         "from": "start",
         "to": "contact_priest",
-        "condition": { "min_day": 16 }
+        "condition": {
+          "min_day": 16
+        }
       },
       {
         "from": "contact_priest",
         "to": "dream_first",
-        "condition": { "tag": "拿到教堂旧币" }
+        "condition": {
+          "tag": "拿到教堂旧币"
+        }
       },
       {
         "from": "dream_first",
         "to": "contact_beyonder",
-        "condition": { "min_day": 25 }
+        "condition": {
+          "min_day": 25
+        }
       }
     ]
   },
@@ -768,22 +1126,36 @@
         "text": "初涉非凡之后，你开始注意到日常之下有另一层秩序。",
         "chance": 0,
         "weight": 1,
-        "after_nodes": ["contact_beyonder"]
+        "after_nodes": [
+          "contact_beyonder"
+        ]
       },
       {
         "id": "second_errand",
         "text": "深衣人再次出现，交给你第二件委托：今夜子时，把一封信放在教堂地窖铁门口。他说“这次不要看信的内容”。",
         "chance": 35,
         "weight": 4,
-        "locations": ["east", "market", "station"],
+        "locations": [
+          "east",
+          "market",
+          "station"
+        ],
         "min_day": 30,
-        "requires_tags_any": ["初涉非凡"],
+        "requires_tags_any": [
+          "初涉非凡"
+        ],
         "choices": [
           {
             "label": "照做",
             "result": "你把信放在铁门口，转身离开时听见门内有人低声念着什么。你开始做奇怪的梦。",
-            "effects": { "corruption": 3, "madness": 5, "stress": 5 },
-            "add_tags": ["完成第二件委托"],
+            "effects": {
+              "corruption": 3,
+              "madness": 5,
+              "stress": 5
+            },
+            "add_tags": [
+              "完成第二件委托"
+            ],
             "add_clues": [
               {
                 "id": "second_errand_clue",
@@ -795,8 +1167,12 @@
           {
             "label": "拒绝",
             "result": "你拒绝了。深衣人没有勉强，但你看得出他记住了这次拒绝。",
-            "effects": { "stress": 2 },
-            "add_tags": ["拒绝深衣人"]
+            "effects": {
+              "stress": 2
+            },
+            "add_tags": [
+              "拒绝深衣人"
+            ]
           }
         ]
       },
@@ -805,16 +1181,29 @@
         "text": "奥尔森教士找到你，语气比往常更沉：他说他注意到你“最近睡得不好”。他在等你开口。",
         "chance": 38,
         "weight": 4,
-        "locations": ["church"],
+        "locations": [
+          "church"
+        ],
         "min_day": 36,
-        "requires_clues": ["second_errand_clue", "church_coin"],
+        "requires_clues": [
+          "second_errand_clue",
+          "church_coin"
+        ],
         "choices": [
           {
             "label": "坦白一切",
             "result": "你把深衣人的委托和盘托出。教士沉默良久，说：你做的没错，但这条路越走，越难回头。",
-            "effects": { "stress": -6, "spirituality": 3, "madness": -5 },
-            "trust_effects": { "olson_priest": 6 },
-            "add_tags": ["向教士坦白"],
+            "effects": {
+              "stress": -6,
+              "spirituality": 3,
+              "madness": -5
+            },
+            "trust_effects": {
+              "olson_priest": 6
+            },
+            "add_tags": [
+              "向教士坦白"
+            ],
             "add_clues": [
               {
                 "id": "priest_accepts",
@@ -826,8 +1215,13 @@
           {
             "label": "遮掩过去",
             "result": "你说只是没睡好。教士没有追问，但你感觉那道目光在你身上停得太久。",
-            "effects": { "stress": 3, "madness": 2 },
-            "add_tags": ["隐瞒教士"]
+            "effects": {
+              "stress": 3,
+              "madness": 2
+            },
+            "add_tags": [
+              "隐瞒教士"
+            ]
           }
         ]
       },
@@ -836,17 +1230,30 @@
         "text": "午夜你惊醒，发现自己正站在窗边，手里握着那把教堂旧硬币。你不记得自己是怎么走到这里的。",
         "chance": 45,
         "weight": 5,
-        "locations": ["north", "east"],
+        "locations": [
+          "north",
+          "east"
+        ],
         "min_day": 42,
-        "requires_clues": ["second_errand_clue"],
+        "requires_clues": [
+          "second_errand_clue"
+        ],
         "min_madness": 40,
         "choices": [
           {
             "label": "去教堂求助",
             "result": "你连夜敲开教堂的门。教士为你守了一夜，可怕的东西没有再来。",
-            "effects": { "madness": -15, "spirituality": 4, "stress": -5 },
-            "trust_effects": { "olson_priest": 4 },
-            "add_tags": ["度过失控之夜"],
+            "effects": {
+              "madness": -15,
+              "spirituality": 4,
+              "stress": -5
+            },
+            "trust_effects": {
+              "olson_priest": 4
+            },
+            "add_tags": [
+              "度过失控之夜"
+            ],
             "add_clues": [
               {
                 "id": "survived_night",
@@ -858,8 +1265,14 @@
           {
             "label": "独自硬扛",
             "result": "你握住旧硬币坐到天亮。什么也没发生，但你知道自己撑不过第二次。",
-            "effects": { "madness": 5, "stress": 8, "stamina": -6 },
-            "add_tags": ["独自硬扛一夜"]
+            "effects": {
+              "madness": 5,
+              "stress": 8,
+              "stamina": -6
+            },
+            "add_tags": [
+              "独自硬扛一夜"
+            ]
           }
         ]
       },
@@ -868,15 +1281,26 @@
         "text": "你终于拼出深衣人的身份——他不是普通掮客，某个非凡组织正借廷根的地窖做交换。他递来一张名片，说：加入，或者离开，都随你。",
         "chance": 50,
         "weight": 6,
-        "locations": ["east", "north"],
+        "locations": [
+          "east",
+          "north"
+        ],
         "min_day": 48,
-        "requires_clues": ["second_errand_clue"],
+        "requires_clues": [
+          "second_errand_clue"
+        ],
         "choices": [
           {
             "label": "加入组织",
             "result": "你接过名片。他说会在合适的时机教你怎么“用双手握住命运”。",
-            "effects": { "corruption": 5, "madness": 8, "mysticism": 3 },
-            "add_tags": ["加入神秘组织"],
+            "effects": {
+              "corruption": 5,
+              "madness": 8,
+              "mysticism": 3
+            },
+            "add_tags": [
+              "加入神秘组织"
+            ],
             "add_clues": [
               {
                 "id": "joined_org",
@@ -888,9 +1312,16 @@
           {
             "label": "投向教会",
             "result": "你把名片交给教士。教士收下后说：你会成为教会的线人，但从此你的每一步都会有人看着。",
-            "effects": { "spirituality": 5, "stress": 4 },
-            "trust_effects": { "olson_priest": 6 },
-            "add_tags": ["成为教会线人"],
+            "effects": {
+              "spirituality": 5,
+              "stress": 4
+            },
+            "trust_effects": {
+              "olson_priest": 6
+            },
+            "add_tags": [
+              "成为教会线人"
+            ],
             "add_clues": [
               {
                 "id": "church_ally",
@@ -902,8 +1333,13 @@
           {
             "label": "抽身退回",
             "result": "你推开名片，说你要做普通人。他笑了：你以为现在还来得及吗？",
-            "effects": { "stress": 6, "spirituality": 2 },
-            "add_tags": ["试图抽身"],
+            "effects": {
+              "stress": 6,
+              "spirituality": 2
+            },
+            "add_tags": [
+              "试图抽身"
+            ],
             "add_clues": [
               {
                 "id": "step_back",
@@ -919,22 +1355,30 @@
       {
         "from": "start",
         "to": "second_errand",
-        "condition": { "min_day": 30 }
+        "condition": {
+          "min_day": 30
+        }
       },
       {
         "from": "second_errand",
         "to": "church_voice",
-        "condition": { "tag": "完成第二件委托" }
+        "condition": {
+          "tag": "完成第二件委托"
+        }
       },
       {
         "from": "church_voice",
         "to": "losing_control",
-        "condition": { "min_day": 42 }
+        "condition": {
+          "min_day": 42
+        }
       },
       {
         "from": "losing_control",
         "to": "truth_choice",
-        "condition": { "min_day": 48 }
+        "condition": {
+          "min_day": 48
+        }
       }
     ]
   }

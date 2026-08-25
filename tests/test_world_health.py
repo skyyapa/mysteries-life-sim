@@ -130,4 +130,5 @@ def test_long_run_character_survives_200_days(seed):
 
     assert state.character.health > 0
     assert state.character.stress <= 100
-    assert len(state.journal) == 200
+    # journal 至少 200 条行动记录（错过痕迹等可能追加，>= 即可保证行动都被记录）
+    assert len(state.journal) >= 200
