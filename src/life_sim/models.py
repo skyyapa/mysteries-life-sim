@@ -242,6 +242,8 @@ class NPC:
         default_factory=lambda: {"trust": 0, "friendship": 0, "fear": 0}
     )
     trust: int = field(default=0, init=False, repr=False)
+    state: Any = None      # NPCState（延迟赋值避免循环 import）
+    needs: Any = None      # NPCNeeds
 
     @property
     def friendship(self) -> int:
@@ -262,6 +264,15 @@ class NPC:
     def __post_init__(self) -> None:
         if "trust" not in self.relationship or self.relationship["trust"] == 0:
             self.relationship["trust"] = max(0, min(100, self.trust))
+        # V0.15.1：初始化状态/需求（延迟 import 避免循环）
+        if self.state is None:
+            from .npc.models import NPCState
+
+            self.state = NPCState(health=100, fatigue=self.fatigue, money=float(self.money))
+        if self.needs is None:
+            from .npc.models import NPCNeeds
+
+            self.needs = NPCNeeds(rest=self.fatigue if self.fatigue > 30 else 30)
 
     def clamp(self) -> None:
         self.fatigue = max(0, min(100, self.fatigue))
@@ -295,11 +306,18 @@ class NPC:
         self.current_time = entry.time
         self.location = entry.location
         self.current_activity = entry.activity
+        # V0.15.1：日程疲劳变化写入 state.fatigue（源头），旧字段同步
+        if self.state is not None:
+            self.state.fatigue = max(
+                0, min(100, self.state.fatigue + entry.fatigue_change)
+            )
         self.fatigue += entry.fatigue_change
+        if self.state is not None:
+            self.fatigue = self.state.fatigue
         self.clamp()
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "id": self.id,
             "name": self.name,
             "job": self.job,
@@ -317,10 +335,17 @@ class NPC:
             "disappeared_day": self.disappeared_day,
             "relationship": dict(self.relationship),
         }
+        if self.state is not None:
+            result["state"] = self.state.to_dict()
+        if self.needs is not None:
+            result["needs"] = self.needs.to_dict()
+        return result
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> NPC:
-        return cls(
+        from .npc.models import NPCNeeds, NPCState
+
+        obj = cls(
             id=data["id"],
             name=data["name"],
             job=data["job"],
@@ -348,6 +373,16 @@ class NPC:
                 )
             ),
         )
+        # V0.15.1：读档优先取存档里的 state/needs，缺省用迁移默认
+        if "state" in data:
+            obj.state = NPCState.from_dict(data["state"])
+            obj.state.money = float(data.get("money", obj.state.money))
+        if "needs" in data:
+            obj.needs = NPCNeeds.from_dict(data["needs"])
+        # 旧存档：fatigue/money 已由 __post_init__ 迁移进 state
+        obj.fatigue = obj.state.fatigue
+        obj.money = int(obj.state.money)
+        return obj
 
 
 @dataclass
