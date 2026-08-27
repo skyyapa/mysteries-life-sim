@@ -71,12 +71,15 @@ class NPCSystem:
     def _apply_schedule2(
         self, npc: NPC, state: GameState, week_index: int, hour: int, date_key: str
     ) -> None:
-        """按时间片日程推进 NPC（V0.15.2）。
+        """按时间片日程 + 行为候选推进 NPC（V0.15.2 + V0.15.3）。
 
-        一天 = 模板时间线上所有关键时刻依次执行（wake→breakfast→work→…→sleep），
-        每个时刻应用行为并累计需求/疲劳/位置——NPC 的"一天"是连续的，而非单一时刻。
+        一天 = 模板时间线上所有关键时刻依次执行；
+        每个时刻先查日程默认行为，再经 Behavior Candidate 决策（需求/状态/目标/世界加权）——
+        NPC 可能因疲劳过高、生病、缺钱而改变计划。
         """
+        from .npc.behavior import decide_behavior
         from .npc.schedule import ACTIVITY_LOCATIONS, ACTIVITY_NAMES
+        from .npc.effects import apply_result, build_result
 
         template = self.schedule_templates[npc.schedule_id]
         is_rest = npc.is_weekend(week_index)
@@ -88,25 +91,39 @@ class NPCSystem:
         timeline_hours = sorted(timeline.timeline.keys())
         if not timeline_hours:
             return
-        # 最后一个时刻是 final 行为（如 sleep 后停在住处）
         for t_hour in timeline_hours:
-            activity_id = timeline.timeline[t_hour]
+            scheduled = timeline.timeline[t_hour]  # 日程默认
+            action_id, _candidates = decide_behavior(
+                npc,
+                schedule_action=scheduled,
+                needs=npc.needs,
+                state=npc.state,
+                is_night=state.date.is_night(),
+                city_tension=state.world.city.get("tension", 0),
+                day_index=state.days_lived,
+            )
+
             npc.current_time = f"{t_hour:02d}:00"
-            npc.current_activity = ACTIVITY_NAMES.get(activity_id, activity_id)
-            loc_type = ACTIVITY_LOCATIONS.get(activity_id)
-            if loc_type == "home":
-                npc.location = npc.home
-            elif loc_type == "workplace":
-                npc.location = npc.job_location or npc.home
-            else:
-                npc.location = self._loc_for_type(loc_type) or npc.home
-            # 行为效果（疲劳/需求）：与 ACTIVITY_EFFECTS 一致的轻量化
-            if activity_id in ("work", "wander", "visit", "shop"):
-                npc.state.fatigue = min(100, npc.state.fatigue + 2)
-            elif activity_id in ("sleep", "rest", "stay_home"):
-                npc.state.fatigue = max(0, npc.state.fatigue - 4)
-            npc.fatigue = npc.state.fatigue
-            self.evolve_needs(npc, days=0.2, guarantee_meal=False)  # 每个时刻推进一小步需求
+            npc.current_activity = ACTIVITY_NAMES.get(action_id, action_id)
+            # 行为结果统一走 EffectSystem 风格：build → apply
+            loc_name_map = {"market": "市场区", "tavern": "北区", "street": "北区",
+                            "church": "黑夜教堂", "canteen": "市场区", "other_home": "东区"}
+            result = build_result(
+                npc, action_id,
+                prev_location=npc.location,
+                hours=1.0,
+                loc_type_map=ACTIVITY_LOCATIONS,
+                loc_name_map=loc_name_map,
+            )
+            # 未落到具体位置时按类型映射兜底
+            if result.to_location is None:
+                loc_type = ACTIVITY_LOCATIONS.get(action_id)
+                result.to_location = self._loc_for_type(loc_type) or npc.home
+            # work/shop 等提高对应地点活跃度
+            if action_id in ("work", "shop", "socialize", "visit"):
+                result.location_activity_delta = 3
+            apply_result(state, npc, result)
+            self.evolve_needs(npc, days=0.2, guarantee_meal=False)
 
     _LOC_TYPE_MAP = None
 

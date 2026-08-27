@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.15.2（Schedule 2.0）完成时
+最后更新：V0.15.3（Behavior Candidate）完成时
 
 ---
 
@@ -16,8 +16,8 @@
 | **V0.15** | **NPC Life System 1.0**：拆 6 小版 |
 | V0.15.1 | NPC State + Needs（已完成） |
 | V0.15.2 | Schedule 2.0 工作日/休息日/特殊日期（已完成） |
-| V0.15.3 | Behavior Candidate（NPC 会改变计划）← 下一步 |
-| V0.15.4 | 地点+经济联动（NPC 行为影响世界） |
+| V0.15.3 | Behavior Candidate（NPC 会改变计划）（已完成） |
+| V0.15.4 | 地点+经济联动（NPC 行为影响世界）← 下一步 |
 | V0.15.5 | NPC-NPC 轻量互动（社会形成） |
 | V0.15.6 | Event Hooks + Debug（为 V0.16 铺路） |
 | V0.16 | 事件图升级（异常→事件链） |
@@ -157,6 +157,8 @@ tests/
 11. **V0.15.2 时间片日程**：日程从"7 天循环数组"升级为"时刻→行为"表（Schedule2），一整天按时间线逐时刻推进（wake→…→sleep），NPC 的"一天"是连续的；旧数组日程仍兼容（无 schedule_id 的 NPC 走旧逻辑）。
 12. **V0.15.2 时刻级不兜底进食**：`guarantee_meal` 只对整日结算生效——否则每个时刻都补一顿饭，饥饿永远刷 0，"会饿"的实感消失。
 13. **V0.15.2 behavior 只影响当前时刻**：时刻级只更新需求/疲劳微调，不做行为决策（那留给 V0.15.3 Behavior Candidate）。
+14. **V0.15.3 评分而非 if-else**：行为由 `score = schedule + need + goal + world + random` 决定，未来 AI/Lisien 只改 score；需求/状态权重足够高（饿>60、疲劳>60、病>40 分）能压过日程基准 50，实现"生病不上班/太累回家"。
+15. **V0.15.3 测试用结构化断言**：不测"谁胜出"（受随机 ±10 影响脆弱），改测 `_need_weight/_goal_weight/_world_weight` 的明确贡献方向（饿时 eat 加分高、病时 work 为负、夜间 sleep 加分为正）。
 
 ---
 
