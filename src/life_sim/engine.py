@@ -25,6 +25,7 @@ class WorldEngine:
         else:
             self.event_system = EventSystem.from_graph_data(event_graphs)
         self.npc_system = NPCSystem.from_data(load_optional_json("npcs.json") or [])
+        self.npc_system.load_schedules()  # V0.15.2：加载时间片日程模板
         self.location_system = LocationSystem()
         self.economy_system = EconomySystem()
         self.relation_system = RelationshipSystem()

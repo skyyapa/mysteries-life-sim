@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.15.1（NPC State + Needs）完成时
+最后更新：V0.15.2（Schedule 2.0）完成时
 
 ---
 
@@ -14,9 +14,9 @@
 |---|---|
 | V0.14 | World Tick 2.0（已完） |
 | **V0.15** | **NPC Life System 1.0**：拆 6 小版 |
-| V0.15.1 | NPC State + Needs（已完） |
-| V0.15.2 | Schedule 2.0（工作日/休息日/特殊日期） |
-| V0.15.3 | Behavior Candidate（NPC 会改变计划） |
+| V0.15.1 | NPC State + Needs（已完成） |
+| V0.15.2 | Schedule 2.0 工作日/休息日/特殊日期（已完成） |
+| V0.15.3 | Behavior Candidate（NPC 会改变计划）← 下一步 |
 | V0.15.4 | 地点+经济联动（NPC 行为影响世界） |
 | V0.15.5 | NPC-NPC 轻量互动（社会形成） |
 | V0.15.6 | Event Hooks + Debug（为 V0.16 铺路） |
@@ -154,6 +154,9 @@ tests/
 8. **V0.15.1 需求整数化**：需求漂移/活动效果 round 成 int——保证存档往返一致（曾因 float 漂移 52.8000… ≠ 52 破坏往返测试）。
 9. **V0.15.1 日程兜底进食/休息**：需求若只漂不满足会全部顶到 100；给"当天活动无进食/休息"的 NPC 自动补一次 eat / 强制补休（rest>85）——无人饿死、无人累垮。
 10. **V0.15.1 日程满足只改需求不改 state**：`apply_activity(needs, None, ...)`——体力/健康的数值变化留给 V0.15.3 行为系统统一管，避免 schedule 与需求双写冲突（曾致疲劳断言失败）。
+11. **V0.15.2 时间片日程**：日程从"7 天循环数组"升级为"时刻→行为"表（Schedule2），一整天按时间线逐时刻推进（wake→…→sleep），NPC 的"一天"是连续的；旧数组日程仍兼容（无 schedule_id 的 NPC 走旧逻辑）。
+12. **V0.15.2 时刻级不兜底进食**：`guarantee_meal` 只对整日结算生效——否则每个时刻都补一顿饭，饥饿永远刷 0，"会饿"的实感消失。
+13. **V0.15.2 behavior 只影响当前时刻**：时刻级只更新需求/疲劳微调，不做行为决策（那留给 V0.15.3 Behavior Candidate）。
 
 ---
 
@@ -162,9 +165,10 @@ tests/
 用户给定的优先级（按顺序）：
 
 1. **V0.15 NPC Life System 1.0**（进行中）
-   - ✅ V0.15.1 完成：NPCState（health/fatigue/stress/mood/money/sick/injured/missing/alive）+ NPCNeeds（hunger/rest/social/safety）+ NPCRelationship 四维（trust/familiarity/affection/fear）+ 需求演化/兜底 + 旧存档迁移
-   - ⏭ 下一步 **V0.15.2 Schedule 2.0**：日程支持工作日/休息日/特殊日期/季节/节日（目前只有 weekday+weekend 两套）
-   - 之后 V0.15.3 Behavior Candidate → V0.15.4 联动 → V0.15.5 互动 → V0.15.6 Hooks+Debug
+   - ✅ V0.15.1 完成：NPCState + NPCNeeds + NPCRelationship 四维 + 需求演化/兜底 + 旧存档迁移
+   - ✅ V0.15.2 完成：Schedule2（时刻→行为表）+ data/schedules.json（tavern_owner/factory_worker/priest/student 四模板）+ 6 NPC 接线 + 工作日/休息日/特殊日
+   - ⏭ 下一步 **V0.15.3 Behavior Candidate**：需求→行为候选→评分→选择（NPC 会因疲劳/生病改变计划）——这是"活 NPC"的核心
+   - 之后 V0.15.4 联动（NPC 行为影响地点/经济）→ V0.15.5 互动（NPC-NPC）→ V0.15.6 Hooks+Debug
 2. **V0.16 事件图分支深化**（图级分支）
 3. **V0.20 完整廷根模拟**（城市感知层：每日动态摘要）
 4. 长期：途径选择（低序列）；一年人生总结结局

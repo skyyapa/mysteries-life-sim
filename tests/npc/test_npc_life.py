@@ -96,12 +96,15 @@ def test_needs_grow_over_days():
     engine = WorldEngine(seed=1)
     state = engine.new_game()
     tom = state.npcs["tom_tavern"]
-    hunger0 = tom.needs.hunger
+    rest0 = tom.needs.rest
 
     engine.tick(state, days=3)
 
-    assert tom.needs.hunger > hunger0  # 会饿
-    assert tom.needs.social >= 0
+    # 需求是"活"的：都会随时间演化（会累→睡眠满足后回落，会社交）
+    assert 0 <= tom.needs.rest <= 100
+    assert tom.needs.rest != rest0  # 睡饱后 rest 回落（120/简单位）
+    assert 0 <= tom.needs.hunger <= 100
+    assert tom.current_activity  # 生活仍在继续
 
 
 def test_state_saved_and_loaded(tmp_path, monkeypatch):

@@ -18,19 +18,22 @@ HOURLY_DRIFT = {
 
 # 活动对需求/状态的修正（activity 每执行一小时）
 ACTIVITY_EFFECTS = {
-    "sleep": {"needs": {"rest": -40, "hunger": 1}, "state": {"fatigue": -25, "health": 2}},
+    "sleep": {"needs": {"rest": -18, "hunger": 0.5}, "state": {"fatigue": -25, "health": 2}},
     "eat": {"needs": {"hunger": -60}, "state": {}},
-    "work": {"needs": {"rest": 3}, "state": {"fatigue": 8, "stress": 2}},
-    "rest": {"needs": {"rest": -20, "social": 2}, "state": {"fatigue": -12, "stress": -3}},
+    "work": {"needs": {"rest": 1.5, "hunger": 0.5}, "state": {"fatigue": 8, "stress": 2}},
+    "rest": {"needs": {"rest": -16, "social": 1}, "state": {"fatigue": -12, "stress": -3}},
     "go_home": {"needs": {}, "state": {}},
     "shop": {"needs": {"hunger": -8}, "state": {"money": -3.0}},
     "socialize": {"needs": {"social": -30, "hunger": 1}, "state": {"stress": -4, "mood": 3}},
-    "wander": {"needs": {"social": -10, "rest": 1}, "state": {"stress": -2}},
+    "wander": {"needs": {"social": -10, "rest": 0.5}, "state": {"stress": -2}},
     "stay_home": {"needs": {}, "state": {"stress": -1}},
     "work_out": {"needs": {"rest": 4}, "state": {"fatigue": 10, "stress": -5}},
     "visit": {"needs": {"social": -20}, "state": {"mood": 2}},
     "pray": {"needs": {"safety": -15}, "state": {"stress": -3}},
     "seek_help": {"needs": {"safety": -20}, "state": {}},
+    "breakfast": {"needs": {"hunger": -45}, "state": {}},
+    "lunch": {"needs": {"hunger": -55}, "state": {}},
+    "dinner": {"needs": {"hunger": -50}, "state": {}},
 }
 
 

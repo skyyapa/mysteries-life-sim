@@ -4,12 +4,19 @@ from .models import GameState, NPC, NPCScheduleEntry
 
 
 class NPCSystem:
-    def __init__(self, npcs: dict[str, NPC]) -> None:
+    def __init__(self, npcs: dict[str, NPC], schedule_templates: dict | None = None) -> None:
         self.templates = npcs
+        self.schedule_templates = schedule_templates or {}
 
     @classmethod
     def from_data(cls, data: list[dict]) -> NPCSystem:
         return cls({npc.id: npc for npc in (npc_from_data(item) for item in data)})
+
+    def load_schedules(self) -> None:
+        """V0.15.2：加载 data/schedules.json 时间片日程模板。"""
+        from .npc.schedule import load_schedule_templates
+
+        self.schedule_templates = load_schedule_templates(self)
 
     def create_state(self) -> dict[str, NPC]:
         return {
@@ -20,6 +27,7 @@ class NPCSystem:
                 goal=npc.goal,
                 home=npc.home,
                 location=npc.location,
+                job_location=npc.job_location,
                 fatigue=npc.fatigue,
                 money=npc.money,
                 trust=npc.trust,
@@ -30,6 +38,7 @@ class NPCSystem:
                 relationship=dict(npc.relationship),
                 state=npc.state,
                 needs=npc.needs,
+                schedule_id=npc.schedule_id,
             )
             for npc_id, npc in self.templates.items()
         }
@@ -37,9 +46,18 @@ class NPCSystem:
     def tick(self, state: GameState) -> None:
         self.ensure_npcs(state)
         week_index = state.days_lived % 7
+        hour = state.date.hour
+        date_key = (
+            f"{state.date.year}-{state.date.month:02d}-{state.date.day:02d}"
+        )
         for npc in state.npcs.values():
             if npc.disappeared:
                 continue  # 失踪者不再按日程活动
+            # V0.15.2：使用时间片日程（若该 NPC 配了 schedule_id）
+            if npc.schedule_id and npc.schedule_id in self.schedule_templates:
+                self._apply_schedule2(npc, state, week_index, hour, date_key)
+                continue
+            # 旧 7 天循环日程（兼容）
             if npc.is_weekend(week_index) and npc.weekend_schedule:
                 entries = npc.weekend_schedule
             else:
@@ -48,14 +66,71 @@ class NPCSystem:
                 continue
             entry = entries[week_index % len(entries)]
             npc.apply_schedule_entry(entry)
-            # V0.15.1：需求随每日生活演化
             self.evolve_needs(npc, days=1)
 
-    def evolve_needs(self, npc: NPC, days: float = 1.0) -> None:
+    def _apply_schedule2(
+        self, npc: NPC, state: GameState, week_index: int, hour: int, date_key: str
+    ) -> None:
+        """按时间片日程推进 NPC（V0.15.2）。
+
+        一天 = 模板时间线上所有关键时刻依次执行（wake→breakfast→work→…→sleep），
+        每个时刻应用行为并累计需求/疲劳/位置——NPC 的"一天"是连续的，而非单一时刻。
+        """
+        from .npc.schedule import ACTIVITY_LOCATIONS, ACTIVITY_NAMES
+
+        template = self.schedule_templates[npc.schedule_id]
+        is_rest = npc.is_weekend(week_index)
+        timeline = template.rest_day if is_rest else template.weekday
+        special = template.special.get(date_key)
+        if special is not None:
+            timeline = special
+
+        timeline_hours = sorted(timeline.timeline.keys())
+        if not timeline_hours:
+            return
+        # 最后一个时刻是 final 行为（如 sleep 后停在住处）
+        for t_hour in timeline_hours:
+            activity_id = timeline.timeline[t_hour]
+            npc.current_time = f"{t_hour:02d}:00"
+            npc.current_activity = ACTIVITY_NAMES.get(activity_id, activity_id)
+            loc_type = ACTIVITY_LOCATIONS.get(activity_id)
+            if loc_type == "home":
+                npc.location = npc.home
+            elif loc_type == "workplace":
+                npc.location = npc.job_location or npc.home
+            else:
+                npc.location = self._loc_for_type(loc_type) or npc.home
+            # 行为效果（疲劳/需求）：与 ACTIVITY_EFFECTS 一致的轻量化
+            if activity_id in ("work", "wander", "visit", "shop"):
+                npc.state.fatigue = min(100, npc.state.fatigue + 2)
+            elif activity_id in ("sleep", "rest", "stay_home"):
+                npc.state.fatigue = max(0, npc.state.fatigue - 4)
+            npc.fatigue = npc.state.fatigue
+            self.evolve_needs(npc, days=0.2, guarantee_meal=False)  # 每个时刻推进一小步需求
+
+    _LOC_TYPE_MAP = None
+
+    def _loc_for_type(self, loc_type: str | None) -> str | None:
+        if loc_type is None:
+            return None
+        if self._LOC_TYPE_MAP is None:
+            self._LOC_TYPE_MAP = {
+                "market": "市场区",
+                "tavern": "北区",
+                "street": "北区",
+                "church": "黑夜教堂",
+                "canteen": "市场区",
+                "other_home": "东区",
+            }
+        return self._LOC_TYPE_MAP.get(loc_type)
+
+    def evolve_needs(self, npc: NPC, days: float = 1.0, guarantee_meal: bool = True) -> None:
         """需求每日演化：需求随时间增长，日常活动满足对应需求。
 
         - drift：饥饿/休息/社交自然累积（会饿会累）
-        - satisfy：当天日程里的进食/休息/社交活动返还需求（不会永远飙到 100）
+        - satisfy：当天日程里的进食/休息/社交活动返还需求
+        - guarantee_meal：整日结算时若当天无进食活动，兜底吃一顿（防饿死）；
+          时刻级调用（Schedule 2.0 逐步推进）不兜底，只按真实活动满足。
         """
         from .npc.needs import apply_activity, drift_needs
 
@@ -72,10 +147,11 @@ class NPCSystem:
             mapped = "socialize"
         elif any(k in activity for k in ("买", "市场", "采买")):
             mapped = "shop"
-        # 兜底：每天至少进食一次（无人会饿死）；隔天补一次休息
-        if mapped is None:
+        # 兜底：整日结算且当天无进食活动时，补一次进食（无人会饿死）
+        if mapped is None and guarantee_meal:
             mapped = "eat"
-        apply_activity(npc.needs, None, mapped, hours=1)
+        if mapped:
+            apply_activity(npc.needs, None, mapped, hours=1)
         # 睡眠是刚需：当 rest 需求过高时强制补休
         if npc.needs.rest > 85:
             apply_activity(npc.needs, None, "rest", hours=2)
@@ -132,6 +208,7 @@ def npc_from_data(data: dict) -> NPC:
         goal=data["goal"],
         home=data["home"],
         location=data.get("location", data["home"]),
+        job_location=data.get("job_location"),
         fatigue=int(data.get("fatigue", 30)),
         money=int(data.get("money", 0)),
         trust=trust,
@@ -142,4 +219,5 @@ def npc_from_data(data: dict) -> NPC:
         disappeared=bool(data.get("disappeared", False)),
         disappeared_day=data.get("disappeared_day"),
         relationship=relationship,
+        schedule_id=data.get("schedule_id"),
     )

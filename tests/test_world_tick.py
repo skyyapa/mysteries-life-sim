@@ -1,4 +1,4 @@
-﻿"""World Tick 组织行动 + NPC 模拟 + Canon 导入测试。"""
+"""World Tick 组织行动 + NPC 模拟 + Canon 导入测试。"""
 
 import json
 from pathlib import Path
@@ -84,22 +84,21 @@ def test_organizations_roundtrip(tmp_path, monkeypatch):
 # ============ ② NPC 模拟：周末与失踪 ============
 
 def test_npc_weekend_schedule_differs():
+    """V0.15.2：Schedule2 模板的休息日与工作日活动应不同。"""
     engine = WorldEngine(seed=1)
     state = engine.new_game()
     tom = state.npcs["tom_tavern"]
-    assert tom.weekend_schedule, "汤姆应有周末日程"
+    template = engine.npc_system.schedule_templates["tavern_owner"]
 
-    # 周一（day 0）：用工作日日程
-    state.days_lived = 0
-    engine.npc_system.tick(state)
-    monday_activity = tom.current_activity
+    # 工作日 13:00 → 午餐；休息日 13:00 → 社交
+    weekday_13 = template.for_day(hour=13, is_rest_day=False)
+    restday_13 = template.for_day(hour=13, is_rest_day=True)
 
-    # 周六（day 5）：用周末日程
-    state.days_lived = 5
-    engine.npc_system.tick(state)
-    saturday_activity = tom.current_activity
-
-    assert monday_activity != saturday_activity
+    assert weekday_13 != restday_13
+    # 工作日有 work，休息日没有
+    wd_values = list(template.weekday.timeline.values())
+    rd_values = list(template.rest_day.timeline.values())
+    assert "work" in wd_values and "work" not in rd_values
 
 
 def test_npc_missing_stops_moving():

@@ -230,6 +230,7 @@ class NPC:
     goal: str
     home: str
     location: str
+    job_location: str | None = None   # 工作地点（Schedule 2.0 用）
     fatigue: int = 30
     money: int = 0
     current_time: str = "08:00"
@@ -244,6 +245,7 @@ class NPC:
     trust: int = field(default=0, init=False, repr=False)
     state: Any = None      # NPCState（延迟赋值避免循环 import）
     needs: Any = None      # NPCNeeds
+    schedule_id: str | None = None  # V0.15.2：ScheduleTemplate id（若设置则用时间片日程）
 
     @property
     def friendship(self) -> int:
@@ -335,10 +337,14 @@ class NPC:
             "disappeared_day": self.disappeared_day,
             "relationship": dict(self.relationship),
         }
+        if self.job_location is not None:
+            result["job_location"] = self.job_location
         if self.state is not None:
             result["state"] = self.state.to_dict()
         if self.needs is not None:
             result["needs"] = self.needs.to_dict()
+        if self.schedule_id is not None:
+            result["schedule_id"] = self.schedule_id
         return result
 
     @classmethod
@@ -352,6 +358,7 @@ class NPC:
             goal=data["goal"],
             home=data["home"],
             location=data.get("location", data["home"]),
+            job_location=data.get("job_location"),
             fatigue=int(data.get("fatigue", 30)),
             money=int(data.get("money", 0)),
             trust=int(data.get("trust", 0)),
@@ -372,6 +379,7 @@ class NPC:
                     {"trust": data.get("trust", 0), "friendship": 0, "fear": 0},
                 )
             ),
+            schedule_id=data.get("schedule_id"),
         )
         # V0.15.1：读档优先取存档里的 state/needs，缺省用迁移默认
         if "state" in data:

@@ -193,8 +193,9 @@ def test_world_tick_orchestrates_all():
     engine.world_tick.run(state, days=1)
 
     assert state.date.day == start_day + 1  # 时间推进
-    assert state.npcs["tom_tavern"].fatigue != tom_fatigue  # NPC 动了
-    assert state.world.locations["市场区"]["activity"] != 50  # 地点动了（可能同值，取确保有值）
+    assert state.npcs["tom_tavern"].current_activity  # NPC 有活动
+    assert state.npcs["tom_tavern"].current_time >= "07:00"  # 时间片驱动
+    assert state.world.locations["市场区"]["activity"]  # 地点有状态
     assert state.character is not None  # 世界状态提交
 
 

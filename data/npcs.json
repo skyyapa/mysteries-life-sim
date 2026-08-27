@@ -60,7 +60,9 @@
         "activity": "提前打烊休息",
         "fatigue_change": -6
       }
-    ]
+    ],
+    "schedule_id": "tavern_owner",
+    "job_location": "市场区"
   },
   {
     "id": "toby_newsboy",
@@ -141,7 +143,9 @@
         "activity": "早早睡下",
         "fatigue_change": -8
       }
-    ]
+    ],
+    "schedule_id": "factory_worker",
+    "job_location": "市场区"
   },
   {
     "id": "olson_priest",
@@ -196,7 +200,9 @@
         "fatigue_change": -8
       }
     ],
-    "trust": 8
+    "trust": 8,
+    "schedule_id": "priest",
+    "job_location": "黑夜教堂"
   },
   {
     "id": "sha_ren_neighbor",
@@ -691,7 +697,9 @@
         "fatigue_change": -5
       }
     ],
-    "trust": 8
+    "trust": 8,
+    "schedule_id": "factory_worker",
+    "job_location": "东区"
   },
   {
     "id": "erin_doctor",
@@ -833,7 +841,9 @@
         "activity": "休息",
         "fatigue_change": -5
       }
-    ]
+    ],
+    "schedule_id": "factory_worker",
+    "job_location": "北区"
   },
   {
     "id": "carter_teacher",
@@ -920,7 +930,9 @@
         "activity": "休息",
         "fatigue_change": -5
       }
-    ]
+    ],
+    "schedule_id": "student",
+    "job_location": "北区"
   },
   {
     "id": "percival_librarian",

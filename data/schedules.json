@@ -1,0 +1,85 @@
+[
+  {
+    "id": "tavern_owner",
+    "weekday": {
+      "07:00": "wake",
+      "08:00": "breakfast",
+      "09:00": "work",
+      "13:00": "lunch",
+      "14:00": "work",
+      "22:00": "go_home",
+      "23:00": "sleep"
+    },
+    "rest_day": {
+      "08:00": "wake",
+      "10:00": "shop",
+      "14:00": "socialize",
+      "22:00": "sleep"
+    }
+  },
+  {
+    "id": "factory_worker",
+    "weekday": {
+      "06:00": "wake",
+      "06:30": "breakfast",
+      "07:00": "work",
+      "12:00": "lunch",
+      "13:00": "work",
+      "18:00": "go_home",
+      "22:00": "sleep"
+    },
+    "rest_day": {
+      "08:00": "wake",
+      "10:00": "shop",
+      "15:00": "visit",
+      "22:00": "sleep"
+    }
+  },
+  {
+    "id": "priest",
+    "weekday": {
+      "06:00": "wake",
+      "07:00": "pray",
+      "08:00": "work",
+      "12:00": "lunch",
+      "13:00": "work",
+      "19:00": "pray",
+      "21:00": "stay_home",
+      "23:00": "sleep"
+    },
+    "rest_day": {
+      "07:00": "wake",
+      "09:00": "pray",
+      "11:00": "socialize",
+      "20:00": "stay_home",
+      "23:00": "sleep"
+    },
+    "special": {
+      "1348-05-01": {
+        "08:00": "wake",
+        "09:00": "pray",
+        "10:00": "socialize"
+      }
+    }
+  },
+  {
+    "id": "student",
+    "weekday": {
+      "06:30": "wake",
+      "07:00": "breakfast",
+      "08:00": "work",
+      "12:00": "lunch",
+      "13:00": "work",
+      "17:00": "go_home",
+      "21:00": "rest",
+      "23:00": "sleep"
+    },
+    "rest_day": {
+      "08:00": "wake",
+      "10:00": "wander",
+      "14:00": "socialize",
+      "21:00": "rest",
+      "23:00": "sleep"
+    }
+  }
+]

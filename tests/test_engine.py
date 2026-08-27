@@ -136,15 +136,16 @@ def test_world_engine_creates_21_npcs_with_schedules():
 def test_world_engine_tick_updates_npc_activity_and_fatigue():
     engine = WorldEngine(seed=1)
     state = engine.new_game()
-    tom = state.npcs["tom_tavern"]
+    tom = state.npcs["tom_tavern"]  # 使用 Schedule 2.0（tavern_owner 模板）
     fatigue = tom.fatigue
 
     engine.tick(state)
 
-    assert tom.current_time == "12:00"
-    assert tom.location == "北区"
-    assert tom.current_activity == "简单吃午饭"
-    assert tom.fatigue == fatigue - 2
+    # V0.15.2：一天走完整时间线，最终停在入睡（23:00）
+    assert tom.current_time == "23:00"
+    assert tom.current_activity == "入睡"
+    assert tom.location == tom.home
+    assert 0 <= tom.fatigue <= 100  # 全天活动后疲劳仍在界内
 
 
 def test_world_engine_tick_100_days_keeps_world_state_consistent():
