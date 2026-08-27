@@ -353,7 +353,7 @@ button:active {
 
 .play-area {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   max-height: 100vh;
   min-width: 0;
   overflow: hidden;
@@ -581,7 +581,8 @@ button:active {
 
 .story-window {
   overflow: hidden;
-  min-height: 260px;
+  min-height: 420px;
+  height: 100%;
   border: 1px solid rgba(244, 239, 230, 0.16);
   border-radius: 8px;
   background: rgba(17, 18, 17, 0.78);
@@ -624,7 +625,7 @@ button:active {
 
 .story-log {
   height: 100%;
-  max-height: calc(100vh - 330px);
+  max-height: calc(100vh - 220px);
   overflow: auto;
   padding: 22px;
 }

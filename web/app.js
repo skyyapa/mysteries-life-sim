@@ -2082,10 +2082,6 @@ const ids = [
 
 const cappedStatIds = ids.filter((id) => id !== "money");
 
-document.querySelectorAll("[data-action]").forEach((button) => {
-  button.addEventListener("click", () => manualAction(button.dataset.action));
-});
-
 document.querySelectorAll("[data-career]").forEach((button) => {
   button.addEventListener("click", () => changeCareer(button.dataset.career));
 });
@@ -2095,18 +2091,8 @@ document.getElementById("autoDay").addEventListener("click", () => {
     render();
     return; // 事件等待玩家选择
   }
-  // 一次点击进入/恢复自动连播：直到事件或跑满一批
-  runAutoLifeLoop();
-});
-
-document.getElementById("autoMonth").addEventListener("click", () => {
-  // 快速过一个月：主角自动生活，遇到事件立即停下交给玩家
-  for (let index = 0; index < 30; index += 1) {
-    if (state.pendingEvent) {
-      break;
-    }
-    takeAction(pickAutoAction(), false);
-  }
+  // 点击一下 = 过一天：主角自动生活一天，遇到事件停下交给玩家
+  takeAction(pickAutoAction());
   saveState();
   render();
   if (state.pendingEvent) {
@@ -2116,12 +2102,6 @@ document.getElementById("autoMonth").addEventListener("click", () => {
 
 document.getElementById("newLife").addEventListener("click", () => {
   state = createRandomState();
-  saveState();
-  render();
-});
-
-document.getElementById("toggleAutoLife").addEventListener("click", () => {
-  state.ui.autoLife = !state.ui.autoLife;
   saveState();
   render();
 });
@@ -2278,11 +2258,6 @@ function resolveEvent(choiceIndex, shouldRender = true) {
 
   if (shouldRender) {
     render();
-  }
-
-  // 自动连播模式下，事件解决后自动恢复生活（无需再点「继续生活」）
-  if (state.ui.autoPlay && !state.pendingEvent) {
-    setTimeout(runAutoLifeLoop, 60);
   }
 }
 
@@ -2600,35 +2575,6 @@ function liveAutomaticDay() {
   const actionId = pickAutoAction();
   takeAction(actionId, false); // silent：不逐次渲染
   return !state.pendingEvent; // true = 今天没触发事件，可继续自动
-}
-
-const AUTO_BATCH_DAYS = 30;
-
-/** 自动连播：从当前状态一口气过日，直到遇到事件（保留 autoPlay）或跑满一批。 */
-function runAutoLifeLoop() {
-  state.ui.autoPlay = true;
-  let advanced = 0;
-  while (advanced < AUTO_BATCH_DAYS && !state.pendingEvent && state.ui.autoPlay) {
-    liveAutomaticDay();
-    advanced += 1;
-  }
-  saveState();
-  render();
-  if (state.pendingEvent) {
-    showSaveToast("遇到事件——轮到你做选择了");
-    // autoPlay 保持开启：玩家选完会自动继续生活
-  } else {
-    state.ui.autoPlay = false;
-    if (advanced >= AUTO_BATCH_DAYS) {
-      showSaveToast(`已连续生活 ${AUTO_BATCH_DAYS} 天，稍作休息——点「继续生活」接着过`);
-    }
-  }
-}
-
-/** 手动干预：退出自动连播，执行指定行动。 */
-function manualAction(actionId) {
-  state.ui.autoPlay = false;
-  takeAction(actionId);
 }
 
 function advanceDay() {
@@ -3391,15 +3337,12 @@ function formatDate() {
 
 function renderAutoLifeBadge() {
   const badge = document.getElementById("autoLifeBadge");
-  const toggle = document.getElementById("toggleAutoLife");
-  if (!badge || !toggle) {
+  if (!badge) {
     return;
   }
-  const autoOn = state.ui.autoLife;
-  badge.textContent = autoOn ? "◇ 自动生活" : "● 手动模式";
-  badge.classList.toggle("on", autoOn);
-  badge.classList.toggle("off", !autoOn);
-  toggle.textContent = autoOn ? "当前：自动生活" : "当前：手动（点行动按钮）";
+  badge.textContent = "主角自动生活 · 点「过一天」推进";
+  badge.classList.add("on");
+  badge.classList.remove("off");
 }
 
 function render() {
@@ -3678,15 +3621,7 @@ function renderContacts() {
 
 function renderPendingEvent() {
   const panel = document.getElementById("eventPanel");
-  const buttons = document.querySelectorAll("[data-action]");
   const event = state.pendingEvent;
-
-  buttons.forEach((button) => {
-    const isCoolingInvestigation =
-      button.dataset.action === "investigate" && getInvestigationCooldown() > 0;
-    button.disabled = Boolean(event) || isCoolingInvestigation;
-    button.classList.toggle("cooling", isCoolingInvestigation);
-  });
 
   if (!event) {
     panel.classList.add("hidden");
