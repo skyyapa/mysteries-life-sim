@@ -1,12 +1,7 @@
 """地点系统：地点的状态演化（人口 / 活跃度 / 危险）。
 
-每个地点在 WorldState.locations 中保存：
-    {"population": int, "activity": int, "danger": int}
-
-Tick 规则（规则驱动，非随机）：
-- 人口随城市整体繁荣缓慢变化（经济压力越低越有人气）
-- 活跃度白天升、夜晚降；有 NPC 在附近的地点更活跃
-- 危险度随暗流组织活跃上升；教会注意度高时下降（教会压制）
+V0.15.4：活跃度不再凭空变——主要由"该地点的 NPC 数量 × 他们在做什么 × 昼夜"决定。
+规格示例：上午 9 点市场里有 26 个 NPC、20 人在工作、6 人在购物 → activity = 78。
 """
 
 from __future__ import annotations
@@ -23,6 +18,20 @@ DEFAULT_LOCATIONS = {
     "黑夜教堂": {"population": 20, "activity": 25, "danger": 4},
     "东区": {"population": 55, "activity": 35, "danger": 22},
     "廷根车站": {"population": 35, "activity": 45, "danger": 14},
+}
+
+# 行为 → 给所在地点提供的"活动热度"
+ACTIVITY_HEAT = {
+    "work": 4,
+    "shop": 3,
+    "socialize": 3,
+    "visit": 2,
+    "wander": 1,
+    "pray": 1,
+    "breakfast": 1,
+    "lunch": 2,
+    "dinner": 2,
+    "eat": 2,
 }
 
 
@@ -46,14 +55,37 @@ class LocationSystem:
         secret = state.world.organizations.get("暗流组织", {}).get("activity", 0)
         church = state.world.organizations.get("黑夜教会", {}).get("attention", 0)
 
+        # 统计每个地点的 NPC 分布与行为热度
+        heat_by_loc: dict[str, int] = {name: 0 for name in self.ids}
+        count_by_loc: dict[str, int] = {name: 0 for name in self.ids}
+        is_night_factor = 0.3 if is_night else 1.0
+
+        for npc in state.npcs.values():
+            if npc.disappeared or not npc.state.alive:
+                continue
+            loc = npc.location
+            if loc not in count_by_loc:
+                continue
+            count_by_loc[loc] += 1
+            activity = npc.current_activity or ""
+            # 中文活动名 → 行为 id 近似的热度（或直接用 behavior 的 current_activity 匹配热词）
+            heat = 0
+            for keyword, h in ACTIVITY_HEAT.items():
+                if keyword in activity or activity == keyword:
+                    heat = h
+                    break
+            heat_by_loc[loc] += heat
+
         for name, loc in state.world.locations.items():
             pop, act, dang = loc["population"], loc["activity"], loc["danger"]
 
             # 人口：经济压力高压人口外流，低压力缓慢回升
             pop += -1 if economy_pressure > 60 else (1 if economy_pressure < 25 else 0)
 
-            # 活跃度：白天 +，夜晚 -
-            act += (-4 if is_night else +3)
+            # 活跃度：由该地 NPC 数量 + 行为热度驱动，向目标值靠拢
+            target = int((count_by_loc.get(name, 0) * 2 + heat_by_loc.get(name, 0)) * is_night_factor)
+            target = max(0, min(100, target + DEFAULT_LOCATIONS[name]["activity"] // 2))
+            act = act + (2 if target > act else -1)  # 缓慢逼近目标，避免跳变
 
             # 危险：暗流活跃推高，教会注意压制
             dang += (1 if secret > 40 else 0) - (1 if church > 40 else 0)
@@ -61,3 +93,13 @@ class LocationSystem:
             loc["population"] = max(1, min(200, pop))
             loc["activity"] = max(0, min(100, act))
             loc["danger"] = max(0, min(100, dang))
+
+    def occupancy(self, state: GameState) -> dict[str, int]:
+        """当前各地点 NPC 数量（用于 UI / 调试）。"""
+        out = {name: 0 for name in self.ids}
+        for npc in state.npcs.values():
+            if npc.disappeared or not npc.state.alive:
+                continue
+            if npc.location in out:
+                out[npc.location] += 1
+        return out

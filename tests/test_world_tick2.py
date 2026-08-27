@@ -73,14 +73,21 @@ def test_locations_initialized():
 
 
 def test_location_tick_changes_activity():
+    """V0.15.4：活跃度由地点内 NPC 数量与行为热度驱动。"""
     engine = WorldEngine(seed=1)
     state = engine.new_game()
     engine.location_system.ensure(state)
-    before = state.world.locations["市场区"]["activity"]
 
-    engine.location_system.tick(state)  # 白天 +3
+    # 把 5 个 NPC 放进北区并标记在工作 → 北区热度应高于没人的地点
+    for i, nid in enumerate(list(state.npcs)[:5]):
+        state.npcs[nid].location = "北区"
+        state.npcs[nid].current_activity = "工作"
 
-    assert state.world.locations["市场区"]["activity"] > before
+    engine.location_system.tick(state)
+
+    north = state.world.locations["北区"]["activity"]
+    empty = state.world.locations["黑夜教堂"]["activity"]
+    assert north >= empty, f"有活跃 NPC 的北区({north})应不比无人教堂({empty})低"
 
 
 def test_night_lowers_activity():

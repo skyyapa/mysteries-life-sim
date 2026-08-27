@@ -84,6 +84,10 @@ def build_result(
     # 事件钩子（V0.15.3 基础，完整 EventSystem 监听在 V0.15.6）
     if action == "work":
         result.emitted_events.append("NPC_WORKED")
+        # V0.15.4：工作赚日薪（按职业）
+        from ..economy.system import npc_wage
+
+        result.money_delta += npc_wage(npc.job)
     if action == "seek_help":
         result.emitted_events.append("NPC_SEEK_HELP")
     if action == "sleep" and prev_location and prev_location != (npc.home or ""):
