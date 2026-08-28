@@ -419,6 +419,8 @@ class WorldState:
     expired_traced: dict[str, int] = field(default_factory=dict)
     locations: dict[str, dict[str, int]] = field(default_factory=dict)
     npcs: dict[str, NPC] = field(default_factory=dict)
+    daily_bulletin: dict[str, Any] = field(default_factory=dict)  # V0.20 当日见闻
+    bulletin: list[dict[str, Any]] = field(default_factory=list)  # 历史公告
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -436,6 +438,8 @@ class WorldState:
                 name: dict(values) for name, values in self.locations.items()
             },
             "npcs": {npc_id: npc.to_dict() for npc_id, npc in self.npcs.items()},
+            "daily_bulletin": dict(self.daily_bulletin),
+            "bulletin": list(self.bulletin),
         }
 
     @classmethod
@@ -457,6 +461,8 @@ class WorldState:
                 npc_id: NPC.from_dict(npc)
                 for npc_id, npc in data.get("npcs", {}).items()
             },
+            daily_bulletin=dict(data.get("daily_bulletin", {})),
+            bulletin=list(data.get("bulletin", [])),
         )
         # 兼容旧存档：确保组织键存在
         for org, default in (

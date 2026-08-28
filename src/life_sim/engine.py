@@ -175,6 +175,7 @@ class WorldEngine:
         self.update_organizations(state)
         self.location_system.tick(state)
         self.relation_system.tick(state)
+        self._update_bulletin(state)  # V0.20：城市每日见闻
         self.tick_expired_events(state)
         self._consume_world_events(state)  # V0.16：总线事件驱动事件图
         self.event_system.auto_advance(state)
@@ -184,6 +185,12 @@ class WorldEngine:
         """V0.16：把 bus 中未消费的世界事件交给事件图（驱动链图）。"""
         for event in self.event_bus.drain_new():
             self.event_system.handle_world_event(event, state)
+
+    def _update_bulletin(self, state: GameState) -> None:
+        """V0.20：每日城市见闻——让玩家感受到城市在运行。"""
+        from .city.news import daily_bulletin
+
+        daily_bulletin(state)
 
     def update_organizations(self, state: GameState) -> None:
         """组织行动层：两大组织逐日演化。

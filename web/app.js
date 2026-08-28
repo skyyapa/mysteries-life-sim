@@ -2611,7 +2611,41 @@ function worldTick() {
   tickMadness();
   tickOrganizations();
   tickExpiredEvents();
+  tickCityTidings();
   updateStoryArcs();
+}
+
+/** V0.20：城市每日见闻——让玩家感受到城市在运行（与 Python city.news 语义一致）。 */
+function tickCityTidings() {
+  const month = state.month || 1;
+  const candidates = [];
+  // 失踪优先（刚发生 3 天内才是新闻）
+  const missing = Object.values(state.contacts).filter(
+    (c) => c.disappeared && c._disappearedAt !== undefined && state.daysLived - c._disappearedAt <= 3,
+  );
+  if (missing.length > 0) {
+    const names = missing.slice(0, 2).map((c) => c.name).join("、");
+    candidates.push(`${names}已经好几天不见人影了，街坊们小声议论着。`);
+  }
+  const pressure = state.world.economyPressure || 0;
+  if (pressure >= 70) candidates.push("煤价与面包价又涨了一截，市场里到处是压低的抱怨声。");
+  else if (pressure >= 45) candidates.push("最近物价不太稳，摊贩们说货运越来越不好走。");
+  const secret = state.world.organizations?.["暗流组织"]?.activity || 0;
+  const church = state.world.organizations?.["黑夜教会"]?.attention || 0;
+  if (secret >= 60) candidates.unshift("夜里东区多了些不该有的动静，守夜人一遍遍巡查看不出端倪。");
+  else if (church >= 65) candidates.unshift("教堂的信徒今早多了许多，教士们低声说着什么。");
+  const eastDanger = state.world.locations?.east?.danger || state.world.locations?.["东区"]?.danger || 0;
+  if (eastDanger >= 65) candidates.push("巡警说东区最近不太平，劝人夜里少走深巷。");
+  if (candidates.length === 0) {
+    if (month === 12 || month === 1 || month === 2) candidates.push("湿冷的冬天，屋檐下晾的衣服三天都不干。");
+    else if (month >= 3 && month <= 5) candidates.push("开春了，街道上的雪水化成泥，马车夫都在骂路难走。");
+    else candidates.push("廷根今日风平浪静，和昨天没什么两样。");
+  }
+  state.world.dailyTidings = candidates[0];
+}
+
+function getCityTidings() {
+  return state.world.dailyTidings || "廷根人的生活，一如既往。";
 }
 
 /**
@@ -3485,6 +3519,10 @@ function renderWorld() {
   document.getElementById("madnessStage").textContent = getMadnessStage();
   document.getElementById("npcScheduleCount").textContent =
     `${npcSummary.scheduled}/${npcSummary.total}`;
+  const tidingsEl = document.getElementById("cityTidings");
+  if (tidingsEl) {
+    tidingsEl.textContent = `廷根 · ${getCityTidings()}`;
+  }
 }
 
 function renderCareer() {
