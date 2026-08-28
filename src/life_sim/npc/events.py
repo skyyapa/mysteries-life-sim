@@ -50,16 +50,24 @@ class WorldEventBus:
     def __init__(self) -> None:
         self._history: list[WorldEvent] = []
         self._listeners: dict[str, list[Callable[[WorldEvent], None]]] = {}
+        self._cursor = 0  # V0.16：tick 消费游标
 
     def publish(self, event: WorldEvent) -> None:
         self._history.append(event)
         if len(self._history) > 500:
             self._history = self._history[-500:]
+            self._cursor = max(0, self._cursor - len(self._history) + 500)
         for listener in self._listeners.get(event.kind, []):
             try:
                 listener(event)
             except Exception:
                 pass  # 监听器失败不阻断世界
+
+    def drain_new(self) -> list[WorldEvent]:
+        """返回自上次 drain 以来的新事件（Tick 消费用），推进游标。"""
+        new_events = self._history[self._cursor:]
+        self._cursor = len(self._history)
+        return new_events
 
     def subscribe(self, kind: str, listener: Callable[[WorldEvent], None]) -> None:
         self._listeners.setdefault(kind, []).append(listener)

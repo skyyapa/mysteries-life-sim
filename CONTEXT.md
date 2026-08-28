@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.15.6（Event Hooks + Debug）完成 —— **V0.15 NPC Life System 1.0 全 6 小版收官**
+最后更新：V0.16（事件图升级：世界事件驱动事件图）完成时
 
 ---
 
@@ -20,8 +20,8 @@
 | V0.15.4 | 地点+经济联动（NPC 行为影响世界）（已完成） |
 | V0.15.5 | NPC-NPC 轻量互动（社会形成）（已完成） |
 | V0.15.6 | Event Hooks + Debug（已完成）→ **V0.15 全部完成** |
-| V0.16 | 事件图升级（异常→事件链）← 下一步 |
-| V0.20 | 完整廷根模拟（城市感知层） |
+| V0.16 | 事件图升级：世界事件驱动事件图（已完成） |
+| V0.20 | 完整廷根模拟（城市感知层）← 下一步 |
 
 每个小版节奏：跑 30 天 → 跑一年 → 测试 → 再进下一步。V0.15 坚决不做 LLM/Lisien/自由对话/长期记忆/非凡NPC。
 
@@ -164,6 +164,7 @@ tests/
 18. **V0.15.5 互动按"白天共处地点"判断**：不能只在一天结束时扫描（那时都回家了）——用 `_day_locations`（当天白天待过的地点集合）判定共处，社会网络才能真正形成（验收：汤姆↔托比一年 familiarity 20→100、affection 59）。
 19. **V0.15.6 事件总线 per-engine 注入**：WorldEngine.event_bus 持有实例，npc_system/effects 注入避免全局单例跨引擎污染；测试用 reset_bus fixture 隔离。
 20. **V0.15.6 异常基线检测**：日程要求 work 但行为偏离（生病/疲劳/睡眠不足）→ NPC_ABSENT_FROM_WORK 带原因——这正是 V0.16"失踪案事件图"监听 NPC_MISSING 的接口基础。
+21. **V0.16 事件驱动事件图**：EventNode.on_world_event（如 abnormal_notice 监听 NPC_MISSING）+ EventSystem.handle_world_event——总线事件经 update_world 的 drain_new 消费后驱动链图（未开始→激活；已开始→沿边推进）；on_world_event_cond 可匹配事件字段（location/npc_id）或 extra。**世界不再只是"第 3 天必有失踪启事"，而是"有人真失踪了你才可能看到布告"。**
 
 ---
 

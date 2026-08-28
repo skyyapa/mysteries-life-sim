@@ -31,6 +31,8 @@ class WorldEngine:
 
         self.event_bus = WorldEventBus()
         self.npc_system.set_bus(self.event_bus)
+        # V0.16：总线事件 → 事件图（NPC_MISSING 等驱动失踪链）
+        self._bridge_event_bus()
         self.location_system = LocationSystem()
         self.economy_system = EconomySystem()
         self.relation_system = RelationshipSystem()
@@ -47,6 +49,27 @@ class WorldEngine:
 
     def _commit_state(self, state: GameState) -> None:
         """状态提交钩子（存档由外层统一调用 save_game）。"""
+        pass
+
+    def _bridge_event_bus(self) -> None:
+        """V0.16：把世界事件总线接到事件图上。
+
+        任何 NPC_MISSING / NPC_WORKED 等事件发布时，尝试驱动事件图节点。
+        """
+        kinds = [
+            "NPC_MISSING",
+            "NPC_WORKED",
+            "NPC_ABSENT_FROM_WORK",
+            "NPC_INTERACTION",
+            "NPC_SICK",
+            "NPC_ARRIVED",
+        ]
+        for kind in kinds:
+            self.event_bus.subscribe(kind, self._on_world_event)
+
+    def _on_world_event(self, event) -> None:
+        """总线回调：事件 → 事件图推进（需要在 state 上操作，由 tick 轮询 state）。"""
+        # 事件回调里没有 state 引用；改为在 tick 里消费 bus.history 增量
         pass
 
     def set_focused_contact(self, state: GameState, npc_id: str | None) -> bool:
@@ -153,8 +176,14 @@ class WorldEngine:
         self.location_system.tick(state)
         self.relation_system.tick(state)
         self.tick_expired_events(state)
+        self._consume_world_events(state)  # V0.16：总线事件驱动事件图
         self.event_system.auto_advance(state)
         self.npc_system.tick(state)
+
+    def _consume_world_events(self, state: GameState) -> None:
+        """V0.16：把 bus 中未消费的世界事件交给事件图（驱动链图）。"""
+        for event in self.event_bus.drain_new():
+            self.event_system.handle_world_event(event, state)
 
     def update_organizations(self, state: GameState) -> None:
         """组织行动层：两大组织逐日演化。

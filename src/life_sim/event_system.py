@@ -18,6 +18,9 @@ class EventNode:
     add_clues: list[str] = field(default_factory=list)
     trust_effects: dict[str, int] = field(default_factory=dict)
     cooldown: int = 0
+    on_world_event: str | None = None  # V0.16：监听的世界事件类型（如 NPC_MISSING）
+    # 激活条件：事件附带信息（如失踪的是 street_friend 等）
+    on_world_event_cond: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -119,6 +122,73 @@ class EventSystem:
                 if self.conditions_met(node.conditions, state):
                     available.append((graph, node))
         return available
+
+    def handle_world_event(self, event: Any, state: GameState) -> bool:
+        """V0.16：世界事件驱动事件图。
+
+        当 bus 发布事件（如 NPC_MISSING）时，找到监听该类型的链图节点：
+        - 若链图尚未推进（无记录）且触发节点即入口 → 激活（标记已开始）
+        - 若非入口节点 → 直接推进链至该节点
+        满足 on_world_event_cond（如失踪 NPC 的地点）才激活。
+        """
+        kind = getattr(event, "kind", None)
+        if not kind:
+            return False
+        triggered = False
+        for graph in self.graphs.values():
+            for node in graph.nodes.values():
+                if node.on_world_event != kind:
+                    continue
+                extra = getattr(event, "extra", {}) or {}
+                if not self._event_cond_met(node.on_world_event_cond, event, extra):
+                    continue
+                if graph.id not in state.event_nodes:
+                    # 链尚未开始：事件激活入口（记录已开始）
+                    state.event_nodes[graph.id] = node.id
+                    triggered = True
+                    break
+                current_id = state.event_nodes.get(graph.id)
+                if current_id == "done" or current_id == node.id:
+                    continue
+                if self._is_before(graph, current_id, node.id):
+                    # 事件目标节点在当前链位置之后 → 往前推进到它
+                    state.event_nodes[graph.id] = node.id
+                    triggered = True
+                    break
+        return triggered
+
+    def _is_before(self, graph: EventGraph, current_id: str, target_id: str) -> bool:
+        """target 是否在链中 current 之后（按边拓扑）。"""
+        order = []
+        seen = {current_id}
+        queue = [current_id]
+        for e in graph.edges:
+            if e.from_node == current_id:
+                order.append(e.to_node)
+        # 简化：沿边找 target 可达性
+        frontier = [current_id]
+        visited = set()
+        while frontier:
+            nxt = frontier.pop(0)
+            if nxt in visited:
+                continue
+            visited.add(nxt)
+            if nxt == target_id:
+                return True
+            for e in graph.edges:
+                if e.from_node == nxt:
+                    frontier.append(e.to_node)
+        return False
+
+    def _event_cond_met(self, cond: dict[str, Any], event: Any, extra: dict[str, Any]) -> bool:
+        for key, expected in cond.items():
+            # 事件核心字段（npc_id/location/kind）或 extra 只要其一匹配即可
+            actual = getattr(event, key, None)
+            if actual is None:
+                actual = extra.get(key)
+            if actual != expected:
+                return False
+        return True
 
     def on_cooldown(self, node: EventNode, state: GameState) -> bool:
         if node.cooldown <= 0:
@@ -280,6 +350,8 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
         add_clues = [clue["id"] for clue in node.get("add_clues", [])]
         trust_effects = dict(node.get("trust_effects", {}))
         cooldown = int(node.get("cooldown", 0))
+        on_world_event = node.get("on_world_event")
+        on_world_event_cond = dict(node.get("on_world_event_cond", {}))
         choices = node.get("choices", [])
         if choices and not effects:
             primary = choices[0]
@@ -298,6 +370,8 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
             add_clues=add_clues,
             trust_effects=trust_effects,
             cooldown=cooldown,
+            on_world_event=on_world_event,
+            on_world_event_cond=on_world_event_cond,
         )
     edges = [
         EventEdge(
