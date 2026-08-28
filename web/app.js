@@ -2058,6 +2058,7 @@ const initialState = {
     focusedContactId: null,
     autoLife: true,
     autoPlay: false,
+    lastSummaryYear: null,
   },
   tags: [],
   clues: [],
@@ -2114,6 +2115,16 @@ document.getElementById("resetGame").addEventListener("click", () => {
 
 document.getElementById("toggleMap").addEventListener("click", () => {
   state.ui.mapOpen = !state.ui.mapOpen;
+  saveState();
+  render();
+});
+
+document.getElementById("summaryClose").addEventListener("click", () => {
+  const panel = document.getElementById("summaryPanel");
+  if (panel) {
+    panel.classList.add("hidden");
+  }
+  state.ui.lastSummaryYear = state.year;
   saveState();
   render();
 });
@@ -2590,6 +2601,8 @@ function advanceDay() {
     state.month = 1;
     state.year += 1;
     advanceAge();
+    // V0.23：过完一年 → 弹年度人生总结
+    showLifeSummary();
   }
 }
 
@@ -2600,6 +2613,88 @@ function advanceAge() {
     formatDate(),
     `新年：时间进入 ${state.year} 年，${state.character.name} 又长了一岁。`,
   );
+}
+
+/** V0.23：一年过完 → 弹年度人生总结（Web 版，规则拼装不 AI）。 */
+function buildLifeSummary() {
+  const c = state.character;
+  // 熟人圈：按友谊排 top3
+  const people = Object.entries(state.contacts)
+    .map(([id, contact]) => ({
+      id,
+      name: contact.name,
+      job: contact.job,
+      friendship: contact.trust ?? 0,
+      level: getRelationshipTier(contact.trust) || "生面孔",
+    }))
+    .filter((p) => p.friendship > 0)
+    .sort((a, b) => b.friendship - a.friendship)
+    .slice(0, 3);
+  const peopleLine =
+    people.length > 0
+      ? `这一年你认识了：${people
+          .map((p) => `${p.name}（${p.job}，${p.level}）`)
+          .join("、")}。`
+      : "这一年你在廷根多是独来独往。";
+
+  // 经历：从标签粗分
+  const tags = state.tags || [];
+  const mysticTags = tags.filter(
+    (t) => /途径|组织|教会|失控|神秘|失踪/.test(t),
+  );
+  const expLine = mysticTags.length
+    ? `你触碰过异常的世界：${mysticTags.slice(0, 4).join("、")}。`
+    : "这一年你过着再普通不过的日子，没有麻烦找上门。";
+
+  // 途径
+  const pathway = c.pathway;
+  const pathwayLine = pathway
+    ? `这一年你踏上了「${pathway}」之路，灵性与疯狂之间，你的选择开始留下痕迹。`
+    : "这一年你始终是个普通人。有些门打开过又关上了，但你选择了留下。";
+
+  // 城市回声
+  const echoes = (state.world.bulletin || []).map((b) => b.text).filter(Boolean);
+  const cityLine = echoes.length
+    ? `廷根这一年：${echoes[0]}`
+    : "廷根城里，时光照常流淌。";
+
+  // 一句话总结
+  let oneLiner = `${c.name}在廷根度过了整整一年`;
+  if (pathway) oneLiner += `，以「${pathway}」的身份`;
+  if (c.money > 300) oneLiner += "，攒下了一笔积蓄";
+  else if (c.money < 20) oneLiner += "，日子过得紧巴巴";
+  oneLiner += "。岁月如河，你留下了自己的痕迹。";
+
+  return {
+    year: `第五纪 ${state.year}`,
+    character: `${c.name} · ${c.age}岁 · ${c.job}`,
+    people: peopleLine,
+    experiences: expLine,
+    pathway: pathwayLine,
+    city: cityLine,
+    oneliner: oneLiner,
+  };
+}
+
+function showLifeSummary() {
+  const report = buildLifeSummary();
+  const panel = document.getElementById("summaryPanel");
+  if (!panel) {
+    return;
+  }
+  document.getElementById("summaryYear").textContent = report.year;
+  document.getElementById("summaryCharacter").textContent = report.character;
+  document.getElementById("summaryPathway").textContent = report.pathway;
+  document.getElementById("summaryPeople").textContent = report.people;
+  document.getElementById("summaryExperiences").textContent = report.experiences;
+  document.getElementById("summaryCity").textContent = report.city;
+  document.getElementById("summaryOneliner").textContent = report.oneliner;
+  panel.classList.remove("hidden");
+
+  // 存一下报告避免重复弹（记住已展示的年份，避免继续玩时反复弹）
+  state.ui.lastSummaryYear = state.year;
+  saveState();
+  render();
 }
 
 function worldTick() {
