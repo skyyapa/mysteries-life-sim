@@ -1382,5 +1382,114 @@
         }
       }
     ]
+  },
+  {
+    "id": "path_choice",
+    "title": "非凡途径",
+    "type": "mystic",
+    "start_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "text": "真相抉择之后，属于你的那条路开始显现。",
+        "chance": 0,
+        "weight": 1
+      },
+      {
+        "id": "path_seer",
+        "text": "无意间，你发现自己对某些征兆格外敏感——茶梗、烛焰、镜面。一个念头成形：也许你能从这些碎片里读懂一点什么。",
+        "chance": 40,
+        "weight": 3,
+        "locations": [
+          "north",
+          "church"
+        ],
+        "min_day": 52,
+        "requires_tags_any": [
+          "加入神秘组织",
+          "成为教会线人"
+        ],
+        "once_tag": "选择途径",
+        "choices": [
+          {
+            "label": "成为占卜家",
+            "result": "你开始尝试解读征兆。世界在你眼中多了一层若隐若现的纹理。",
+            "effects": {
+              "_pathway": "占卜家",
+              "spirituality": 5,
+              "mysticism_knowledge": 3,
+              "corruption": 2,
+              "madness": 3
+            },
+            "add_tags": [
+              "选择途径"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "path_reader",
+        "text": "你与人相处时，越来越难以忽略那些细微的表情与停顿。你能感觉到别人没有说出口的话。",
+        "chance": 38,
+        "weight": 3,
+        "locations": [
+          "north",
+          "market"
+        ],
+        "min_day": 52,
+        "requires_tags_any": [
+          "加入神秘组织",
+          "成为教会线人"
+        ],
+        "once_tag": "选择途径",
+        "choices": [
+          {
+            "label": "成为观众",
+            "result": "你选择观察。看人、看场合、看那些隐藏的意图——这就是你的路。",
+            "effects": {
+              "_pathway": "观众",
+              "charisma": 4,
+              "spirituality": 2,
+              "stress": -3
+            },
+            "add_tags": [
+              "选择途径"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "path_insomn",
+        "text": "午夜时分，你在窗前站了很久。那些别人害怕的夜晚，让你感到一种说不清的安心。",
+        "chance": 38,
+        "weight": 3,
+        "locations": [
+          "north",
+          "east"
+        ],
+        "min_day": 52,
+        "requires_tags_any": [
+          "加入神秘组织",
+          "成为教会线人"
+        ],
+        "once_tag": "选择途径",
+        "choices": [
+          {
+            "label": "成为不眠者",
+            "result": "从今夜起，你与夜晚为伴。黑暗不再是威胁，而是你的领地。",
+            "effects": {
+              "_pathway": "不眠者",
+              "stamina": 4,
+              "spirituality": 3,
+              "stress": -2
+            },
+            "add_tags": [
+              "选择途径"
+            ]
+          }
+        ]
+      }
+    ],
+    "edges": []
   }
 ]

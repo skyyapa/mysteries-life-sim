@@ -93,6 +93,7 @@ class Character:
     spirituality: int = 5
     corruption: int = 0
     madness: int = 0
+    pathway: str | None = None  # V0.21：非凡途径（占卜家/观众/不眠者），默认普通人
     tags: list[str] = field(default_factory=list)
 
     def clamp(self) -> None:
@@ -141,6 +142,7 @@ class Character:
             "spirituality": self.spirituality,
             "corruption": self.corruption,
             "madness": self.madness,
+            "pathway": self.pathway,
             "tags": list(self.tags),
         }
 
@@ -165,6 +167,7 @@ class Character:
             spirituality=int(data.get("spirituality", 5)),
             corruption=int(data.get("corruption", 0)),
             madness=int(data.get("madness", 0)),
+            pathway=data.get("pathway"),
             tags=list(data.get("tags", [])),
         )
 

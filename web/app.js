@@ -3409,6 +3409,7 @@ function render() {
   renderTags();
   renderClues();
   renderDeductions();
+  renderPathway();
   renderContacts();
   renderPendingEvent();
 }
@@ -3612,6 +3613,14 @@ function renderDeductions() {
       `,
     )
     .join("");
+}
+
+function renderPathway() {
+  const el = document.getElementById("pathway");
+  if (!el) {
+    return;
+  }
+  el.textContent = state.character?.pathway || "无";
 }
 
 function renderContacts() {

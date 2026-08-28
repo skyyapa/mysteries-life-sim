@@ -238,6 +238,13 @@ class EventSystem:
 
     def apply(self, graph: EventGraph, node: EventNode, state: GameState) -> str:
         state.character.apply_changes(map_effect_keys(node.effects))
+        # V0.21：特效键 _pathway 设置非凡途径
+        pathway = node.effects.get("_pathway")
+        if pathway:
+            state.character.pathway = pathway
+            tag = f"途径：{pathway}"
+            if tag not in state.character.tags:
+                state.character.tags.append(tag)
         for tag in node.add_tags:
             if tag not in state.character.tags:
                 state.character.tags.append(tag)

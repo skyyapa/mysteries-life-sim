@@ -42,7 +42,7 @@ ALL_ACTIONS = [
 
 def _goal_weight(npc: Any, action_id: str) -> int:
     """目标加成：不同目标偏向不同行为。"""
-    goal = (npc.goal or "").lower()
+    goal = (npc.goal or "").lower() if hasattr(npc, "goal") else ""
     money_goal = any(k in goal for k in ("钱", "赚", "收入", "生计", "活", "生意"))
     if action_id == "work":
         if money_goal:
@@ -57,6 +57,14 @@ def _goal_weight(npc: Any, action_id: str) -> int:
             return 10
     if action_id == "pray" and ("教" in goal or "神" in goal):
         return 12
+    # V0.21：非凡途径加成（有 pathway 的对象，如玩家角色）
+    pathway = getattr(npc, "pathway", None)
+    if pathway:
+        from ..mysticism.pathways import pathway_behavior_bonus
+
+        bonus = pathway_behavior_bonus(pathway, action_id)
+        if bonus:
+            return bonus
     return 0
 
 
