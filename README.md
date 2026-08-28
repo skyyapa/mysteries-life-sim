@@ -8,11 +8,8 @@
 
 ## 在线试玩
 
-当前网页版本已经部署在：
-
-```text
-https://api.yapasky.dpdns.org/life-simulator/
-```
+> ⚠️ 原线上部署（`api.yapasky.dpdns.org/life-simulator/`）已下线、不再维护。
+> 本地游玩方式：直接用浏览器打开 `web/index.html`（网页版），或 `python run.py`（CLI 版）。
 
 ## 项目状态
 
