@@ -36,6 +36,7 @@ class NPCSystem:
                 schedule=list(npc.schedule),
                 weekend_schedule=list(npc.weekend_schedule),
                 relationship=dict(npc.relationship),
+                social_links={k: dict(v) for k, v in npc.social_links.items()},
                 state=npc.state,
                 needs=npc.needs,
                 schedule_id=npc.schedule_id,
@@ -50,6 +51,10 @@ class NPCSystem:
         date_key = (
             f"{state.date.year}-{state.date.month:02d}-{state.date.day:02d}"
         )
+        # 记录每个 NPC 今天白天待过的地点（用于共处判断）
+        for npc in state.npcs.values():
+            npc._day_locations = {npc.location}
+            npc._day_worked_here = npc.location
         for npc in state.npcs.values():
             if npc.disappeared:
                 continue  # 失踪者不再按日程活动
@@ -66,7 +71,10 @@ class NPCSystem:
                 continue
             entry = entries[week_index % len(entries)]
             npc.apply_schedule_entry(entry)
+            npc._day_locations.add(npc.location)
             self.evolve_needs(npc, days=1)
+        # V0.15.5：NPC-NPC 同地点社交（按白天活跃地点共处判断，社会形成）
+        self.interactions_tick(state)
 
     def _apply_schedule2(
         self, npc: NPC, state: GameState, week_index: int, hour: int, date_key: str
@@ -123,6 +131,10 @@ class NPCSystem:
             if action_id in ("work", "shop", "socialize", "visit"):
                 result.location_activity_delta = 3
             apply_result(state, npc, result)
+            # 记录白天待过的地点（共处判断用）
+            if not hasattr(npc, "_day_locations"):
+                npc._day_locations = set()
+            npc._day_locations.add(result.to_location or npc.location)
             self.evolve_needs(npc, days=0.2, guarantee_meal=False)
 
     _LOC_TYPE_MAP = None
@@ -140,6 +152,16 @@ class NPCSystem:
                 "other_home": "东区",
             }
         return self._LOC_TYPE_MAP.get(loc_type)
+
+    def interactions_tick(self, state: GameState) -> None:
+        """V0.15.5：按地点扫描同地 NPC 自动社交，社会网络逐渐形成。"""
+        from .location.system import LocationSystem
+        from .npc.interaction import scan_and_interact
+
+        loc_ids = LocationSystem().ids
+        npc_list = list(state.npcs.values())
+        for loc in loc_ids:
+            scan_and_interact(npc_list, day=state.days_lived, location=loc)
 
     def evolve_needs(self, npc: NPC, days: float = 1.0, guarantee_meal: bool = True) -> None:
         """需求每日演化：需求随时间增长，日常活动满足对应需求。
@@ -236,5 +258,6 @@ def npc_from_data(data: dict) -> NPC:
         disappeared=bool(data.get("disappeared", False)),
         disappeared_day=data.get("disappeared_day"),
         relationship=relationship,
+        social_links={k: dict(v) for k, v in data.get("social_links", {}).items()},
         schedule_id=data.get("schedule_id"),
     )

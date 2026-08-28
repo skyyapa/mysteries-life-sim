@@ -242,6 +242,9 @@ class NPC:
     relationship: dict[str, int] = field(
         default_factory=lambda: {"trust": 0, "friendship": 0, "fear": 0}
     )
+    social_links: dict[str, dict[str, int]] = field(
+        default_factory=dict
+    )  # V0.15.5：NPC→NPC 关系（{"other_npc_id": {"familiarity","affection",...}}）
     trust: int = field(default=0, init=False, repr=False)
     state: Any = None      # NPCState（延迟赋值避免循环 import）
     needs: Any = None      # NPCNeeds
@@ -336,6 +339,9 @@ class NPC:
             "disappeared": self.disappeared,
             "disappeared_day": self.disappeared_day,
             "relationship": dict(self.relationship),
+            "social_links": {
+                k: dict(v) for k, v in self.social_links.items()
+            },
         }
         if self.job_location is not None:
             result["job_location"] = self.job_location
@@ -379,6 +385,9 @@ class NPC:
                     {"trust": data.get("trust", 0), "friendship": 0, "fear": 0},
                 )
             ),
+            social_links={
+                k: dict(v) for k, v in data.get("social_links", {}).items()
+            },
             schedule_id=data.get("schedule_id"),
         )
         # V0.15.1：读档优先取存档里的 state/needs，缺省用迁移默认
