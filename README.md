@@ -76,7 +76,10 @@ V0.13 起进入“一年模拟”打磨阶段：目标不是继续扩得更大�
 - V0.15.5 NPC-NPC 轻量互动：同地点的熟人自动社交（社交需求高 + 彼此熟悉 → 互动），
   友谊/熟悉度随时间加深、社交需求回落——社会网络自己形成
   （验收：汤姆与托比一年后熟悉度 100、好感 59）
-- V0.15.6 Event Hooks + Debug 面板（开发中）
+- V0.15.6 Event Hooks + Debug（V0.15 收官）：
+  `python run.py --debug tom_tavern` 显示某 NPC 完整状态/需求/行为评分/事件轨迹；
+  世界事件总线已就位（NPC_ARRIVED / NPC_ABSENT / NPC_MISSING / NPC_INTERACTION...），
+  为 V0.16 事件图监听做准备
 - V0.14 World Tick 2.0：新增 world/（tick 编排 + 时间 + 状态）、location/、economy/、relation/ 子系统，WorldTick.run() 作为世界推进唯一入口（时间→NPC→地点→经济→关系→事件→提交）
 - 时间系统升级：时分级 WorldTime，快进支持（睡觉+8h / 工作+6h / 旅行+3天、夜间判定）
 - 地点系统：5 个地点带人口/活跃度/危险状态，白天升活跃、夜晚降，暗流活跃推高危险

@@ -11,6 +11,7 @@ from typing import Any
 
 from .models import NPCNeeds, NPCState
 from .needs import ACTIVITY_EFFECTS
+from .events import get_bus
 
 
 @dataclass
@@ -96,10 +97,25 @@ def build_result(
     return result
 
 
-def apply_result(world: Any, npc: Any, result: NPCActionResult) -> None:
+def apply_result(world: Any, npc: Any, result: NPCActionResult, bus: Any = None) -> None:
     """把 ActionResult 应用到世界状态（EffectSystem 的轻量实现）。"""
+    prev_location = npc.location
     if result.to_location and result.to_location != npc.location:
         npc.location = result.to_location
+        # V0.15.6：位置变化 → 发布 NPC_ARRIVED
+        from .events import EV_NPC_ARRIVED, WorldEvent
+
+        _bus = bus or get_bus()
+        _bus.publish(
+            WorldEvent(
+                kind=EV_NPC_ARRIVED,
+                npc_id=npc.id,
+                day=world.days_lived if hasattr(world, "days_lived") else 0,
+                location=result.to_location,
+                reason=result.action,
+                extra={"from": prev_location},
+            )
+        )
 
     if result.money_delta:
         npc.state.money = max(0.0, npc.state.money + result.money_delta)
@@ -111,6 +127,22 @@ def apply_result(world: Any, npc: Any, result: NPCActionResult) -> None:
             )
     npc.money = int(npc.state.money)
     npc.fatigue = npc.state.fatigue
+    # 把 built-in 事件钩子（NPC_WORKED 等）发布到总线
+    if result.emitted_events:
+        from .events import EV_NPC_WORKED, WorldEvent
+
+        _bus = bus or get_bus()
+        for kind in result.emitted_events:
+            if kind == "NPC_WORKED":
+                _bus.publish(
+                    WorldEvent(
+                        kind=EV_NPC_WORKED,
+                        npc_id=npc.id,
+                        day=world.days_lived if hasattr(world, "days_lived") else 0,
+                        location=npc.location,
+                        reason="work",
+                    )
+                )
 
     # 地点活跃度：有人工作→地点活跃上升
     if result.location_activity_delta and world is not None:

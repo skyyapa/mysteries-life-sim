@@ -7,6 +7,17 @@ class NPCSystem:
     def __init__(self, npcs: dict[str, NPC], schedule_templates: dict | None = None) -> None:
         self.templates = npcs
         self.schedule_templates = schedule_templates or {}
+        self._bus = None  # WorldEventBus 实例（由 WorldEngine 注入）
+
+    def set_bus(self, bus) -> None:
+        self._bus = bus
+
+    def _get_bus(self):
+        if self._bus is not None:
+            return self._bus
+        from .npc.events import get_bus
+
+        return self._get_bus()
 
     @classmethod
     def from_data(cls, data: list[dict]) -> NPCSystem:
@@ -111,6 +122,9 @@ class NPCSystem:
                 day_index=state.days_lived,
             )
 
+            # V0.15.6 异常基线：日程要求工作但行为偏离 → 缺勤/异常事件
+            self._detect_anomaly(npc, scheduled, action_id, state)
+
             npc.current_time = f"{t_hour:02d}:00"
             npc.current_activity = ACTIVITY_NAMES.get(action_id, action_id)
             # 行为结果统一走 EffectSystem 风格：build → apply
@@ -130,7 +144,7 @@ class NPCSystem:
             # work/shop 等提高对应地点活跃度
             if action_id in ("work", "shop", "socialize", "visit"):
                 result.location_activity_delta = 3
-            apply_result(state, npc, result)
+            apply_result(state, npc, result, bus=self._get_bus())
             # 记录白天待过的地点（共处判断用）
             if not hasattr(npc, "_day_locations"):
                 npc._day_locations = set()
@@ -161,7 +175,65 @@ class NPCSystem:
         loc_ids = LocationSystem().ids
         npc_list = list(state.npcs.values())
         for loc in loc_ids:
-            scan_and_interact(npc_list, day=state.days_lived, location=loc)
+            # 同地互动 → 发布 NPC_INTERACTION
+            results = scan_and_interact(npc_list, day=state.days_lived, location=loc)
+            for r in results:
+                from .npc.events import EV_NPC_INTERACTION, WorldEvent, get_bus
+
+                self._get_bus().publish(
+                    WorldEvent(
+                        kind=EV_NPC_INTERACTION,
+                        npc_id=r.npc_a,
+                        day=state.days_lived,
+                        location=r.location,
+                        reason="同地社交",
+                        extra={"other": r.npc_b, "kind": r.kind},
+                    )
+                )
+
+    def _detect_anomaly(
+        self, npc: NPC, scheduled: str, chosen: str, state: GameState
+    ) -> None:
+        """V0.15.6 异常基线检测：与日程计划偏离时发布世界事件。"""
+        from .npc.events import (
+            EV_NPC_ABSENT,
+            EV_NPC_SICK,
+            WorldEvent,
+            get_bus,
+        )
+
+        if chosen == scheduled:
+            # 生病但照常工作（硬扛）也记录
+            if npc.state.sick and scheduled == "work":
+                self._get_bus().publish(
+                    WorldEvent(
+                        kind=EV_NPC_SICK,
+                        npc_id=npc.id,
+                        day=state.days_lived,
+                        location=npc.location,
+                        reason="带病工作",
+                    )
+                )
+            return
+        # 计划工作但没干（缺勤）
+        if scheduled == "work" and chosen in ("rest", "stay_home", "sleep", "seek_help"):
+            reason = []
+            if npc.state.sick:
+                reason.append("生病")
+            if npc.state.fatigue >= 65:
+                reason.append("疲劳过高")
+            if npc.needs and npc.needs.rest >= 85:
+                reason.append("睡眠不足")
+            self._get_bus().publish(
+                WorldEvent(
+                    kind=EV_NPC_ABSENT,
+                    npc_id=npc.id,
+                    day=state.days_lived,
+                    location=npc.location,
+                    reason="、".join(reason) if reason else "计划外休息",
+                    extra={"scheduled": scheduled, "chosen": chosen},
+                )
+            )
 
     def evolve_needs(self, npc: NPC, days: float = 1.0, guarantee_meal: bool = True) -> None:
         """需求每日演化：需求随时间增长，日常活动满足对应需求。
@@ -196,13 +268,27 @@ class NPCSystem:
             apply_activity(npc.needs, None, "rest", hours=2)
 
     def disappear(self, state: GameState, npc_id: str) -> bool:
-        """让 NPC 失踪：之后不再移动（诡秘消失），返回是否成功。"""
+        """让 NPC 失踪：之后不再移动（诡秘消失），返回是否成功。
+
+        发布 NPC_MISSING 事件（V0.15.6，V0.16 失踪事件图监听）。"""
         npc = state.npcs.get(npc_id)
         if npc is None or npc.disappeared:
             return False
         npc.disappeared = True
         npc.disappeared_day = state.days_lived
         npc.current_activity = "（失踪）"
+        from .npc.events import EV_NPC_MISSING, WorldEvent, get_bus
+
+        self._get_bus().publish(
+            WorldEvent(
+                kind=EV_NPC_MISSING,
+                npc_id=npc_id,
+                day=state.days_lived,
+                location=npc.location,
+                reason="行踪不明",
+                extra={"name": npc.name, "job": npc.job},
+            )
+        )
         return True
 
     def missing_npcs(self, state: GameState) -> list[NPC]:

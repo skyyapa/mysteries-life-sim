@@ -15,6 +15,7 @@ def main() -> None:
     parser.add_argument("--auto", type=int, default=0, help="自动模拟指定天数")
     parser.add_argument("--seed", type=int, default=1348, help="随机种子")
     parser.add_argument("--name", default="埃文·莫里斯", help="角色姓名")
+    parser.add_argument("--debug", default=None, help="模拟 N 天后打印某 NPC 的调试面板（如 --debug tom_tavern）")
     args = parser.parse_args()
 
     engine = LifeEngine(seed=args.seed)
@@ -25,6 +26,11 @@ def main() -> None:
     print(f"地点：{state.character.location}，时间：{state.date.label()}")
     print()
 
+    if args.debug:
+        run_auto(engine, state, args.auto or 30)
+        print_debug_panel(engine, state, args.debug)
+        return
+
     if args.auto:
         run_auto(engine, state, args.auto)
     else:
@@ -33,6 +39,48 @@ def main() -> None:
     path = save_game(state)
     print()
     print(f"存档已保存：{path}")
+
+
+def print_debug_panel(engine, state, npc_id: str) -> None:
+    """V0.15.6 Debug 面板：展示 NPC 状态/需求/日程/行为评分/事件记录。"""
+    npc = state.npcs.get(npc_id)
+    if npc is None:
+        print(f"未找到 NPC：{npc_id}")
+        return
+    print(f"\n═══ NPC Debug: {npc.name}（{npc.job}）═══")
+    print(f"  地点：{npc.location} | 行为：{npc.current_activity} | 时间：{npc.current_time}")
+    print(f"  健康 {npc.state.health} | 疲劳 {npc.state.fatigue} | 压力 {npc.state.stress} | "
+          f"情绪 {npc.state.mood} | 金钱 {npc.state.money:.1f} | 病 {int(npc.state.sick)}")
+    print(f"  需求：饿 {npc.needs.hunger} | 休息 {npc.needs.rest} | 社交 {npc.needs.social} | 安全 {npc.needs.safety}")
+    print(f"  日程模板：{npc.schedule_id or '旧数组'} | 失踪 {int(npc.disappeared)}")
+
+    # 当前行为的评分（为何这么做）
+    try:
+        from life_sim.npc.behavior import generate_candidates
+
+        cands = generate_candidates(
+            npc,
+            schedule_action=npc.current_activity.lower(),
+            needs=npc.needs,
+            state=npc.state,
+            is_night=state.date.is_night(),
+            city_tension=state.world.city.get("tension", 0),
+            day_index=state.days_lived,
+        )
+        ranked = sorted(cands, key=lambda c: -c.score)[:5]
+        print("  行为评分（TOP5）：")
+        for c in ranked:
+            print(f"    {c}")
+    except Exception as exc:
+        print(f"  （评分查询失败：{exc}）")
+
+    # 该 NPC 最近的钩子事件
+    events = engine.event_bus.recent(npc_id, limit=5)
+    if events:
+        print("  最近事件：")
+        for ev in events:
+            print(f"    {ev}")
+    print("═" * 32)
 
 
 def run_auto(engine: LifeEngine, state, days: int) -> None:
