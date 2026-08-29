@@ -126,6 +126,8 @@ class WorldEngine:
             self.world_tick.run(state)
 
     def process_action(self, state: GameState, action_id: str) -> JournalEntry:
+        if state.character.dead:
+            raise ValueError("角色已失控死亡，无法继续行动（读档或重新开始）")
         if action_id not in self.actions:
             raise ValueError(f"未知行动：{action_id}")
 

@@ -95,6 +95,8 @@ class Character:
     madness: int = 0
     pathway: str | None = None  # V0.21：非凡途径（占卜家/观众/不眠者），默认普通人
     sequence: int | None = None  # V0.28：非凡序列（9 最低，晋升递减到 7）
+    dead: bool = False          # V0.30：精神死亡/身体崩溃（失控 S 后果）
+    death_reason: str | None = None  # 死亡原因（崩溃时写）
     tags: list[str] = field(default_factory=list)
 
     def clamp(self) -> None:
@@ -145,6 +147,8 @@ class Character:
             "madness": self.madness,
             "pathway": self.pathway,
             "sequence": self.sequence,
+            "dead": self.dead,
+            "death_reason": self.death_reason,
             "tags": list(self.tags),
         }
 
@@ -171,6 +175,8 @@ class Character:
             madness=int(data.get("madness", 0)),
             pathway=data.get("pathway"),
             sequence=int(data["sequence"]) if data.get("sequence") is not None else None,
+            dead=bool(data.get("dead", False)),
+            death_reason=data.get("death_reason"),
             tags=list(data.get("tags", [])),
         )
 

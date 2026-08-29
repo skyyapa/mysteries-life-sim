@@ -291,6 +291,10 @@ class EventSystem:
                     state.character.tags.append(tag)
             if result["ok"]:
                 state.character.sequence = int(potion_target)
+            # V0.30：精神死亡·身体崩溃（S 后果）→ 角色终结
+            if result.get("death"):
+                state.character.dead = True
+                state.character.death_reason = "失控：精神死亡，身体异变崩解"
             return
 
         target_seq = effects.get("_sequence")
