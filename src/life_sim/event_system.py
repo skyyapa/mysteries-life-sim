@@ -261,7 +261,7 @@ class EventSystem:
         return advanced
 
     def _apply_pathway(self, effects: dict[str, Any], state: GameState) -> None:
-        """V0.21+：_pathway 设置途径（首次=序列9），_sequence 支持晋升。"""
+        """V0.21+：_pathway 设置途径（首次=序列9）；_potion 服食魔药（V0.29 失控检定）；_sequence 直接设序列。"""
         pathway = effects.get("_pathway")
         if pathway:
             state.character.pathway = pathway
@@ -270,6 +270,29 @@ class EventSystem:
             tag = f"途径：{pathway}"
             if tag not in state.character.tags:
                 state.character.tags.append(tag)
+
+        # V0.29：服食魔药（失控检定）——成功才晋升；失控则反噬
+        potion_target = effects.get("_potion")
+        if potion_target is not None and state.character.pathway:
+            from .mysticism.sequences import drink_potion
+
+            result = drink_potion(
+                state.character, state.character.pathway,
+                int(potion_target), rng=None,
+            )
+            # 失控/平稳的疯狂与属性变化
+            changes = result["changes"]
+            state.character.apply_changes({
+                k: v for k, v in changes.items() if k != "madness"
+            })
+            state.character.madness = max(0, min(100, state.character.madness + changes.get("madness", 0)))
+            for tag in result["tags"]:
+                if tag not in state.character.tags:
+                    state.character.tags.append(tag)
+            if result["ok"]:
+                state.character.sequence = int(potion_target)
+            return
+
         target_seq = effects.get("_sequence")
         if target_seq is not None and state.character.pathway:
             from .mysticism.sequences import seq_name

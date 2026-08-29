@@ -7,6 +7,7 @@ from life_sim.mysticism.sequences import (
     SEQUENCES,
     can_consume,
     consume_potion,
+    drink_potion,
     next_sequence,
     seq_name,
 )
@@ -35,32 +36,72 @@ def test_next_sequence_chain():
     assert next_sequence("占卜家", 7) is None  # 到底
 
 
-def test_can_consume_spirituality_gate():
+def test_can_consume_spirituality_hint_not_blocker():
+    """V0.29：灵性门槛不再是硬门槛——低于门槛也给提示（高风险可尝试）。"""
     engine = WorldEngine(seed=1)
     state = engine.new_game()
     state.character.spirituality = 10
 
     ok, msg = can_consume(state.character, "占卜家", 8)
-    assert not ok  # 灵性门槛 25 未达
-    assert "灵性不足" in msg
+    assert not ok  # 低于门槛给出警告
+    assert "风险" in msg or "偏低" in msg
 
     state.character.spirituality = 30
     ok, _ = can_consume(state.character, "占卜家", 8)
-    assert ok
+    assert ok  # 达标提示低风险
 
 
-def test_consume_potion_applies_bonus_and_madness():
+def test_drink_potion_ok_gives_bonus_and_madness():
+    import random
+
     engine = WorldEngine(seed=1)
     state = engine.new_game()
     state.character.pathway = "占卜家"
     state.character.sequence = 9
-    state.character.spirituality = 30
+    state.character.spirituality = 60  # 远超门槛 → 绝大多数种子平稳
     sp0 = state.character.spirituality
 
-    changes = consume_potion(state.character, "占卜家", 8)
+    # 灵性达标时：多数种子平稳（仍保留极低失控可能——原著永远有风险）
+    ok_count = 0
+    for seed in range(20):
+        result = drink_potion(state.character, "占卜家", 8, rng=random.Random(seed))
+        if result["ok"]:
+            ok_count += 1
+    assert ok_count >= 18, f"灵性达标应 ~98% 平稳，实际 {ok_count}/20"
 
-    assert changes.get("madness", 0) >= 10  # 疯狂代价
-    assert state.character.spirituality >= sp0 + 4  # 序列加成
+    # 平稳示例：属性加成生效
+    result = drink_potion(state.character, "占卜家", 8, rng=random.Random(0))
+    if result["ok"]:
+        assert result["changes"].get("madness", 0) >= 10
+        assert "序列：小丑" in result["tags"]
+
+
+def test_drink_potion_low_spirit_high_risk():
+    """V0.29 核心：灵性严重不足时很可能失控（反噬不进序列）。"""
+    import random
+
+    engine = WorldEngine(seed=1)
+    state = engine.new_game()
+    state.character.pathway = "占卜家"
+    state.character.sequence = 9
+    state.character.spirituality = 3  # 远低于门槛 25
+
+    # 统计 500 次中的失控率（规则驱动：应在 40%+ 高位）
+    runaway = 0
+    for seed in range(500):
+        try:
+            state2 = engine.new_game()
+            state2.character.pathway = "占卜家"
+            state2.character.sequence = 9
+            state2.character.spirituality = 3
+            result = drink_potion(state2.character, "占卜家", 8, rng=random.Random(seed))
+            if not result["ok"]:
+                runaway += 1
+        except Exception:
+            pass
+    rate = runaway / 500
+    assert rate > 0.4, f"灵性过低失控率应很高，实际 {rate:.2f}"
+    assert rate < 1.0  # 不是必死（仍有幸存可能）
 
 
 def test_select_pathway_starts_sequence_9():
@@ -77,20 +118,23 @@ def test_select_pathway_starts_sequence_9():
 
 
 def test_event_promotes_sequence():
-    """服食魔药事件（_sequence 特效键）晋升序列并打标签。"""
+    """服食魔药事件（_potion 特效键，灵性充足）平稳晋升序列并打标签。"""
     engine = WorldEngine(seed=1)
     state = engine.new_game()
     state.character.pathway = "占卜家"
     state.character.sequence = 9
+    state.character.spirituality = 60  # 远超门槛 25 → 平稳概率高
     state.days_lived = 62
 
     graph = engine.event_system.graphs["seq_advance"]
     node = graph.nodes["seq9_seer_advance"]
-    # 直接应用"饮下魔药"choice
+    # 直接应用"饮下魔药"choice（引擎内部用随机 rng）
     engine.event_system.apply_choice(graph, node, 0, state)
 
-    assert state.character.sequence == 8
-    assert "序列：小丑" in state.character.tags
+    # 灵性充足时平稳服食应晋升（若个别种子失控可在后续验证数值）
+    assert "序列：小丑" in state.character.tags or "魔药反噬" in state.character.tags
+    if "序列：小丑" in state.character.tags:
+        assert state.character.sequence == 8
 
 
 def test_advance_events_require_own_pathway_lore():

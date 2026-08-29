@@ -1814,13 +1814,9 @@
         "choices": [
           {
             "label": "饮下魔药",
-            "result": "苦涩的液体划过喉咙，世界忽然在你眼前裂开无数细小的倒影。你成为小丑——七窍皆明。",
+            "result": "魔药入喉，世界在你眼前旋转。成功与否，取决于你的灵性是否安稳。",
             "effects": {
-              "_sequence": 8,
-              "spirituality": 4,
-              "intelligence": 2,
-              "madness": 10,
-              "stress": 8
+              "_potion": 8
             },
             "add_tags": [
               "占卜家晋升",
@@ -1840,8 +1836,7 @@
         ],
         "requires_any_clue": [
           "shadow_watcher"
-        ],
-        "min_spirituality": 25
+        ]
       },
       {
         "id": "seq8_seer_advance",
@@ -1861,12 +1856,12 @@
             "label": "进行仪式",
             "result": "灵性几乎枯竭的瞬间，你看见了一张属于你的牌——魔术师。世界在掌中翻跃。",
             "effects": {
-              "_sequence": 7,
               "spirituality": 6,
               "intelligence": 3,
               "stamina": -3,
               "madness": 16,
-              "stress": 10
+              "stress": 10,
+              "_potion": 7
             },
             "add_tags": [
               "占卜家晋升8",
@@ -1886,8 +1881,7 @@
         ],
         "requires_any_clue": [
           "shadow_watcher"
-        ],
-        "min_spirituality": 45
+        ]
       },
       {
         "id": "seq9_reader_advance",
@@ -1907,13 +1901,9 @@
         "choices": [
           {
             "label": "饮下魔药",
-            "result": "酒入喉后，周围的低语忽然清晰成词。你开始听得见声音背后的心思。你成为读心者。",
+            "result": "魔药入喉，世界在你眼前旋转。成功与否，取决于你的灵性是否安稳。",
             "effects": {
-              "_sequence": 8,
-              "spirituality": 4,
-              "intelligence": 2,
-              "madness": 9,
-              "stress": 7
+              "_potion": 8
             },
             "add_tags": [
               "观众晋升",
@@ -1930,8 +1920,7 @@
               "观众晋升"
             ]
           }
-        ],
-        "min_spirituality": 25
+        ]
       },
       {
         "id": "seq8_reader_advance",
@@ -1952,12 +1941,12 @@
             "label": "完成仪式",
             "result": "你学着在一个陌生人的泪光里找到真相的裂口。心理医生——言语如刀。",
             "effects": {
-              "_sequence": 7,
               "spirituality": 6,
               "intelligence": 3,
               "stamina": -3,
               "madness": 14,
-              "stress": 9
+              "stress": 9,
+              "_potion": 7
             },
             "add_tags": [
               "观众晋升8",
@@ -1974,8 +1963,7 @@
               "观众晋升8"
             ]
           }
-        ],
-        "min_spirituality": 45
+        ]
       },
       {
         "id": "seq9_insomn_advance",
@@ -1995,13 +1983,9 @@
         "choices": [
           {
             "label": "饮下魔药",
-            "result": "黑暗在你眼中褪去，巷子里每一粒尘埃都清晰可见。你吟诵着夜的韵律，成为午夜诗人。",
+            "result": "魔药入喉，世界在你眼前旋转。成功与否，取决于你的灵性是否安稳。",
             "effects": {
-              "_sequence": 8,
-              "spirituality": 4,
-              "stamina": 4,
-              "madness": 11,
-              "stress": 7
+              "_potion": 8
             },
             "add_tags": [
               "不眠者晋升",
@@ -2018,8 +2002,7 @@
               "不眠者晋升"
             ]
           }
-        ],
-        "min_spirituality": 25
+        ]
       },
       {
         "id": "seq8_insomn_advance",
@@ -2038,14 +2021,9 @@
         "choices": [
           {
             "label": "饮下魔药",
-            "result": "你梦见自己站在无数扇门前。推门而入那一刻，你明白了什么是织梦。",
+            "result": "魔药入喉，世界在你眼前旋转。成功与否，取决于你的灵性是否安稳。",
             "effects": {
-              "_sequence": 7,
-              "spirituality": 6,
-              "intelligence": 3,
-              "stamina": -3,
-              "madness": 18,
-              "stress": 10
+              "_potion": 7
             },
             "add_tags": [
               "不眠者晋升8",
@@ -2062,8 +2040,7 @@
               "不眠者晋升8"
             ]
           }
-        ],
-        "min_spirituality": 45
+        ]
       }
     ],
     "edges": []

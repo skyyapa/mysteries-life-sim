@@ -58,32 +58,22 @@ def test_sequence_no_downgrade():
     assert state.character.sequence == 8  # 未降级
 
 
-def test_spirituality_gate_hides_advance_event():
-    """修复3：灵性不足时晋升事件不可见（门槛 25/45）。"""
+def test_spirituality_does_not_hide_advance_event():
+    """V0.29 修正：灵性不足事件照常出现（风险在服食时，不在遇不到）。"""
     engine = WorldEngine(seed=1)
     state = _seer_state(engine, spirit=10, day=62)  # 灵性 10 < 25
 
     avail = engine.event_system.available_nodes(state)
     ids = {n.id for g, n in avail if g.id == "seq_advance"}
-    assert "seq9_seer_advance" not in ids
-
-    state.character.spirituality = 30
-    avail = engine.event_system.available_nodes(state)
-    ids = {n.id for g, n in avail if g.id == "seq_advance"}
-    assert "seq9_seer_advance" in ids
+    assert "seq9_seer_advance" in ids  # 低灵性也能遇到晋升事件
 
 
-def test_sequence8_gate_stricter():
-    """序列8→7 需要灵性 45（比 9→8 的 25 更苛刻）。"""
+def test_advance_event_not_gated_by_spirituality():
+    """序列8→7 事件同样不受灵性硬门槛限制。"""
     engine = WorldEngine(seed=1)
     state = _seer_state(engine, spirit=30, seq=8, day=88)
     state.character.tags += ["序列：小丑"]
 
     avail = engine.event_system.available_nodes(state)
     ids = {n.id for g, n in avail if g.id == "seq_advance"}
-    assert "seq8_seer_advance" not in ids  # 30 < 45
-
-    state.character.spirituality = 50
-    avail = engine.event_system.available_nodes(state)
-    ids = {n.id for g, n in avail if g.id == "seq_advance"}
-    assert "seq8_seer_advance" in ids
+    assert "seq8_seer_advance" in ids  # 30 < 45 也能遇到

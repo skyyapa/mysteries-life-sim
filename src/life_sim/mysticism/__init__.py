@@ -3,8 +3,12 @@
 from .pathways import PATHWAYS, apply_pathway_bonus, pathway_behavior_bonus
 from .sequences import (
     SEQUENCES,
+    TAG_POISONED,
+    TAG_RUNAWAY,
+    TAG_UNSTABLE,
     can_consume,
     consume_potion,
+    drink_potion,
     next_sequence,
     seq_name,
 )
@@ -16,6 +20,10 @@ __all__ = [
     "SEQUENCES",
     "can_consume",
     "consume_potion",
+    "drink_potion",
     "next_sequence",
     "seq_name",
+    "TAG_RUNAWAY",
+    "TAG_UNSTABLE",
+    "TAG_POISONED",
 ]
