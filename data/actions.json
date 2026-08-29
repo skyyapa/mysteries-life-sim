@@ -21,6 +21,19 @@
       "stress": 5
     }
   },
+  "divination": {
+    "name": "占卜",
+    "description": "【占卜家专属】借助茶梗、烛焰或镜面窥探征兆，尝试捕捉隐秘的联系。",
+    "days": 1,
+    "requires_pathway": "占卜家",
+    "summary": "茶梗沉浮，烛焰摇曳——你在半梦半醒间看见了一些纹路。",
+    "effects": {
+      "spirituality": -6,
+      "stress": 6,
+      "mysticism_knowledge": 1
+    },
+    "add_tag": "占卜过"
+  },
   "rest": {
     "name": "休息",
     "description": "减少外出，恢复身体和精神。",

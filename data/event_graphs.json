@@ -1488,6 +1488,133 @@
             ]
           }
         ]
+      },
+      {
+        "id": "path_seer_master",
+        "text": "你试着在深夜对着一面旧镜占卜。镜中的倒影里，烛火投下一道你未曾见过的阴影——有什么在回应你的窥探。",
+        "chance": 32,
+        "weight": 3,
+        "locations": [
+          "north"
+        ],
+        "min_day": 58,
+        "requires_tags_any": [
+          "途径：占卜家"
+        ],
+        "once_tag": "占卜家初窥",
+        "choices": [
+          {
+            "label": "继续深看",
+            "result": "你记住了那道阴影的形状。次日，它在市场的人群里一闪而过。",
+            "effects": {
+              "mysticism_knowledge": 2,
+              "spirituality": -4,
+              "stress": 8,
+              "madness": 3
+            },
+            "add_clues": [
+              {
+                "id": "shadow_watcher",
+                "title": "镜中的窥视者",
+                "text": "你占卜时看见的阴影，似乎也在现实中注视着你。"
+              }
+            ],
+            "add_tags": [
+              "占卜家初窥"
+            ]
+          },
+          {
+            "label": "立即合上镜子",
+            "result": "你猛地扣下镜子。有些门，不该今晚打开。",
+            "effects": {
+              "stress": -2
+            },
+            "add_tags": [
+              "占卜家初窥"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "path_reader_insight",
+        "text": "酒馆里，一个与你相识的商人说得天花乱坠。他却不知道，你早看见他指尖的颤抖。",
+        "chance": 30,
+        "weight": 3,
+        "locations": [
+          "north",
+          "market"
+        ],
+        "min_day": 58,
+        "requires_tags_any": [
+          "途径：观众"
+        ],
+        "once_tag": "观众洞察",
+        "choices": [
+          {
+            "label": "点破他的谎话",
+            "result": "他愣住，讪讪地改了口。你在他眼里看到了忌惮。",
+            "add_tags": [
+              "观众洞察",
+              "看破谎言"
+            ]
+          },
+          {
+            "label": "装作不知，记下暗示",
+            "result": "你不动声色，却记住了他话里的漏洞——这也许以后有用。",
+            "effects": {
+              "intelligence": 1,
+              "stress": -1
+            },
+            "add_tags": [
+              "观众洞察"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "path_insomn_night",
+        "text": "凌晨两点，你沿东区小巷巡行。黑暗中传来脚步声——不是你自己的。",
+        "chance": 32,
+        "weight": 3,
+        "locations": [
+          "east"
+        ],
+        "min_day": 58,
+        "requires_tags_any": [
+          "途径：不眠者"
+        ],
+        "once_tag": "不眠者夜巡",
+        "choices": [
+          {
+            "label": "循声追去",
+            "result": "你追出三条街，只看见一道消失在墙角的影子，以及地上半枚旧纽扣。",
+            "effects": {
+              "stamina": -6,
+              "stress": 5
+            },
+            "add_clues": [
+              {
+                "id": "night_trace",
+                "title": "小巷里的旧纽扣",
+                "text": "夜巡时捡到的旧纽扣，与你模糊记忆中某件失踪案有关。"
+              }
+            ],
+            "add_tags": [
+              "不眠者夜巡"
+            ]
+          },
+          {
+            "label": "心跳如鼓，原路返回",
+            "result": "不眠者的直觉告诉你：今晚不该追。",
+            "effects": {
+              "stress": -3,
+              "stamina": -2
+            },
+            "add_tags": [
+              "不眠者夜巡"
+            ]
+          }
+        ]
       }
     ],
     "edges": []

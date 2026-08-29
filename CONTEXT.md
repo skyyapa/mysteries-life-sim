@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.23（一年人生总结）完成时
+最后更新：V0.24（途径深化）完成时
 
 ---
 
@@ -25,7 +25,8 @@
 | V0.21 | 非凡途径选择 1.0：占卜家/观众/不眠者（已完成） |
 | V0.22 | 数据校验工具链：JSON Schema + 语义校验（已完成） |
 | V0.23 | 一年人生总结岁末回顾（已完成） |
-| 后续 | 途径深化（低序列能力）、NPC 轻量记忆、事件图图级分支 |
+| V0.24 | 途径深化：占卜行动/观众加成/不眠者耐力 + 途径专属事件（已完成） |
+| 后续 | NPC 轻量记忆（规则驱动）、事件图图级分支、意式散文扩展 |
 
 每个小版节奏：跑 30 天 → 跑一年 → 测试 → 再进下一步。V0.15 坚决不做 LLM/Lisien/自由对话/长期记忆/非凡NPC。
 
@@ -173,6 +174,7 @@ tests/
 23. **V0.21 途径克制版**：只做 3 条低序列途径（占卜家=灵性敏锐/观众=洞察人心/不眠者=夜行耐力），选择经事件图 `path_choice`（接真相抉择后，requires_tags + once_tag 防重复）；`_pathway` 特效键 + Character.pathway 存档；途径加成作用于行为评分（`_goal_weight` 兼容无 goal 的角色对象）。
 24. **V0.22 数据校验工具链**：`python tools/check_data.py` 或 pytest 校验全部 data/*.json——JSON 可解析 + JSON Schema 结构白名单（data/schema/event_graphs.schema.json）+ 语义（图/节点 id 唯一、边引用存在、min_day≤max_day、once_tag 不在 requires_tags_any 里互锁、choice 有 label/result）；**改完数据先跑它再跑引擎**，杜绝"手改 JSON 缺括号/引用崩溃"。
 25. **V0.23 一年总结是纯函数**：`summary.summarize_life(state)` 从既有数据（relationship 熟人圈、pathway、madness、bulletin、money）拼装报告，不引入 AI/新状态——Web 版 `buildLifeSummary()` 语义镜像，跨年弹"岁末回顾"模态；`ui.lastSummaryYear` 防重复弹。
+26. **V0.24 途径深化三件套**：占卜家→`divination` 专属行动（requires_pathway 校验 + available_actions 按 pathway 过滤 + 偶然吉兆）；观众→社交 trust 加成（apply_social_effects(bonus=3)/Web charisma）；不眠者→工作/调查耐力豁免（stamina 净变化放款）。3 个途径专属事件节点（初窥镜影/洞察谎言/夜巡纽扣）接 `途径：X` 标签触发，once_tag 防重复；`actions.json` 校验器（V0.22）当时直接拦下了 `trust_effects:{}` 的空对象错误。
 
 ---
 

@@ -94,8 +94,14 @@ class WorldEngine:
             world=WorldState(npcs=self.npc_system.create_state()),
         )
 
-    def available_actions(self) -> list[str]:
-        return list(self.actions.keys())
+    def available_actions(self, state: GameState | None = None) -> list[str]:
+        # V0.23：途径专属行动仅对拥有该途径的角色可见（无 state 时同样排除——它们默认不可用）
+        pathway = state.character.pathway if state else None
+        return [
+            aid
+            for aid, action in self.actions.items()
+            if not action.get("requires_pathway") or action["requires_pathway"] == pathway
+        ]
 
     def tick(self, state: GameState, days: int = 1) -> None:
         for _ in range(days):
@@ -124,10 +130,30 @@ class WorldEngine:
             raise ValueError(f"未知行动：{action_id}")
 
         action = self.actions[action_id]
+
+        # V0.23 途径专属行动校验
+        required = action.get("requires_pathway")
+        if required and state.character.pathway != required:
+            raise ValueError(
+                f"行动 {action_id} 需要途径 {required}，当前无/途径是 {state.character.pathway}"
+            )
+
         changes = self.apply_action_effects(state, action)
 
+        # V0.23 途径加成：观众社交更强、不眠者调查/工作更耐
+        pathway = state.character.pathway
         if action_id == "social":
-            changes.update(self.apply_social_effects(state))
+            bonus = 3 if pathway == "观众" else 0
+            changes.update(self.apply_social_effects(state, bonus=bonus))
+        elif pathway == "不眠者" and action_id in ("investigate", "work"):
+            changes.setdefault("stamina", 0)
+            changes["stamina"] += 4  # 夜行耐力：调查/工作不那么耗体力
+
+        # 途径行动特殊效果
+        if action.get("add_tag"):
+            tag = action["add_tag"]
+            if tag not in state.character.tags:
+                state.character.tags.append(tag)
 
         event_text = self.trigger_event(state)
         summary = self._build_summary(action, event_text)
@@ -143,9 +169,10 @@ class WorldEngine:
         self.tick(state, days=int(action.get("days", 1)))
         return entry
 
-    def apply_social_effects(self, state: GameState) -> dict[str, int]:
+    def apply_social_effects(self, state: GameState, bonus: int = 0) -> dict[str, int]:
         """社交行动：泛社交封顶 40（朋友）；选中深交对象且同地点则无封顶深交。
 
+        V0.23：bonus 为途径加成（观众 +3）——洞察人心让社交收益更高。
         NPC.location 是区域级（北区/市场区），角色在城市级（廷根）——
         玩家可在城市内各区域活动，规则引擎中同地判断一律视为可遇见。
         returns: {"social_trust": 净变化} 用于日志。
@@ -155,14 +182,14 @@ class WorldEngine:
         changes: dict[str, int] = {"social_trust": 0}
 
         if focused is not None:
-            focused.add_trust(3)
-            changes["social_trust"] = changes.get("social_trust", 0) + 3
+            focused.add_trust(3 + bonus)
+            changes["social_trust"] = changes.get("social_trust", 0) + 3 + bonus
             changes["focused"] = 1
         else:
             for npc in state.npcs.values():
                 if npc.trust < 40:
-                    npc.set_trust(min(40, npc.trust + 1))
-                    changes["social_trust"] = changes.get("social_trust", 0) + 1
+                    npc.set_trust(min(40, npc.trust + 1 + bonus))
+                    changes["social_trust"] = changes.get("social_trust", 0) + 1 + bonus
         return changes
 
     def update_world(self, state: GameState, *, previous_year: int | None = None) -> None:

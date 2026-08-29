@@ -765,6 +765,13 @@ const actions = {
     summary: "你认真学习了一整天，脑子有些疲惫，但知识确实增长了。",
     effects: { intelligence: 2, stamina: -8, stress: 4 },
   },
+  divination: {
+    name: "占卜",
+    requiresPathway: "占卜家",
+    summary: "你摆弄着茶梗与烛焰，半梦半醒间仿佛看见了一些若隐若现的纹路。",
+    effects: { spirituality: -6, stress: 6, mysticism: 1 },
+    addTag: "占卜过",
+  },
   work: {
     name: "工作",
     summary: "你把一天交给了工作，账本上的数字因此稍微好看了一些。",
@@ -2479,6 +2486,26 @@ function getActionEffects(actionId, action) {
   }
 
   effects.money = (effects.money || 0) - career.dailyCost;
+
+  // V0.23 途径加成
+  const pathway = state.character?.pathway;
+  if (action.requiresPathway && action.requiresPathway !== pathway) {
+    // 途径专属行动校验：不满足则忽略该行动（调用方已避免，此处兜底）
+    return { ...effects, blocked: true };
+  }
+  if (pathway === "观众" && actionId === "social") {
+    effects.charisma = (effects.charisma || 0) + 3; // 洞察人心，社交更有效
+  }
+  if (pathway === "不眠者" && (actionId === "work" || actionId === "investigate")) {
+    effects.stamina = (effects.stamina || 0) + 4; // 夜行耐力
+  }
+  if (actionId === "divination") {
+    effects.mysticism = (effects.mysticism || 0) + 1;
+    addTag("占卜过");
+    if (Math.random() < 0.3) {
+      effects.mysticism = (effects.mysticism || 0) + 1; // 偶有吉兆
+    }
+  }
   return effects;
 }
 
@@ -2565,6 +2592,16 @@ function pickAutoAction() {
     if (getInvestigationCooldown() <= 0 && Math.random() < 0.45) {
       return "investigate";
     }
+  }
+  // V0.23 途径：占卜家偶发占卜（攒神秘知识，耗灵性）；观众社交加成在取效果时处理
+  const pathway = state.character?.pathway;
+  if (
+    pathway === "占卜家" &&
+    state.stats.mysticism < 40 &&
+    state.stats.money >= 40 &&
+    Math.random() < 0.18
+  ) {
+    return "divination";
   }
   if (state.clues.length >= 2 && state.deductions.length < 4 && Math.random() < 0.25) {
     return "deduce";
