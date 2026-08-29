@@ -183,6 +183,7 @@ tests/
 28. **V0.26 图级分支 = choice.branch_to**：选择不再只改属性——`apply_choice(graph,node,index,state)` 应用该 choice 效果并把图推进到 `branch_to` 节点（图内分支）；链图 current 是分支点（choices 含 branch_to）时，available_nodes 额外列出满足标签门控的旁支（选了才有标签 → 只看到自己的线）；校验器新增 branch_to 引用检查。主线真相抉择改造成三条结局线（组织/教会/普通人各 2 节点、含二次分支）。
 29. **V0.27 三时段一天**：Web 一次"过一天"= 早晨/午后/夜晚三时段各一动作（去重、单条日志），事件在当天末尾 roll（不打断三时段——曾因早晨 roll 事件即 break 导致"只有早晨"，在 Node 沙箱验证 30/30 天完整后才收）。顺带解决浏览器缓存旧 JS：版本参数 ?v27 + meta no-cache + 标题盖版本章；`takeAction` 保留单动作兼容路径（移动等）。
 30. **V0.28 序列体系（克制 3 阶）**：`mysticism/sequences.py`——每途径 9→8→7（占卜家 占卜家→小丑→魔术师；观众 观众→读心者→心理医生；不眠者 不眠者→午夜诗人→梦魇）。选途径时 `sequence=9`（event `_pathway`）；服食魔药 `_sequence` 特效键晋升；`can_consume` 灵性门槛拦截；行为加成按序列倍率（9:1.0/8:1.6/7:2.4）。晋升事件图 `seq_advance`（每途径 2 节点 6 选），前置=各途径专属线索/标签（占卜家用 clue `shadow_watcher`、观众/不眠者用专属事件标签）——曾误用占卜家线索做观众/不眠者前置（会卡死），已修正。
+31. **V0.28 复查修复（重要）**：① **Python 事件系统此前没有 once_tag 防重**（Web 有）——途径/晋升/分支事件会无限次触发；现补 `EventNode.once_tag` + available_nodes 过滤 + apply/apply_choice 触发即打标，与 Web 语义一致（错过即错过）。② `_sequence` 只允许晋升（target<current）防降级/重设。③ 6 个晋升节点加 `min_spirituality`（9→8 需 25、8→7 需 45），灵性不足事件不出现（无需 can_consume 单独调用，条件由 conditions_met 统一处理）。教训：内容迭代后必须回归"一次性事件"机制，两端语义要保持一致。
 
 ---
 

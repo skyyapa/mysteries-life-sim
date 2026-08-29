@@ -1840,7 +1840,8 @@
         ],
         "requires_any_clue": [
           "shadow_watcher"
-        ]
+        ],
+        "min_spirituality": 25
       },
       {
         "id": "seq8_seer_advance",
@@ -1885,7 +1886,8 @@
         ],
         "requires_any_clue": [
           "shadow_watcher"
-        ]
+        ],
+        "min_spirituality": 45
       },
       {
         "id": "seq9_reader_advance",
@@ -1928,7 +1930,8 @@
               "观众晋升"
             ]
           }
-        ]
+        ],
+        "min_spirituality": 25
       },
       {
         "id": "seq8_reader_advance",
@@ -1971,7 +1974,8 @@
               "观众晋升8"
             ]
           }
-        ]
+        ],
+        "min_spirituality": 45
       },
       {
         "id": "seq9_insomn_advance",
@@ -2014,7 +2018,8 @@
               "不眠者晋升"
             ]
           }
-        ]
+        ],
+        "min_spirituality": 25
       },
       {
         "id": "seq8_insomn_advance",
@@ -2057,7 +2062,8 @@
               "不眠者晋升8"
             ]
           }
-        ]
+        ],
+        "min_spirituality": 45
       }
     ],
     "edges": []

@@ -22,6 +22,7 @@ class EventNode:
     # 激活条件：事件附带信息（如失踪的是 street_friend 等）
     on_world_event_cond: dict[str, Any] = field(default_factory=dict)
     choices: list[dict[str, Any]] = field(default_factory=list)  # V0.26：完整选择列表（含 branch_to）
+    once_tag: str | None = None  # V0.28:一次性事件标记（触发后不再出现，防重复）
 
 
 @dataclass(frozen=True)
@@ -113,6 +114,8 @@ class EventSystem:
                 for node in graph.nodes.values():
                     if node.id == graph.start_node and node.chance <= 0:
                         continue  # chance=0 的占位节点（如链图的 start）
+                    if self._once_triggered(node, state):
+                        continue
                     if not self.on_cooldown(node, state) and self.conditions_met(
                         node.conditions, state
                     ):
@@ -130,11 +133,19 @@ class EventSystem:
                             continue
                         if alt.chance <= 0:
                             continue
+                        if self._once_triggered(alt, state):
+                            continue
                         if not self.on_cooldown(alt, state) and self.conditions_met(
                             alt.conditions, state
                         ):
                             available.append((graph, alt))
         return available
+
+    def _once_triggered(self, node: EventNode, state: GameState) -> bool:
+        """V0.28：once_tag 节点已在 tags 中出现过 → 视为已触发，不再可遇。"""
+        if not node.once_tag:
+            return False
+        return node.once_tag in state.character.tags
 
     def handle_world_event(self, event: Any, state: GameState) -> bool:
         """V0.16：世界事件驱动事件图。
@@ -263,8 +274,13 @@ class EventSystem:
         if target_seq is not None and state.character.pathway:
             from .mysticism.sequences import seq_name
 
-            state.character.sequence = int(target_seq)
-            name = seq_name(state.character.pathway, int(target_seq)) or f"序列{target_seq}"
+            target_seq = int(target_seq)
+            current = state.character.sequence
+            # V0.28 防作弊/防降级：仅允许晋升（数字变小）或首次设置
+            if current is not None and target_seq >= current:
+                return
+            state.character.sequence = target_seq
+            name = seq_name(state.character.pathway, target_seq) or f"序列{target_seq}"
             tag = f"序列：{name}"
             if tag not in state.character.tags:
                 state.character.tags.append(tag)
@@ -290,6 +306,8 @@ class EventSystem:
                     npc.remember("harmed", state.days_lived)
         if node.cooldown > 0:
             state.world.event_last_triggered[node.id] = state.days_lived
+        if node.once_tag and node.once_tag not in state.character.tags:
+            state.character.tags.append(node.once_tag)  # V0.28：一次性标记
         self.advance(graph, state)
         return node.text
 
@@ -340,6 +358,8 @@ class EventSystem:
                     npc.remember("harmed", state.days_lived)
         if node.cooldown > 0:
             state.world.event_last_triggered[node.id] = state.days_lived
+        if node.once_tag and node.once_tag not in state.character.tags:
+            state.character.tags.append(node.once_tag)  # V0.28：一次性标记
 
     def conditions_met(self, conditions: dict[str, Any], state: GameState) -> bool:
         character = state.character
@@ -461,6 +481,7 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
             on_world_event=on_world_event,
             on_world_event_cond=on_world_event_cond,
             choices=[dict(c) for c in choices],
+            once_tag=node.get("once_tag"),
         )
     edges = [
         EventEdge(
