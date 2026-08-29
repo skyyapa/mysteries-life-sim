@@ -21,6 +21,7 @@ class EventNode:
     on_world_event: str | None = None  # V0.16：监听的世界事件类型（如 NPC_MISSING）
     # 激活条件：事件附带信息（如失踪的是 street_friend 等）
     on_world_event_cond: dict[str, Any] = field(default_factory=dict)
+    choices: list[dict[str, Any]] = field(default_factory=list)  # V0.26：完整选择列表（含 branch_to）
 
 
 @dataclass(frozen=True)
@@ -121,6 +122,18 @@ class EventSystem:
             if node is not None and not self.on_cooldown(node, state):
                 if self.conditions_met(node.conditions, state):
                     available.append((graph, node))
+                # V0.26 图级分支：当前节点是分支点（choice 带 branch_to）时，
+                # 额外列出满足条件的旁支节点（让玩家看到"选择后的后续"）
+                if node.choices and any(c.get("branch_to") for c in node.choices):
+                    for alt in graph.nodes.values():
+                        if alt.id == node.id or alt.id == graph.start_node:
+                            continue
+                        if alt.chance <= 0:
+                            continue
+                        if not self.on_cooldown(alt, state) and self.conditions_met(
+                            alt.conditions, state
+                        ):
+                            available.append((graph, alt))
         return available
 
     def handle_world_event(self, event: Any, state: GameState) -> bool:
@@ -265,6 +278,59 @@ class EventSystem:
         self.advance(graph, state)
         return node.text
 
+    def apply_choice(
+        self, graph: EventGraph, node: EventNode, choice_index: int, state: GameState
+    ) -> str:
+        """V0.26：应用节点的一个选择分支（图级分支）。
+
+        选择后：
+        - 应用该 choice 的 effects/add_tags/add_clues/trust_effects
+        - 若 choice 声明 branch_to → 直接把图推进到该节点（图内分支）
+        - 否则走默认边推进
+        """
+        if choice_index < 0 or choice_index >= len(node.choices):
+            return self.apply(graph, node, state)
+        choice = node.choices[choice_index]
+
+        self._apply_choice_effects(graph, node, state, choice)
+        # 分支推进
+        branch_to = choice.get("branch_to")
+        if branch_to and branch_to in graph.nodes:
+            state.event_nodes[graph.id] = branch_to
+        else:
+            self.advance(graph, state)
+        return node.text
+
+    def _apply_choice_effects(
+        self, graph: EventGraph, node: EventNode, state: GameState, choice: dict
+    ) -> None:
+        """应用单个 choice 的效果集（与 apply 的公共效果逻辑一致）。"""
+        effects = dict(choice.get("effects", {}))
+        state.character.apply_changes(map_effect_keys(effects))
+        pathway = effects.get("_pathway")
+        if pathway:
+            state.character.pathway = pathway
+            tag = f"途径：{pathway}"
+            if tag not in state.character.tags:
+                state.character.tags.append(tag)
+        for tag in choice.get("add_tags", []):
+            if tag not in state.character.tags:
+                state.character.tags.append(tag)
+        for clue in choice.get("add_clues", []):
+            clue_id = clue["id"] if isinstance(clue, dict) else clue
+            if clue_id not in state.clues:
+                state.clues.append(clue_id)
+        for npc_id, amount in choice.get("trust_effects", {}).items():
+            npc = state.npcs.get(npc_id)
+            if npc is not None:
+                npc.add_trust(amount)
+                if amount > 0:
+                    npc.remember("helped", state.days_lived)
+                elif amount < 0:
+                    npc.remember("harmed", state.days_lived)
+        if node.cooldown > 0:
+            state.world.event_last_triggered[node.id] = state.days_lived
+
     def conditions_met(self, conditions: dict[str, Any], state: GameState) -> bool:
         character = state.character
 
@@ -384,6 +450,7 @@ def event_graph_from_data(graph: dict[str, Any]) -> EventGraph:
             cooldown=cooldown,
             on_world_event=on_world_event,
             on_world_event_cond=on_world_event_cond,
+            choices=[dict(c) for c in choices],
         )
     edges = [
         EventEdge(

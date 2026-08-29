@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.25（NPC 轻量记忆）完成时
+最后更新：V0.26（事件图图级分支）完成时
 
 ---
 
@@ -27,7 +27,8 @@
 | V0.23 | 一年人生总结岁末回顾（已完成） |
 | V0.24 | 途径深化：占卜行动/观众加成/不眠者耐力 + 途径专属事件（已完成） |
 | V0.25 | NPC 轻量记忆：帮过/坑过影响社交（已完成） |
-| 后续 | 事件图图级分支、更多途径能力、内容扩展 |
+| V0.26 | 事件图图级分支：choice.branch_to 走不同结局线（已完成） |
+| 后续 | 更多途径能力、内容扩充（赛季/节日/更多 NPC）、Web 端玩法对齐 |
 
 每个小版节奏：跑 30 天 → 跑一年 → 测试 → 再进下一步。V0.15 坚决不做 LLM/Lisien/自由对话/长期记忆/非凡NPC。
 
@@ -177,6 +178,7 @@ tests/
 25. **V0.23 一年总结是纯函数**：`summary.summarize_life(state)` 从既有数据（relationship 熟人圈、pathway、madness、bulletin、money）拼装报告，不引入 AI/新状态——Web 版 `buildLifeSummary()` 语义镜像，跨年弹"岁末回顾"模态；`ui.lastSummaryYear` 防重复弹。
 26. **V0.24 途径深化三件套**：占卜家→`divination` 专属行动（requires_pathway 校验 + available_actions 按 pathway 过滤 + 偶然吉兆）；观众→社交 trust 加成（apply_social_effects(bonus=3)/Web charisma）；不眠者→工作/调查耐力豁免（stamina 净变化放款）。3 个途径专属事件节点（初窥镜影/洞察谎言/夜巡纽扣）接 `途径：X` 标签触发，once_tag 防重复；`actions.json` 校验器（V0.22）当时直接拦下了 `trust_effects:{}` 的空对象错误。
 27. **V0.25 NPC 记忆是规则表不是 AI**：`NPC.memories{kind:{count,last_day}}` + `remember()/memory_magnitude()`（30 天内全强度、之后按 30 天半衰衰减）；事件 trust_effects 正负自动记 helped/harmed；深交社交收益按记忆修正（帮过 +≤3，坑过 −≤4）。Web 镜像：contact.memories 徽记（念着我的好/对我有怨）、changeTrust 记记忆（|Δ|≥2 才记）。
+28. **V0.26 图级分支 = choice.branch_to**：选择不再只改属性——`apply_choice(graph,node,index,state)` 应用该 choice 效果并把图推进到 `branch_to` 节点（图内分支）；链图 current 是分支点（choices 含 branch_to）时，available_nodes 额外列出满足标签门控的旁支（选了才有标签 → 只看到自己的线）；校验器新增 branch_to 引用检查。主线真相抉择改造成三条结局线（组织/教会/普通人各 2 节点、含二次分支）。
 
 ---
 

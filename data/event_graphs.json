@@ -1294,6 +1294,7 @@
           {
             "label": "加入组织",
             "result": "你接过名片。他说会在合适的时机教你怎么“用双手握住命运”。",
+            "branch_to": "branch_org_life",
             "effects": {
               "corruption": 5,
               "madness": 8,
@@ -1313,6 +1314,7 @@
           {
             "label": "投向教会",
             "result": "你把名片交给教士。教士收下后说：你会成为教会的线人，但从此你的每一步都会有人看着。",
+            "branch_to": "branch_church_life",
             "effects": {
               "spirituality": 5,
               "stress": 4
@@ -1334,6 +1336,7 @@
           {
             "label": "抽身退回",
             "result": "你推开名片，说你要做普通人。他笑了：你以为现在还来得及吗？",
+            "branch_to": "branch_plain_life",
             "effects": {
               "stress": 6,
               "spirituality": 2
@@ -1350,6 +1353,170 @@
             ]
           }
         ]
+      },
+      {
+        "id": "branch_org_life",
+        "text": "深衣人教你的第一课：『不要相信任何人。』你在组织的地下室里第一次握住了不属于凡人的力量。",
+        "chance": 60,
+        "weight": 3,
+        "locations": [
+          "east"
+        ],
+        "min_day": 50,
+        "requires_tags_any": [
+          "加入神秘组织"
+        ],
+        "once_tag": "组织线结局",
+        "choices": [
+          {
+            "label": "接过这份力量",
+            "result": "从此你不再普通。代价早已刻进你的骨血。",
+            "effects": {
+              "mysticism": 4,
+              "corruption": 6,
+              "madness": 10
+            },
+            "add_tags": [
+              "组织线结局"
+            ],
+            "branch_to": "branch_org_life_end"
+          },
+          {
+            "label": "记住自己的底线",
+            "result": "你用这股力量调查失踪案，却小心不让自己滑向深渊。",
+            "effects": {
+              "mysticism": 2,
+              "stress": 4
+            },
+            "add_tags": [
+              "组织线结局"
+            ],
+            "branch_to": "branch_org_life_end"
+          }
+        ]
+      },
+      {
+        "id": "branch_org_life_end",
+        "text": "组织里没有人问你是不是自愿的。他们只在乎你还能走多远。",
+        "chance": 55,
+        "weight": 2,
+        "locations": [
+          "east"
+        ],
+        "min_day": 53,
+        "requires_tags_any": [
+          "加入神秘组织"
+        ],
+        "once_tag": "组织线结局"
+      },
+      {
+        "id": "branch_church_life",
+        "text": "教会给了你一间安静的房与一册手抄的旧典。教士说：守护他人之前，先守住自己。",
+        "chance": 60,
+        "weight": 3,
+        "locations": [
+          "church"
+        ],
+        "min_day": 50,
+        "requires_tags_any": [
+          "成为教会线人"
+        ],
+        "once_tag": "教会线结局",
+        "choices": [
+          {
+            "label": "研读旧典",
+            "result": "你学到了一些东西，也确认了一些让你脊背发凉的事。",
+            "effects": {
+              "spirituality": 4,
+              "mysticism_knowledge": 2
+            },
+            "add_tags": [
+              "教会线结局"
+            ],
+            "branch_to": "branch_church_life_end"
+          },
+          {
+            "label": "把时间留给街巷",
+            "result": "你仍会巡逻黑夜，护着那些根本不知道危险的普通人。",
+            "effects": {
+              "stamina": -4,
+              "stress": 3,
+              "charisma": 2
+            },
+            "add_tags": [
+              "教会线结局"
+            ],
+            "branch_to": "branch_church_life_end"
+          }
+        ]
+      },
+      {
+        "id": "branch_church_life_end",
+        "text": "每一次深夜巡逻结束，你都能听见自己在黑暗中平稳的心跳。",
+        "chance": 55,
+        "weight": 2,
+        "locations": [
+          "church"
+        ],
+        "min_day": 53,
+        "requires_tags_any": [
+          "成为教会线人"
+        ],
+        "once_tag": "教会线结局"
+      },
+      {
+        "id": "branch_plain_life",
+        "text": "你把手里的名片烧了，也烧掉了那间地下室的入口。廷根恢复了它惯常的平静——只是你偶尔会在夜里醒来。",
+        "chance": 60,
+        "weight": 3,
+        "locations": [
+          "north"
+        ],
+        "min_day": 50,
+        "requires_tags_any": [
+          "试图抽身"
+        ],
+        "once_tag": "普通人线结局",
+        "choices": [
+          {
+            "label": "彻底遗忘",
+            "result": "你搬了次家，换了份工。一年以后，有些事你真的记不太清了。",
+            "effects": {
+              "stress": -8,
+              "spirituality": -2
+            },
+            "add_tags": [
+              "普通人线结局"
+            ],
+            "branch_to": "branch_plain_life_end"
+          },
+          {
+            "label": "在心里留一页",
+            "result": "你答应过那里的人不再回头，但有些名字你永远不会忘。",
+            "effects": {
+              "madness": 3,
+              "mysticism_knowledge": 1
+            },
+            "add_tags": [
+              "普通人线结局"
+            ],
+            "branch_to": "branch_plain_life_end"
+          }
+        ]
+      },
+      {
+        "id": "branch_plain_life_end",
+        "text": "风平浪静的廷根，和你想守护的那个平凡人生，都还在。",
+        "chance": 55,
+        "weight": 2,
+        "locations": [
+          "north"
+        ],
+        "min_day": 53,
+        "requires_tags_any": [
+          "试图抽身"
+        ],
+        "once_tag": "普通人线结局"
       }
     ],
     "edges": [

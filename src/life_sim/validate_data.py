@@ -91,6 +91,12 @@ def validate_event_graphs(data: list[dict[str, Any]]) -> list[str]:
                         errors.append(f"图 {gid} 节点 {nid}: choice 缺 label")
                     if not c.get("result"):
                         errors.append(f"图 {gid} 节点 {nid}: choice 缺 result")
+                    # V0.26：branch_to 必须引用同一图内的已有节点
+                    branch_to = c.get("branch_to")
+                    if branch_to and branch_to not in ids:
+                        errors.append(
+                            f"图 {gid} 节点 {nid}: choice.branch_to '{branch_to}' 不存在"
+                        )
             # once_tag 与 requires_tags_any 不应互相锁定（选择后触发条件消失）
             once = node.get("once_tag")
             req = node.get("requires_tags_any", [])

@@ -79,6 +79,7 @@
       "properties": {
         "label": { "type": "string", "minLength": 1 },
         "result": { "type": "string", "minLength": 1 },
+        "branch_to": { "type": "string" },
         "effects": { "$ref": "#/$defs/effects" },
         "add_tags": { "type": "array", "items": { "type": "string" } },
         "add_clues": { "$ref": "#/$defs/clueList" },

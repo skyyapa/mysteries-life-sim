@@ -94,6 +94,13 @@ def test_mainline_graph_structure():
         "church_voice",
         "losing_control",
         "truth_choice",
+        # V0.26 图级分支：真相抉择后三条结局线
+        "branch_org_life",
+        "branch_org_life_end",
+        "branch_church_life",
+        "branch_church_life_end",
+        "branch_plain_life",
+        "branch_plain_life_end",
     }
     edges = {(e.from_node, e.to_node) for e in graph.edges}
     assert edges == {
