@@ -15,7 +15,7 @@ from ..models import GameState
 DEFAULT_LOCATIONS = {
     "北区": {"population": 40, "activity": 30, "danger": 6},
     "市场区": {"population": 60, "activity": 50, "danger": 12},
-    "黑夜教堂": {"population": 20, "activity": 25, "danger": 4},
+    "圣赛琳娜教堂": {"population": 20, "activity": 25, "danger": 4},
     "东区": {"population": 55, "activity": 35, "danger": 22},
     "廷根车站": {"population": 35, "activity": 45, "danger": 14},
 }
@@ -37,7 +37,7 @@ ACTIVITY_HEAT = {
 
 @dataclass
 class LocationSystem:
-    ids: tuple[str, ...] = ("北区", "市场区", "黑夜教堂", "东区", "廷根车站")
+    ids: tuple[str, ...] = ("北区", "市场区", "圣赛琳娜教堂", "东区", "廷根车站")
 
     def init_state(self) -> dict[str, dict[str, int]]:
         return {name: dict(DEFAULT_LOCATIONS[name]) for name in self.ids}

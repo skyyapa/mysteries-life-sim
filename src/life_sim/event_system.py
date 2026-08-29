@@ -53,7 +53,7 @@ EFFECT_ALIASES = {
 LOCATION_ALIASES = {
     "north": "北区",
     "market": "市场区",
-    "church": "黑夜教堂",
+    "church": "圣赛琳娜教堂",
     "east": "东区",
     "station": "廷根车站",
 }
@@ -299,7 +299,7 @@ class EventSystem:
 
         target_seq = effects.get("_sequence")
         if target_seq is not None and state.character.pathway:
-            from .mysticism.sequences import seq_name
+            from .mysticism.sequences import seq_tag_name
 
             target_seq = int(target_seq)
             current = state.character.sequence
@@ -307,7 +307,7 @@ class EventSystem:
             if current is not None and target_seq >= current:
                 return
             state.character.sequence = target_seq
-            name = seq_name(state.character.pathway, target_seq) or f"序列{target_seq}"
+            name = seq_tag_name(state.character.pathway, target_seq) or f"序列{target_seq}"
             tag = f"序列：{name}"
             if tag not in state.character.tags:
                 state.character.tags.append(tag)

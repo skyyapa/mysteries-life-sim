@@ -63,7 +63,7 @@
       },
       {
         "id": "ordinary_bell",
-        "text": "黑夜教堂的钟声在雾气中响起，你短暂地感到安心。",
+        "text": "圣赛琳娜教堂的钟声在雾气中响起，你短暂地感到安心。",
         "chance": 10,
         "weight": 2,
         "locations": [
@@ -80,7 +80,7 @@
               "spirituality": 1
             },
             "add_tags": [
-              "去过黑夜教堂"
+              "去过圣赛琳娜教堂"
             ]
           }
         ]
@@ -897,7 +897,7 @@
         "choices": [
           {
             "label": "举报给教会",
-            "result": "你把整理好的线索交给黑夜教堂。教士没有承诺什么，但你看见他立刻锁上了后室的门。",
+            "result": "你把整理好的线索交给圣赛琳娜教堂。教士没有承诺什么，但你看见他立刻锁上了后室的门。",
             "effects": {
               "stress": -5,
               "spirituality": 2
@@ -2038,183 +2038,6 @@
             },
             "add_tags": [
               "不眠者晋升8"
-            ]
-          }
-        ]
-      }
-    ],
-    "edges": []
-  },
-  {
-    "id": "festival_days",
-    "title": "廷根岁时节令",
-    "type": "pool",
-    "nodes": [
-      {
-        "id": "festival_wake",
-        "text": "三月伊始，冰冻的运河解了封。万象节让整座廷根从蛰伏中醒来——街上挂满褪色的旧彩带，人人都像重新活了一遍。",
-        "chance": 70,
-        "weight": 5,
-        "locations": [
-          "north",
-          "market",
-          "station"
-        ],
-        "calendar": {
-          "month": 3,
-          "day": 1
-        },
-        "cooldown": 360,
-        "choices": [
-          {
-            "label": "加入巡游",
-            "result": "你跟着人群走了三个街区，笑得像忘了这年冬天的糟心事。",
-            "effects": {
-              "health": 3,
-              "stress": -6,
-              "mood": 6
-            },
-            "add_tags": [
-              "过万象节"
-            ]
-          },
-          {
-            "label": "趁热闹摆摊卖旧物",
-            "result": "节日里什么都卖得动。你清掉了积灰的杂物，换回几枚银币。",
-            "effects": {
-              "money": 8,
-              "stamina": -4
-            },
-            "add_tags": [
-              "过万象节"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "festival_longnight",
-        "text": "长夜节到了。黑夜教堂的钟声从黄昏响到黎明，信徒举着烛灯沿街巡游，沉默得像一场巨大的梦。",
-        "chance": 75,
-        "weight": 6,
-        "locations": [
-          "church",
-          "north",
-          "east"
-        ],
-        "calendar": {
-          "month": 7,
-          "day": 30
-        },
-        "cooldown": 360,
-        "choices": [
-          {
-            "label": "加入巡游与守夜",
-            "result": "一整夜，你在烛火与颂声里没有合眼。天亮时分，你觉得自己离某个不可言说的东西近了一线。",
-            "effects": {
-              "spirituality": 4,
-              "mysticism": 2,
-              "stress": 4,
-              "stamina": -8
-            },
-            "add_tags": [
-              "守过长夜"
-            ]
-          },
-          {
-            "label": "远远看着，不去打扰",
-            "result": "你站在街角看完了整场巡游。有些仪式不属于你，但这座城市因为它们而存在。",
-            "effects": {
-              "stress": -2,
-              "spirituality": 1
-            },
-            "add_tags": [
-              "守过长夜"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "festival_harvest",
-        "text": "丰收感恩日，市场外支起了长桌。面包、苹果和熏鱼堆得像小山，街坊们破天荒地互相道谢。",
-        "chance": 70,
-        "weight": 5,
-        "locations": [
-          "market",
-          "north"
-        ],
-        "calendar": {
-          "month": 9,
-          "day": 21
-        },
-        "cooldown": 360,
-        "choices": [
-          {
-            "label": "与街坊共宴",
-            "result": "你认识了几个新面孔，也慰劳了老交情。这顿饭吃得值。",
-            "effects": {
-              "charisma": 3,
-              "money": -5,
-              "stress": -4
-            },
-            "trust_effects": {
-              "sha_ren_neighbor": 3,
-              "tom_tavern": 3
-            },
-            "add_tags": [
-              "共赴丰收宴"
-            ]
-          },
-          {
-            "label": "帮忙卸货换工钱",
-            "result": "你帮着把一筐筐苹果搬进仓库，主人家给了不错的工钱。",
-            "effects": {
-              "money": 12,
-              "stamina": -8
-            },
-            "add_tags": [
-              "共赴丰收宴"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "festival_year_end",
-        "text": "岁末之夜，全城点亮红灯笼。教堂的炉火彻夜不熄，老人们说：这一夜许下的愿，来年会回来找你。",
-        "chance": 75,
-        "weight": 6,
-        "locations": [
-          "church",
-          "north",
-          "market"
-        ],
-        "calendar": {
-          "month": 12,
-          "day": 25
-        },
-        "cooldown": 360,
-        "choices": [
-          {
-            "label": "在教堂许愿并守夜",
-            "result": "你跪在长椅前许了一个愿。炉火噼啪作响，你感到久违的安宁——以及一丝被人注视的错觉。",
-            "effects": {
-              "spirituality": 3,
-              "stress": -8,
-              "mood": 4
-            },
-            "add_tags": [
-              "岁末许愿"
-            ]
-          },
-          {
-            "label": "买一份热红酒独酌",
-            "result": "热红酒的香气里，你想起这一年走过的路。有些人已经不在了，但你还在。",
-            "effects": {
-              "money": -4,
-              "stress": -5,
-              "madness": -3
-            },
-            "add_tags": [
-              "岁末许愿"
             ]
           }
         ]

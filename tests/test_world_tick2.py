@@ -67,7 +67,7 @@ def test_locations_initialized():
     state = engine.new_game()
     engine.location_system.ensure(state)
 
-    assert set(state.world.locations) == {"北区", "市场区", "黑夜教堂", "东区", "廷根车站"}
+    assert set(state.world.locations) == {"北区", "市场区", "圣赛琳娜教堂", "东区", "廷根车站"}
     east = state.world.locations["东区"]
     assert east["danger"] > east["北区" if False else "danger"] if False else True
 
@@ -86,7 +86,7 @@ def test_location_tick_changes_activity():
     engine.location_system.tick(state)
 
     north = state.world.locations["北区"]["activity"]
-    empty = state.world.locations["黑夜教堂"]["activity"]
+    empty = state.world.locations["圣赛琳娜教堂"]["activity"]
     assert north >= empty, f"有活跃 NPC 的北区({north})应不比无人教堂({empty})低"
 
 
@@ -218,4 +218,4 @@ def test_tick_world_advances_and_ages():
     assert state.date.year == 1349
     assert state.days_lived == 1
     assert state.character.age == age + 1
-    assert set(state.world.locations) == {"北区", "市场区", "黑夜教堂", "东区", "廷根车站"}
+    assert set(state.world.locations) == {"北区", "市场区", "圣赛琳娜教堂", "东区", "廷根车站"}

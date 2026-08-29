@@ -130,7 +130,7 @@ class NPCSystem:
             npc.current_activity = ACTIVITY_NAMES.get(action_id, action_id)
             # 行为结果统一走 EffectSystem 风格：build → apply
             loc_name_map = {"market": "市场区", "tavern": "北区", "street": "北区",
-                            "church": "黑夜教堂", "canteen": "市场区", "other_home": "东区"}
+                            "church": "圣赛琳娜教堂", "canteen": "市场区", "other_home": "东区"}
             result = build_result(
                 npc, action_id,
                 prev_location=npc.location,
@@ -162,7 +162,7 @@ class NPCSystem:
                 "market": "市场区",
                 "tavern": "北区",
                 "street": "北区",
-                "church": "黑夜教堂",
+                "church": "圣赛琳娜教堂",
                 "canteen": "市场区",
                 "other_home": "东区",
             }

@@ -44,7 +44,7 @@
       },
       {
         "time": "14:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "去教堂做礼拜",
         "fatigue_change": 2
       },
@@ -152,26 +152,26 @@
     "name": "奥尔森教士",
     "job": "黑夜教士",
     "goal": "维持教区安稳",
-    "home": "黑夜教堂",
-    "location": "黑夜教堂",
+    "home": "圣赛琳娜教堂",
+    "location": "圣赛琳娜教堂",
     "fatigue": 20,
     "money": 20,
     "schedule": [
       {
         "time": "07:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "主持日常祈祷",
         "fatigue_change": 3
       },
       {
         "time": "10:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "整理教堂档案",
         "fatigue_change": 3
       },
       {
         "time": "13:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "接待信徒",
         "fatigue_change": 4
       },
@@ -183,26 +183,26 @@
       },
       {
         "time": "18:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "处理教区事务",
         "fatigue_change": 4
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "守夜祈祷",
         "fatigue_change": 3
       },
       {
         "time": "23:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "安静休息",
         "fatigue_change": -8
       }
     ],
     "trust": 8,
     "schedule_id": "priest",
-    "job_location": "黑夜教堂"
+    "job_location": "圣赛琳娜教堂"
   },
   {
     "id": "sha_ren_neighbor",
@@ -246,7 +246,7 @@
       },
       {
         "time": "20:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "去教堂祈祷",
         "fatigue_change": 2
       },
@@ -362,7 +362,7 @@
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "参加礼拜",
         "fatigue_change": 2
       }
@@ -472,7 +472,7 @@
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "捐出剩余面包",
         "fatigue_change": 2
       }
@@ -637,7 +637,7 @@
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "参加晚祷",
         "fatigue_change": 2
       }
@@ -749,7 +749,7 @@
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "与教士交谈",
         "fatigue_change": 2
       }
@@ -804,7 +804,7 @@
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "在教堂外值守",
         "fatigue_change": 3
       }
@@ -893,7 +893,7 @@
       },
       {
         "time": "21:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "参加礼拜",
         "fatigue_change": 2
       }
@@ -914,7 +914,7 @@
       },
       {
         "time": "15:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "参加礼拜",
         "fatigue_change": 1
       },
@@ -1123,7 +1123,7 @@
       },
       {
         "time": "12:00",
-        "location": "黑夜教堂",
+        "location": "圣赛琳娜教堂",
         "activity": "领取救济汤",
         "fatigue_change": -2
       },

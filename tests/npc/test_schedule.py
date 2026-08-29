@@ -93,7 +93,7 @@ def test_npc_moves_between_locations_during_day():
 
     engine.tick(state)
 
-    # 教士工作日结束在家（job_location=黑夜教堂，home=黑夜教堂）
+    # 教士工作日结束在家（job_location=圣赛琳娜教堂，home=圣赛琳娜教堂）
     assert priest.location == priest.home
 
 

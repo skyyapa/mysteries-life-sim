@@ -33,7 +33,7 @@ SEQUENCES: dict[str, dict[int, dict[str, Any]]] = {
     "观众": {
         9: {"name": "观众", "魔药": "观众魔药", "灵性门槛": 12, "疯狂风险": 4, "特质": "洞察人心"},
         8: {"name": "读心者", "魔药": "读心者魔药", "灵性门槛": 25, "疯狂风险": 9, "特质": "见他心识"},
-        7: {"name": "心理医生", "魔药": "心理医生魔药", "灵性门槛": 45, "疯狂风险": 14, "特质": "言语如刀"},
+        7: {"name": "心理医生", "别名": "精神分析师", "魔药": "心理医生魔药", "灵性门槛": 45, "疯狂风险": 14, "特质": "言语如刀"},
     },
     "不眠者": {
         9: {"name": "不眠者", "魔药": "不眠者魔药", "灵性门槛": 12, "疯狂风险": 6, "特质": "夜行耐力"},
@@ -85,12 +85,23 @@ POLLUTION_TAGS = {"精神污染", "镜中的窥视者", "接触高位格", "邪�
 
 
 def seq_name(pathway: str | None, sequence: int | None) -> str | None:
-    """当前序列的人类可读名。"""
+    """当前序列的人类可读名（含别名，如 心理医生（精神分析师））。"""
     if not pathway or sequence is None:
         return None
-    if sequence not in SEQUENCES.get(pathway, {}):
+    spec = SEQUENCES.get(pathway, {}).get(sequence)
+    if spec is None:
         return None
-    return SEQUENCES[pathway][sequence]["name"]
+    base = spec["name"]
+    alias = spec.get("别名")
+    return f"{base}（{alias}）" if alias else base
+
+
+def seq_tag_name(pathway: str | None, sequence: int | None) -> str | None:
+    """序列标签名（纯名，无别名）——用于 tags 匹配，保证条件稳定。"""
+    if not pathway or sequence is None:
+        return None
+    spec = SEQUENCES.get(pathway, {}).get(sequence)
+    return spec["name"] if spec else None
 
 
 def next_sequence(pathway: str | None, sequence: int | None) -> int | None:
@@ -183,7 +194,7 @@ def drink_potion(
     runaway = rng.random() < risk
 
     changes: dict[str, int] = {"madness": spec["疯狂风险"]}
-    tags: list[str] = [f"序列：{seq_name(pathway, target_seq)}"]
+    tags: list[str] = [f"序列：{seq_tag_name(pathway, target_seq)}"]
     if runaway:
         outcome, extra = _roll_outcome(rng)
         # 叠加：基疯狂代价 + 后果额外（原 update 会覆盖，改为逐项加）

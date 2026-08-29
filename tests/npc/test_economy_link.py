@@ -74,7 +74,7 @@ def test_location_activity_follows_npc_density():
     engine.location_system.tick(state)
 
     north = state.world.locations["北区"]["activity"]
-    church = state.world.locations["黑夜教堂"]["activity"]
+    church = state.world.locations["圣赛琳娜教堂"]["activity"]
     assert north >= church
 
 
