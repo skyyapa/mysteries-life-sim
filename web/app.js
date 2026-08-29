@@ -1,5 +1,5 @@
 // 版本戳：browser title 展示当前加载版本（防缓存旧版误判）
-const APP_VERSION = "v30";
+const APP_VERSION = "v31";
 try {
   document.title = `人生模拟器 ${APP_VERSION}`;
 } catch (e) {
@@ -2082,6 +2082,99 @@ const events = [
       },
     ],
   },
+  {
+    id: "festival_wake",
+    title: "万象节",
+    text: "三月伊始，冰冻的运河解了封。万象节让整座廷根从蛰伏中醒来——街上挂满褪色的旧彩带，人人都像重新活了一遍。",
+    chance: 70,
+    weight: 5,
+    calendar: { month: 3, day: 1 },
+    cooldownDays: 360,
+    choices: [
+      {
+        label: "加入巡游",
+        result: "你跟着人群走了三个街区，笑得像忘了这年冬天的糟心事。",
+        effects: { health: 3, stress: -6 },
+        addTags: ["过万象节"],
+      },
+      {
+        label: "趁热闹摆摊卖旧物",
+        result: "节日里什么都卖得动。你清掉了积灰的杂物，换回几枚银币。",
+        effects: { money: 8, stamina: -4 },
+        addTags: ["过万象节"],
+      },
+    ],
+  },
+  {
+    id: "festival_longnight",
+    title: "长夜节",
+    text: "长夜节到了。黑夜教堂的钟声从黄昏响到黎明，信徒举着烛灯沿街巡游，沉默得像一场巨大的梦。",
+    chance: 75,
+    weight: 6,
+    calendar: { month: 7, day: 30 },
+    cooldownDays: 360,
+    choices: [
+      {
+        label: "加入巡游与守夜",
+        result: "一整夜，你在烛火与颂声里没有合眼。天亮时分，你觉得自己离某个不可言说的东西近了一线。",
+        effects: { spirituality: 4, mysticism: 2, stress: 4, stamina: -8 },
+        addTags: ["守过长夜"],
+      },
+      {
+        label: "远远看着，不去打扰",
+        result: "你站在街角看完了整场巡游。有些仪式不属于你，但这座城市因为它们而存在。",
+        effects: { stress: -2, spirituality: 1 },
+        addTags: ["守过长夜"],
+      },
+    ],
+  },
+  {
+    id: "festival_harvest",
+    title: "丰收感恩日",
+    text: "丰收感恩日，市场外支起了长桌。面包、苹果和熏鱼堆得像小山，街坊们破天荒地互相道谢。",
+    chance: 70,
+    weight: 5,
+    calendar: { month: 9, day: 21 },
+    cooldownDays: 360,
+    choices: [
+      {
+        label: "与街坊共宴",
+        result: "你认识了几个新面孔，也慰劳了老交情。这顿饭吃得值。",
+        effects: { charisma: 3, money: -5, stress: -4 },
+        trustEffects: { neighbor: 3, newsboy: 3 },
+        addTags: ["共赴丰收宴"],
+      },
+      {
+        label: "帮忙卸货换工钱",
+        result: "你帮着把一筐筐苹果搬进仓库，主人家给了不错的工钱。",
+        effects: { money: 12, stamina: -8 },
+        addTags: ["共赴丰收宴"],
+      },
+    ],
+  },
+  {
+    id: "festival_year_end",
+    title: "岁末之夜",
+    text: "岁末之夜，全城点亮红灯笼。教堂的炉火彻夜不熄，老人们说：这一夜许下的愿，来年会回来找你。",
+    chance: 75,
+    weight: 6,
+    calendar: { month: 12, day: 25 },
+    cooldownDays: 360,
+    choices: [
+      {
+        label: "在教堂许愿并守夜",
+        result: "你跪在长椅前许了一个愿。炉火噼啪作响，你感到久违的安宁——以及一丝被人注视的错觉。",
+        effects: { spirituality: 3, stress: -8 },
+        addTags: ["岁末许愿"],
+      },
+      {
+        label: "买一份热红酒独酌",
+        result: "热红酒的香气里，你想起这一年走过的路。有些人已经不在了，但你还在。",
+        effects: { money: -4, stress: -5, madness: -3 },
+        addTags: ["岁末许愿"],
+      },
+    ],
+  },
 ];
 
 const initialState = {
@@ -2771,6 +2864,13 @@ function canEventTriggerAt(event, locationId) {
     return false;
   }
   if (event.months && !event.months.includes(state.month)) {
+    return false;
+  }
+  // V0.31 节日：特定月日才可触发
+  if (
+    event.calendar &&
+    !(event.calendar.month === (state.month || 1) && event.calendar.day === (state.day || 1))
+  ) {
     return false;
   }
   if (event.jobs && !event.jobs.includes(getCareer().name)) {

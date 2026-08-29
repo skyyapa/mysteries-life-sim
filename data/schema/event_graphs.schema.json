@@ -53,6 +53,14 @@
         },
         "after_nodes": { "type": "array", "items": { "type": "string" } },
         "once_tag": { "type": "string" },
+        "calendar": {
+          "type": "object",
+          "required": ["month", "day"],
+          "properties": {
+            "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "day": { "type": "integer", "minimum": 1, "maximum": 30 }
+          }
+        },
         "on_world_event": { "type": "string" },
         "on_world_event_cond": {
           "type": "object",

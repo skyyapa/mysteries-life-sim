@@ -391,6 +391,14 @@ class EventSystem:
     def conditions_met(self, conditions: dict[str, Any], state: GameState) -> bool:
         character = state.character
 
+        # V0.31：特定日期条件（节日）——{"month": 3, "day": 1} 仅当月日命中
+        calendar = conditions.get("calendar")
+        if calendar:
+            if state.date.month != int(calendar.get("month", 0)) or state.date.day != int(
+                calendar.get("day", 0)
+            ):
+                return False
+
         min_day = conditions.get("min_day")
         if min_day is not None and state.days_lived < min_day:
             return False
@@ -567,6 +575,9 @@ def normalize_conditions(node: dict[str, Any]) -> dict[str, Any]:
         conditions["season"] = node["season"]
     if "months" in node:
         conditions["months"] = list(node["months"])
+    # V0.31：节日特定日期
+    if "calendar" in node:
+        conditions["calendar"] = dict(node["calendar"])
     if "jobs" in node:
         conditions["job"] = list(node["jobs"])
     elif "job" in node:
