@@ -1,3 +1,11 @@
+// 版本戳：browser title 展示当前加载版本（防缓存旧版误判）
+const APP_VERSION = "v27";
+try {
+  document.title = `人生模拟器 ${APP_VERSION}`;
+} catch (e) {
+  /* noop */
+}
+
 const careers = {
   student: {
     name: "文法学校学生",
