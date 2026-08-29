@@ -2156,7 +2156,7 @@ function takeAction(actionId, shouldRender = true) {
 
 /**
  * v0.27 一天由早/午/晚三时段组成：执行动作但只在当天结束时推进日期。
- * 各时段动作不做日期推进，事件判定只在整个天数末尾 roll 一次。
+ * 事件不中断当天：三时段照常过完，事件在当天结束后交给你抉择。
  */
 function liveOneFullDay() {
   if (state.pendingEvent) {
@@ -2165,13 +2165,16 @@ function liveOneFullDay() {
   const slotActions = pickDaySlots();
   const happened = [];
   for (const slot of slotActions) {
-    if (state.pendingEvent) {
-      break; // 中途遇事件（如调查触发），停下交给玩家
-    }
-    const text = performActionOnce(slot.action, slot.label, false);
+    const text = performActionOnce(slot.action, slot.label, false, true);
     if (text) {
       happened.push(text);
     }
+  }
+  // 三时段全部过完后再 roll 事件（不打断今天）
+  const event = rollEvent();
+  if (event) {
+    state.pendingEvent = { ...event, happenedAt: formatDate() };
+    happened.push(`晚间：${event.text}`);
   }
   // 只有那天真正过了才推进日期与月结算
   const day = advanceDayNoEvent();
@@ -2226,9 +2229,10 @@ function pickEveningAction(used = new Set()) {
   return pool.length > 0 ? pick(pool) : "rest";
 }
 
-/** 纯执行一次动作：applyEffects + 生活描述，不推进日期、不 roll 事件。 */
-function performActionOnce(actionId, slotLabel, shouldRender) {
-  if (state.pendingEvent) {
+/** 纯执行一次动作：applyEffects + 生活描述，不推进日期、不 roll 事件。
+ * force=true：当天三时段内即使已有待处理事件也继续过完（事件在当天末尾再呈现）。 */
+function performActionOnce(actionId, slotLabel, shouldRender, force = false) {
+  if (state.pendingEvent && !force) {
     return "";
   }
   const action = actions[actionId];
@@ -2259,7 +2263,6 @@ function performActionOnce(actionId, slotLabel, shouldRender) {
     if (deposited > 0) {
       state.stats.money -= deposited;
       state.finance.savings += deposited;
-      text = text + ` 你把 ${deposited} 镑存进储蓄银行。`;
     } else {
       text = "你走到银行门口，摸了摸空荡荡的口袋，只好转身回去。";
     }
@@ -2268,18 +2271,8 @@ function performActionOnce(actionId, slotLabel, shouldRender) {
     if (withdrawn > 0) {
       state.finance.savings -= withdrawn;
       state.stats.money += withdrawn;
-      text = text + ` 你从储蓄银行取出 ${withdrawn} 镑。`;
     } else {
       text = "你的存款是零，银行柜员礼貌地请你让开后面的队伍。";
-    }
-  }
-  // 时段标签 + 触发的随机事件（当天只 roll 一次）
-  const morning = slotLabel === "早晨";
-  if (morning) {
-    const event = rollEvent();
-    if (event) {
-      state.pendingEvent = { ...event, happenedAt: formatDate() };
-      text = `${text} ${event.text}`;
     }
   }
   return `${slotLabel}：${text}`;
@@ -2316,6 +2309,11 @@ function advanceDayWithAction(actionId, shouldRender = true) {
     return;
   }
   const parts = [performActionOnce(actionId, "今日", false)];
+  const event = rollEvent();
+  if (event) {
+    state.pendingEvent = { ...event, happenedAt: formatDate() };
+    parts.push(`晚间：${event.text}`);
+  }
   advanceDayNoEvent();
   const text = parts.filter(Boolean).join(" ");
   if (text) {
