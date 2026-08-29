@@ -530,7 +530,9 @@ button:active {
   border-color: rgba(208, 179, 106, 0.75);
   color: #fff2c3;
   font-weight: 700;
-  padding: 10px 22px;
+  padding: 12px 30px;  /* V0.26UI：主按钮更大更好点 */
+  font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
 .primary-btn:hover {
@@ -668,10 +670,11 @@ button:active {
 }
 
 .footer-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto auto auto;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 10px;
+  padding-top: 12px;
 }
 
 .career-actions {
@@ -679,6 +682,19 @@ button:active {
   flex-wrap: wrap;
   gap: 8px;
   min-width: 0;
+  margin-right: auto;
+}
+
+.footer-divider {
+  width: 1px;
+  height: 26px;
+  background: rgba(244, 239, 230, 0.16);
+  margin: 0 2px;
+}
+
+.danger-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .secondary {
@@ -737,7 +753,7 @@ button:active {
   }
 
   .footer-actions {
-    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 

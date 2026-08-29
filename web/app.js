@@ -2109,12 +2109,18 @@ document.getElementById("autoDay").addEventListener("click", () => {
 });
 
 document.getElementById("newLife").addEventListener("click", () => {
+  if (!confirm(`生成新人生将放弃当前人生（${formatDate()}，第 ${state.daysLived} 天）。\n确定要重新开始吗？`)) {
+    return;
+  }
   state = createRandomState();
   saveState();
   render();
 });
 
 document.getElementById("resetGame").addEventListener("click", () => {
+  if (!confirm("重新开始将清除当前进度并恢复默认人生。确定吗？")) {
+    return;
+  }
   state = createDefaultState();
   saveState();
   render();
