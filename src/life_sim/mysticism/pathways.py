@@ -50,8 +50,14 @@ def apply_pathway_bonus(character: Any, pathway: str) -> None:
             setattr(character, key, max(0, min(100, current + value)))
 
 
-def pathway_behavior_bonus(pathway: str | None, action_id: str) -> int:
-    """行为评分加成：途径影响 NPC/玩家的行为倾向。"""
+def pathway_behavior_bonus(pathway: str | None, action_id: str, sequence: int | None = None) -> int:
+    """行为评分加成：途径影响行为倾向；序列越高加成越强（V0.28）。"""
     if not pathway:
         return 0
-    return PATHWAY_BEHAVIOR.get(pathway, {}).get(action_id, 0)
+    base = PATHWAY_BEHAVIOR.get(pathway, {}).get(action_id, 0)
+    if base == 0:
+        return 0
+    from .sequences import SEQUENCE_BEHAVIOR_MULT
+
+    mult = SEQUENCE_BEHAVIOR_MULT.get(sequence or 9, 1.0)
+    return int(round(base * mult))

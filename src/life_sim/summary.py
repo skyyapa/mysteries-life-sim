@@ -28,15 +28,18 @@ def summarize_life(state: GameState) -> dict[str, Any]:
         "抉择": [t for t in tags if "抉择" in t or "选择" in t or "抽身" in t or "加入" in t or "线人" in t],
     }
 
-    # 3. 非凡之路
+    # 3. 非凡之路（V0.28 带序列）
     pathway = char.pathway
     madness_stage = _madness_stage(char.madness)
     if pathway:
         from .mysticism.pathways import PATHWAYS
+        from .mysticism.sequences import seq_name
 
         spec = PATHWAYS.get(pathway, {})
+        seq_label = seq_name(pathway, char.sequence) if char.sequence else pathway
         pathway_line = (
-            f"这一年你踏上了「{pathway}」之路——{spec.get('trait', '')}。"
+            f"这一年你踏上了「{pathway}」之路——{spec.get('trait', '')}，"
+            f"抵达序列「{seq_label}」。"
             f"心灵在灵性与疯狂间摇摆，岁末时{_madness_stage_text(madness_stage)}。"
         )
     else:

@@ -1785,5 +1785,281 @@
       }
     ],
     "edges": []
+  },
+  {
+    "id": "seq_advance",
+    "title": "序列晋升",
+    "type": "mystic",
+    "start_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "text": "非凡之路的每一次晋升，都是一场与疯狂的赌博。",
+        "chance": 0,
+        "weight": 1
+      },
+      {
+        "id": "seq9_seer_advance",
+        "text": "深衣人交给你一支细颈玻璃瓶——小丑魔药。灵性在瓶壁内流转，隐约传来戏谑的笑声。",
+        "chance": 30,
+        "weight": 4,
+        "locations": [
+          "east"
+        ],
+        "min_day": 62,
+        "requires_tags_any": [
+          "途径：占卜家"
+        ],
+        "once_tag": "占卜家晋升",
+        "choices": [
+          {
+            "label": "饮下魔药",
+            "result": "苦涩的液体划过喉咙，世界忽然在你眼前裂开无数细小的倒影。你成为小丑——七窍皆明。",
+            "effects": {
+              "_sequence": 8,
+              "spirituality": 4,
+              "intelligence": 2,
+              "madness": 10,
+              "stress": 8
+            },
+            "add_tags": [
+              "占卜家晋升",
+              "序列：小丑"
+            ]
+          },
+          {
+            "label": "再等等",
+            "result": "你把瓶子收进怀中。有些玩笑，还不是时候。",
+            "effects": {
+              "stress": -2
+            },
+            "add_tags": [
+              "占卜家晋升"
+            ]
+          }
+        ],
+        "requires_any_clue": [
+          "shadow_watcher"
+        ]
+      },
+      {
+        "id": "seq8_seer_advance",
+        "text": "东区的地窖里，老牌小丑魔术师看着你：再进一步，就是魔术师——仪式需要你的灵性接近枯竭的那一刻。",
+        "chance": 26,
+        "weight": 4,
+        "locations": [
+          "east"
+        ],
+        "min_day": 85,
+        "requires_tags_any": [
+          "序列：小丑"
+        ],
+        "once_tag": "占卜家晋升8",
+        "choices": [
+          {
+            "label": "进行仪式",
+            "result": "灵性几乎枯竭的瞬间，你看见了一张属于你的牌——魔术师。世界在掌中翻跃。",
+            "effects": {
+              "_sequence": 7,
+              "spirituality": 6,
+              "intelligence": 3,
+              "stamina": -3,
+              "madness": 16,
+              "stress": 10
+            },
+            "add_tags": [
+              "占卜家晋升8",
+              "序列：魔术师"
+            ]
+          },
+          {
+            "label": "状态不稳，改日再说",
+            "result": "老魔术师点点头：明智。失控的晋升，比死更糟。",
+            "effects": {
+              "stress": -3
+            },
+            "add_tags": [
+              "占卜家晋升8"
+            ]
+          }
+        ],
+        "requires_any_clue": [
+          "shadow_watcher"
+        ]
+      },
+      {
+        "id": "seq9_reader_advance",
+        "text": "剧院后台，一个戴单片眼镜的女人递给你一杯闻不出味道的酒——读心者魔药。她说：喝了它，你就能听见人心里的话。",
+        "chance": 30,
+        "weight": 4,
+        "locations": [
+          "north",
+          "market"
+        ],
+        "min_day": 62,
+        "requires_tags_any": [
+          "途径：观众",
+          "看破谎言"
+        ],
+        "once_tag": "观众晋升",
+        "choices": [
+          {
+            "label": "饮下魔药",
+            "result": "酒入喉后，周围的低语忽然清晰成词。你开始听得见声音背后的心思。你成为读心者。",
+            "effects": {
+              "_sequence": 8,
+              "spirituality": 4,
+              "intelligence": 2,
+              "madness": 9,
+              "stress": 7
+            },
+            "add_tags": [
+              "观众晋升",
+              "序列：读心者"
+            ]
+          },
+          {
+            "label": "婉拒",
+            "result": "她笑而不语，收回了酒杯。有些东西，推辞过一次就不会再来。",
+            "effects": {
+              "stress": -2
+            },
+            "add_tags": [
+              "观众晋升"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "seq8_reader_advance",
+        "text": "那女人再次找到你：心理医生魔药。它教你说出任何人此刻最想听的话，也教你看穿最深处的动机。",
+        "chance": 26,
+        "weight": 4,
+        "locations": [
+          "north"
+        ],
+        "min_day": 85,
+        "requires_tags_any": [
+          "序列：读心者",
+          "看破谎言"
+        ],
+        "once_tag": "观众晋升8",
+        "choices": [
+          {
+            "label": "完成仪式",
+            "result": "你学着在一个陌生人的泪光里找到真相的裂口。心理医生——言语如刀。",
+            "effects": {
+              "_sequence": 7,
+              "spirituality": 6,
+              "intelligence": 3,
+              "stamina": -3,
+              "madness": 14,
+              "stress": 9
+            },
+            "add_tags": [
+              "观众晋升8",
+              "序列：心理医生"
+            ]
+          },
+          {
+            "label": "放弃",
+            "result": "你选择停在读心者的位置。有些真相，知道了就不再有退路。",
+            "effects": {
+              "stress": -4
+            },
+            "add_tags": [
+              "观众晋升8"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "seq9_insomn_advance",
+        "text": "午夜，老守夜人将一杯黑色的液体推到你面前——午夜诗人魔药。它会让你的夜晚比白天更清醒。",
+        "chance": 30,
+        "weight": 4,
+        "locations": [
+          "east",
+          "north"
+        ],
+        "min_day": 62,
+        "requires_tags_any": [
+          "途径：不眠者",
+          "不眠者夜巡"
+        ],
+        "once_tag": "不眠者晋升",
+        "choices": [
+          {
+            "label": "饮下魔药",
+            "result": "黑暗在你眼中褪去，巷子里每一粒尘埃都清晰可见。你吟诵着夜的韵律，成为午夜诗人。",
+            "effects": {
+              "_sequence": 8,
+              "spirituality": 4,
+              "stamina": 4,
+              "madness": 11,
+              "stress": 7
+            },
+            "add_tags": [
+              "不眠者晋升",
+              "序列：午夜诗人"
+            ]
+          },
+          {
+            "label": "把杯子推回去",
+            "result": "老守夜人沉默片刻：那便再守一段夜吧。",
+            "effects": {
+              "stress": -2
+            },
+            "add_tags": [
+              "不眠者晋升"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "seq8_insomn_advance",
+        "text": "你开始能看见别人梦里的轮廓。梦魇魔药在罐底等待——传说饮下它的人，能走进他人的梦境。",
+        "chance": 26,
+        "weight": 4,
+        "locations": [
+          "east"
+        ],
+        "min_day": 85,
+        "requires_tags_any": [
+          "序列：午夜诗人",
+          "不眠者夜巡"
+        ],
+        "once_tag": "不眠者晋升8",
+        "choices": [
+          {
+            "label": "饮下魔药",
+            "result": "你梦见自己站在无数扇门前。推门而入那一刻，你明白了什么是织梦。",
+            "effects": {
+              "_sequence": 7,
+              "spirituality": 6,
+              "intelligence": 3,
+              "stamina": -3,
+              "madness": 18,
+              "stress": 10
+            },
+            "add_tags": [
+              "不眠者晋升8",
+              "序列：梦魇"
+            ]
+          },
+          {
+            "label": "黎明前抽身",
+            "result": "你在梦的边界停下脚步。梦魇之路，对现在的你而言还太深。",
+            "effects": {
+              "stress": -3
+            },
+            "add_tags": [
+              "不眠者晋升8"
+            ]
+          }
+        ]
+      }
+    ],
+    "edges": []
   }
 ]

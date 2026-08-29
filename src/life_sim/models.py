@@ -94,6 +94,7 @@ class Character:
     corruption: int = 0
     madness: int = 0
     pathway: str | None = None  # V0.21：非凡途径（占卜家/观众/不眠者），默认普通人
+    sequence: int | None = None  # V0.28：非凡序列（9 最低，晋升递减到 7）
     tags: list[str] = field(default_factory=list)
 
     def clamp(self) -> None:
@@ -143,6 +144,7 @@ class Character:
             "corruption": self.corruption,
             "madness": self.madness,
             "pathway": self.pathway,
+            "sequence": self.sequence,
             "tags": list(self.tags),
         }
 
@@ -168,6 +170,7 @@ class Character:
             corruption=int(data.get("corruption", 0)),
             madness=int(data.get("madness", 0)),
             pathway=data.get("pathway"),
+            sequence=int(data["sequence"]) if data.get("sequence") is not None else None,
             tags=list(data.get("tags", [])),
         )
 

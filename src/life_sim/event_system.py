@@ -249,15 +249,30 @@ class EventSystem:
                     break
         return advanced
 
-    def apply(self, graph: EventGraph, node: EventNode, state: GameState) -> str:
-        state.character.apply_changes(map_effect_keys(node.effects))
-        # V0.21：特效键 _pathway 设置非凡途径
-        pathway = node.effects.get("_pathway")
+    def _apply_pathway(self, effects: dict[str, Any], state: GameState) -> None:
+        """V0.21+：_pathway 设置途径（首次=序列9），_sequence 支持晋升。"""
+        pathway = effects.get("_pathway")
         if pathway:
             state.character.pathway = pathway
+            if state.character.sequence is None:
+                state.character.sequence = 9  # 途径起始序列（V0.28）
             tag = f"途径：{pathway}"
             if tag not in state.character.tags:
                 state.character.tags.append(tag)
+        target_seq = effects.get("_sequence")
+        if target_seq is not None and state.character.pathway:
+            from .mysticism.sequences import seq_name
+
+            state.character.sequence = int(target_seq)
+            name = seq_name(state.character.pathway, int(target_seq)) or f"序列{target_seq}"
+            tag = f"序列：{name}"
+            if tag not in state.character.tags:
+                state.character.tags.append(tag)
+
+    def apply(self, graph: EventGraph, node: EventNode, state: GameState) -> str:
+        state.character.apply_changes(map_effect_keys(node.effects))
+        # V0.21：特效键 _pathway 设置非凡途径
+        self._apply_pathway(node.effects, state)
         for tag in node.add_tags:
             if tag not in state.character.tags:
                 state.character.tags.append(tag)
@@ -307,12 +322,7 @@ class EventSystem:
         """应用单个 choice 的效果集（与 apply 的公共效果逻辑一致）。"""
         effects = dict(choice.get("effects", {}))
         state.character.apply_changes(map_effect_keys(effects))
-        pathway = effects.get("_pathway")
-        if pathway:
-            state.character.pathway = pathway
-            tag = f"途径：{pathway}"
-            if tag not in state.character.tags:
-                state.character.tags.append(tag)
+        self._apply_pathway(effects, state)
         for tag in choice.get("add_tags", []):
             if tag not in state.character.tags:
                 state.character.tags.append(tag)

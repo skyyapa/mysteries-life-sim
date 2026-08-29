@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.26（事件图图级分支）完成时
+最后更新：V0.28（非凡序列与魔药晋升）完成时
 
 ---
 
@@ -28,7 +28,9 @@
 | V0.24 | 途径深化：占卜行动/观众加成/不眠者耐力 + 途径专属事件（已完成） |
 | V0.25 | NPC 轻量记忆：帮过/坑过影响社交（已完成） |
 | V0.26 | 事件图图级分支：choice.branch_to 走不同结局线（已完成） |
-| 后续 | 更多途径能力、内容扩充（赛季/节日/更多 NPC）、Web 端玩法对齐 |
+| V0.27 | 三时段一天：早/午/晚生活 + 反缓存（已完成） |
+| V0.28 | 非凡序列与魔药晋升：9→8→7 三阶（已完成） |
+| 后续 | Web 途径+序列展示同步、内容扩充（节日/更多 NPC）、双端数据单一化 |
 
 每个小版节奏：跑 30 天 → 跑一年 → 测试 → 再进下一步。V0.15 坚决不做 LLM/Lisien/自由对话/长期记忆/非凡NPC。
 
@@ -179,6 +181,8 @@ tests/
 26. **V0.24 途径深化三件套**：占卜家→`divination` 专属行动（requires_pathway 校验 + available_actions 按 pathway 过滤 + 偶然吉兆）；观众→社交 trust 加成（apply_social_effects(bonus=3)/Web charisma）；不眠者→工作/调查耐力豁免（stamina 净变化放款）。3 个途径专属事件节点（初窥镜影/洞察谎言/夜巡纽扣）接 `途径：X` 标签触发，once_tag 防重复；`actions.json` 校验器（V0.22）当时直接拦下了 `trust_effects:{}` 的空对象错误。
 27. **V0.25 NPC 记忆是规则表不是 AI**：`NPC.memories{kind:{count,last_day}}` + `remember()/memory_magnitude()`（30 天内全强度、之后按 30 天半衰衰减）；事件 trust_effects 正负自动记 helped/harmed；深交社交收益按记忆修正（帮过 +≤3，坑过 −≤4）。Web 镜像：contact.memories 徽记（念着我的好/对我有怨）、changeTrust 记记忆（|Δ|≥2 才记）。
 28. **V0.26 图级分支 = choice.branch_to**：选择不再只改属性——`apply_choice(graph,node,index,state)` 应用该 choice 效果并把图推进到 `branch_to` 节点（图内分支）；链图 current 是分支点（choices 含 branch_to）时，available_nodes 额外列出满足标签门控的旁支（选了才有标签 → 只看到自己的线）；校验器新增 branch_to 引用检查。主线真相抉择改造成三条结局线（组织/教会/普通人各 2 节点、含二次分支）。
+29. **V0.27 三时段一天**：Web 一次"过一天"= 早晨/午后/夜晚三时段各一动作（去重、单条日志），事件在当天末尾 roll（不打断三时段——曾因早晨 roll 事件即 break 导致"只有早晨"，在 Node 沙箱验证 30/30 天完整后才收）。顺带解决浏览器缓存旧 JS：版本参数 ?v27 + meta no-cache + 标题盖版本章；`takeAction` 保留单动作兼容路径（移动等）。
+30. **V0.28 序列体系（克制 3 阶）**：`mysticism/sequences.py`——每途径 9→8→7（占卜家 占卜家→小丑→魔术师；观众 观众→读心者→心理医生；不眠者 不眠者→午夜诗人→梦魇）。选途径时 `sequence=9`（event `_pathway`）；服食魔药 `_sequence` 特效键晋升；`can_consume` 灵性门槛拦截；行为加成按序列倍率（9:1.0/8:1.6/7:2.4）。晋升事件图 `seq_advance`（每途径 2 节点 6 选），前置=各途径专属线索/标签（占卜家用 clue `shadow_watcher`、观众/不眠者用专属事件标签）——曾误用占卜家线索做观众/不眠者前置（会卡死），已修正。
 
 ---
 

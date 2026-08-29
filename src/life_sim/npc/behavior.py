@@ -57,12 +57,13 @@ def _goal_weight(npc: Any, action_id: str) -> int:
             return 10
     if action_id == "pray" and ("教" in goal or "神" in goal):
         return 12
-    # V0.21：非凡途径加成（有 pathway 的对象，如玩家角色）
+    # V0.21：非凡途径加成（有 pathway 的对象，如玩家角色）；V0.28 序列越高越强
     pathway = getattr(npc, "pathway", None)
     if pathway:
         from ..mysticism.pathways import pathway_behavior_bonus
 
-        bonus = pathway_behavior_bonus(pathway, action_id)
+        seq = getattr(npc, "sequence", None)
+        bonus = pathway_behavior_bonus(pathway, action_id, seq)
         if bonus:
             return bonus
     return 0
