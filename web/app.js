@@ -1,5 +1,5 @@
 // 版本戳：browser title 展示当前加载版本（防缓存旧版误判）
-const APP_VERSION = "v27";
+const APP_VERSION = "v30";
 try {
   document.title = `人生模拟器 ${APP_VERSION}`;
 } catch (e) {
@@ -1980,6 +1980,108 @@ const events = [
       },
     ],
   },
+  {
+    id: "pathway_choice",
+    title: "途径：属于你的路",
+    text: "真相抉择之后，属于你的那条路开始显现。你隐约感到，自己与某些古老的东西有了说不清的联系。",
+    chance: 60,
+    weight: 6,
+    minDay: 52,
+    requiresTags: ["加入神秘组织"],
+    onceTag: "选定途径",
+    choices: [
+      {
+        label: "成为占卜家",
+        result: "你对某些征兆格外敏感——茶梗、烛焰、镜面。你选择以占卜为路。",
+        effects: { _pathway: "占卜家", spirituality: 5, mysticism: 3 },
+        addTags: ["选定途径"],
+      },
+      {
+        label: "成为观众",
+        result: "你选择观察。看人、看场合、看那些隐藏的意图。",
+        effects: { _pathway: "观众", charisma: 4, spirituality: 2 },
+        addTags: ["选定途径"],
+      },
+      {
+        label: "成为不眠者",
+        result: "从今夜起，你与夜晚为伴。黑暗不再是威胁。",
+        effects: { _pathway: "不眠者", stamina: 4, spirituality: 3 },
+        addTags: ["选定途径"],
+      },
+    ],
+  },
+  {
+    id: "seq_advance_seer",
+    title: "晋升：小丑魔药",
+    text: "深衣人交给你一支细颈玻璃瓶——小丑魔药。灵性在瓶壁内流转，隐约传来戏谑的笑声。",
+    chance: 34,
+    weight: 5,
+    minDay: 62,
+    requiresTags: ["途径：占卜家"],
+    onceTag: "占卜家晋升",
+    choices: [
+      {
+        label: "饮下魔药",
+        result: "你仰头饮下。",
+        effects: { _potion: 8 },
+        addTags: ["占卜家晋升"],
+      },
+      {
+        label: "再等等",
+        result: "你把瓶子收进怀中。有些玩笑，还不是时候。",
+        effects: { stress: -2 },
+        addTags: ["占卜家晋升"],
+      },
+    ],
+  },
+  {
+    id: "seq_advance_reader",
+    title: "晋升：读心者魔药",
+    text: "剧院后台，一个戴单片眼镜的女人递给你一杯闻不出味道的酒——读心者魔药。她说：喝了它，你就能听见人心里的话。",
+    chance: 34,
+    weight: 5,
+    minDay: 62,
+    requiresTags: ["途径：观众", "看破谎言"],
+    onceTag: "观众晋升",
+    choices: [
+      {
+        label: "饮下魔药",
+        result: "酒入喉后，周围的低语忽然清晰成词。",
+        effects: { _potion: 8 },
+        addTags: ["观众晋升"],
+      },
+      {
+        label: "婉拒",
+        result: "她笑而不语，收回了酒杯。有些东西，推辞过一次就不会再来。",
+        effects: { stress: -2 },
+        addTags: ["观众晋升"],
+      },
+    ],
+  },
+  {
+    id: "seq_advance_insomn",
+    title: "晋升：午夜诗人魔药",
+    text: "午夜，老守夜人将一杯黑色的液体推到你面前——午夜诗人魔药。它会让你的夜晚比白天更清醒。",
+    chance: 34,
+    weight: 5,
+    minDay: 62,
+    requiresTags: ["途径：不眠者", "不眠者夜巡"],
+    onceTag: "不眠者晋升",
+    choices: [
+      {
+        label: "饮下魔药",
+        result: "黑暗在你眼中褪去，巷子里每一粒尘埃都清晰可见。",
+        effects: { _potion: 8 },
+        addTags: ["不眠者晋升"],
+      },
+      {
+        label: "把杯子推回去",
+        result: "老守夜人沉默片刻：那便再守一段夜吧。",
+        effects: { stress: -2 },
+        addTags: ["不眠者晋升"],
+      },
+    ],
+  },
 ];
 
 const initialState = {
@@ -2370,6 +2472,76 @@ function createRandomState() {
   return newState;
 }
 
+/** V0.30 Web 版魔药失控检定（镜像 Python mysticism.sequences.drink_potion）。
+ * 诱因逐项累积 → 失控率；失控后三档后果（发狂/扭曲/死亡）。
+ */
+function drinkPotionWeb(targetSeq) {
+  const c = state.character || {};
+  const spirit = state.stats.spirituality ?? 0;
+  const stress = state.stats.stress ?? 0;
+  const mood = state.stats.mood ?? 50;
+  const madness = state.stats.madness ?? 0;
+
+  // 门槛/风险参数（与 sequences.py 对齐）
+  const gate = targetSeq <= 8 ? 25 : 45;
+  let risk = 0.06 + (targetSeq <= 8 ? 0.06 : 0); // 相性差基线 + 高序列污染
+  const deficit = Math.max(0, gate - spirit);
+  if (deficit > 0) {
+    risk += Math.min(0.7, 0.45 * (deficit / gate) * 3); // 灵性外溢
+  }
+  if (stress > 60) risk += 0.12;
+  if (mood < 25) risk += 0.1;
+  if (madness > 60) risk += 0.15;
+  if (madness >= 80) risk += 0.35;
+  const tags = state.tags || [];
+  if (tags.some((t) => ["精神污染", "接触高位格", "邪神呓语"].includes(t))) {
+    risk += 0.08;
+  }
+  risk = Math.min(0.97, risk);
+
+  // 失控 roll
+  if (Math.random() >= risk) {
+    // 平稳晋升
+    const name = ({ 8: "小丑", 7: "魔术师" })[targetSeq] ||
+      ({ 8: "读心者", 7: "心理医生" })[targetSeq] || "晋升者";
+    return {
+      sequence: targetSeq,
+      text: `魔药在意识中沉定成新的形状，你成为「${name}」。`,
+      effects: { spirituality: 4, madness: 10 },
+      tags: [`序列：${name}`],
+      dead: false,
+    };
+  }
+
+  // 失控：三档后果（55:32:13）
+  const roll = Math.random() * 100;
+  if (roll < 13) {
+    // S 精神死亡·身体崩溃
+    return {
+      text: "魔药的力量炸开了你意识的最深处——灵魂在震爆中湮灭，身体开始异变、崩解（失控·精神死亡）。",
+      effects: { madness: 30, health: -50, stamina: -20 },
+      tags: ["身体崩溃", "魔药反噬", "精神污染"],
+      dead: true,
+    };
+  }
+  if (roll < 45) {
+    // A 人格被扭曲
+    return {
+      text: "魔药中那道古老意志压过了你——你清醒地感受着自己变得冷酷残忍，却再也找不回原来的自己（失控·人格扭曲）。晋升失败。",
+      effects: { madness: 16, charisma: -6, stress: 6 },
+      tags: ["人格被扭曲", "魔药反噬", "精神污染"],
+      dead: false,
+    };
+  }
+  // B 当场发狂
+  return {
+    text: "魔药入喉，你的精神当场崩断——你发疯般撕扯着一切近身之物（失控·发狂）。众人合力才将你制住，晋升失败。",
+    effects: { madness: 14, stress: 12, stamina: -6 },
+    tags: ["当场发狂", "魔药反噬", "灵性外溢"],
+    dead: false,
+  };
+}
+
 function resolveEvent(choiceIndex, shouldRender = true) {
   const event = state.pendingEvent;
   if (!event) {
@@ -2377,7 +2549,36 @@ function resolveEvent(choiceIndex, shouldRender = true) {
   }
 
   const choice = event.choices[choiceIndex];
-  applyEffects(choice.effects || {});
+  let appliedText = choice.result;
+  const effects = { ...(choice.effects || {}) };
+
+  // V0.28/V0.30：途径选择（_pathway）→ 设途径 + 起始序列 9
+  if (effects._pathway !== undefined) {
+    state.character.pathway = effects._pathway;
+    state.character.sequence = 9;
+    addTag(`途径：${effects._pathway}`);
+    addTag(`序列：${effects._pathway}`);
+    delete effects._pathway;
+  }
+
+  // V0.30：魔药晋升（_potion）→ Web 版失控检定（复刻 Python drink_potion 语义）
+  if (effects._potion !== undefined) {
+    const potionResult = drinkPotionWeb(effects._potion);
+    appliedText = potionResult.text;
+    Object.assign(effects, potionResult.effects);
+    delete effects._potion;
+    if (potionResult.dead) {
+      state.character.dead = true;
+      state.character.deathReason = "失控：精神死亡，身体异变崩解";
+      addTag("身体崩溃");
+    }
+    (potionResult.tags || []).forEach(addTag);
+    if (potionResult.sequence) {
+      state.character.sequence = potionResult.sequence;
+    }
+  }
+
+  applyEffects(effects);
   changeLife(choice.lifeEffects || {});
   applyExposureChange(choice.exposureChange || 0);
   applyTrustEffects(choice.trustEffects || {});
@@ -2403,7 +2604,16 @@ function resolveEvent(choiceIndex, shouldRender = true) {
   markEventTriggered(event);
   updateStoryArcs();
   state.pendingEvent = null;
-  addEntry(event.happenedAt || formatDate(), `${event.title}：${choice.result}`);
+  addEntry(event.happenedAt || formatDate(), `${event.title}：${appliedText}`);
+  // V0.30：失控死亡后存档并提示（专属终局提示，不弹年度总结）
+  if (state.character.dead) {
+    saveState();
+    if (shouldRender) {
+      render();
+    }
+    window.alert(`感染(精神死亡)·身体崩解——${state.character.name}在晋升中失控，灵魂在魔药的力量下湮灭。\n这段人生结束了。可「重新开始」或读档回溯。`);
+    return;
+  }
   saveState();
 
   if (shouldRender) {
@@ -3903,7 +4113,25 @@ function renderPathway() {
   if (!el) {
     return;
   }
-  el.textContent = state.character?.pathway || "无";
+  const c = state.character || {};
+  if (!c.pathway) {
+    el.textContent = "无";
+    return;
+  }
+  const seqNames = {
+    占卜家: { 7: "魔术师", 8: "小丑", 9: "占卜家" },
+    观众: { 7: "心理医生", 8: "读心者", 9: "观众" },
+    不眠者: { 7: "梦魇", 8: "午夜诗人", 9: "不眠者" },
+  };
+  const seq = c.sequence ?? 9;
+  const name = (seqNames[c.pathway] || {})[seq] || c.pathway;
+  if (c.dead) {
+    el.textContent = `${name}·已失控`;
+  } else if (seq >= 9 && c.sequence === undefined) {
+    el.textContent = c.pathway;
+  } else {
+    el.textContent = `${name}·序列${seq}`;
+  }
 }
 
 function renderContacts() {
