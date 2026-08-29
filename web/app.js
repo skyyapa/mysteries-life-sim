@@ -3189,6 +3189,8 @@ function changeTrust(contactId, amount) {
     return;
   }
   contact.trust = Math.max(0, Math.min(100, contact.trust + amount));
+  // V0.25 记忆：明显的善意/恶意会被记住
+  recordMemory(contact, amount);
 }
 
 function changeTrustCapped(contactId, amount, cap) {
@@ -3198,7 +3200,24 @@ function changeTrustCapped(contactId, amount, cap) {
   }
   const before = contact.trust;
   contact.trust = Math.max(0, Math.min(cap, contact.trust + amount));
-  return contact.trust - before;
+  const applied = contact.trust - before;
+  if (applied !== 0) {
+    recordMemory(contact, applied);
+  }
+  return applied;
+}
+
+/** V0.25：记录轻量记忆（contact.memories.helped/harmed 计数）。 */
+function recordMemory(contact, applied) {
+  if (Math.abs(applied) < 2) {
+    return; // 小幅波动不记
+  }
+  contact.memories = contact.memories || { helped: 0, harmed: 0 };
+  if (applied > 0) {
+    contact.memories.helped = (contact.memories.helped || 0) + 1;
+  } else {
+    contact.memories.harmed = (contact.memories.harmed || 0) + 1;
+  }
 }
 
 /** 泛社交：同地点联系人 +1 信任，但封顶 40（朋友），浅交无法更深。 */
@@ -3776,6 +3795,15 @@ function renderContacts() {
         contact.trust >= 40
           ? `<span class="deep-only">已在朋友之上，需专门深交</span>`
           : "";
+      // V0.25：轻量记忆徽记（帮过/坑过，颜色区分）
+      const memBadges = [];
+      const mem = contact.memories || {};
+      if ((mem.helped || 0) > 0) {
+        memBadges.push('<em class="mem-badge mem-helped">念着我的好</em>');
+      }
+      if ((mem.harmed || 0) > 0) {
+        memBadges.push('<em class="mem-badge mem-harmed">对我有怨</em>');
+      }
       return `
         <article class="contact${nearby}${focused}" data-contact-id="${contactId}">
           <div>
@@ -3784,6 +3812,7 @@ function renderContacts() {
             <span>${contact.currentActivity || "维持日常生活"}</span>
           </div>
           <b class="trust-num">${contact.trust}</b>
+          ${memBadges.join("")}
           ${deepHint}
         </article>
       `;

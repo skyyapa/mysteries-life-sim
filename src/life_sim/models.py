@@ -248,6 +248,9 @@ class NPC:
     social_links: dict[str, dict[str, int]] = field(
         default_factory=dict
     )  # V0.15.5：NPC→NPC 关系（{"other_npc_id": {"familiarity","affection",...}}）
+    memories: dict[str, dict[str, int]] = field(
+        default_factory=dict
+    )  # V0.25：玩家→NPC 的记忆 {"helped": {count,last_day}, "harmed": {...}}
     trust: int = field(default=0, init=False, repr=False)
     state: Any = None      # NPCState（延迟赋值避免循环 import）
     needs: Any = None      # NPCNeeds
@@ -306,6 +309,31 @@ class NPC:
             0, min(100, self.relationship.get("fear", 0) + amount)
         )
 
+    def remember(self, kind: str, day: int) -> None:
+        """V0.25：记录玩家对 NPC 的记忆（helped/harmed/admired 等）。
+
+        同类型事件累积 count，并刷新最近发生日（用于衰减计算）。
+        """
+        mem = self.memories.setdefault(kind, {"count": 0, "last_day": day})
+        mem["count"] = mem.get("count", 0) + 1
+        mem["last_day"] = day
+
+    def memory_magnitude(self, kind: str, day: int) -> int:
+        """V0.25：某类记忆当前的"强度"（越近越强，随时间衰减）。
+
+        强度 = count × 时间衰减因子（最近 30 天全强度，之后每月减半）。
+        """
+        mem = self.memories.get(kind)
+        if not mem:
+            return 0
+        count = mem.get("count", 0)
+        elapsed = day - mem.get("last_day", day)
+        # 30 天内全强度；每过 30 天强度减半
+        decay = 1.0
+        if elapsed > 30:
+            decay = max(0.1, 0.5 ** ((elapsed - 30) / 30))
+        return int(round(count * decay))
+
     def is_weekend(self, day: int) -> bool:
         """day 0-6 对应周一..周日；5(周六)、6(周日) 为休息日。"""
         return day in (5, 6)
@@ -345,6 +373,7 @@ class NPC:
             "social_links": {
                 k: dict(v) for k, v in self.social_links.items()
             },
+            "memories": {k: dict(v) for k, v in self.memories.items()},
         }
         if self.job_location is not None:
             result["job_location"] = self.job_location
@@ -391,6 +420,7 @@ class NPC:
             social_links={
                 k: dict(v) for k, v in data.get("social_links", {}).items()
             },
+            memories={k: dict(v) for k, v in data.get("memories", {}).items()},
             schedule_id=data.get("schedule_id"),
         )
         # V0.15.1：读档优先取存档里的 state/needs，缺省用迁移默认

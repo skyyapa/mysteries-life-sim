@@ -48,6 +48,7 @@ class NPCSystem:
                 weekend_schedule=list(npc.weekend_schedule),
                 relationship=dict(npc.relationship),
                 social_links={k: dict(v) for k, v in npc.social_links.items()},
+                memories={k: dict(v) for k, v in npc.memories.items()},
                 state=npc.state,
                 needs=npc.needs,
                 schedule_id=npc.schedule_id,
@@ -345,5 +346,6 @@ def npc_from_data(data: dict) -> NPC:
         disappeared_day=data.get("disappeared_day"),
         relationship=relationship,
         social_links={k: dict(v) for k, v in data.get("social_links", {}).items()},
+        memories={k: dict(v) for k, v in data.get("memories", {}).items()},
         schedule_id=data.get("schedule_id"),
     )

@@ -255,6 +255,11 @@ class EventSystem:
             npc = state.npcs.get(npc_id)
             if npc is not None:
                 npc.add_trust(amount)
+                # V0.25：记忆——玩家对 NPC 的好/坏会留在 NPC 心里
+                if amount > 0:
+                    npc.remember("helped", state.days_lived)
+                elif amount < 0:
+                    npc.remember("harmed", state.days_lived)
         if node.cooldown > 0:
             state.world.event_last_triggered[node.id] = state.days_lived
         self.advance(graph, state)

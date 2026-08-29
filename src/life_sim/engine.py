@@ -182,8 +182,13 @@ class WorldEngine:
         changes: dict[str, int] = {"social_trust": 0}
 
         if focused is not None:
-            focused.add_trust(3 + bonus)
-            changes["social_trust"] = changes.get("social_trust", 0) + 3 + bonus
+            base = 3 + bonus
+            # V0.25：记忆修正——帮过更容易交心，坑过更见外
+            helped = focused.memory_magnitude("helped", state.days_lived)
+            harmed = focused.memory_magnitude("harmed", state.days_lived)
+            base = base + min(3, helped) - min(4, harmed)
+            focused.add_trust(base)
+            changes["social_trust"] = changes.get("social_trust", 0) + base
             changes["focused"] = 1
         else:
             for npc in state.npcs.values():

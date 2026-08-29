@@ -4,7 +4,7 @@
 > 任何新会话/协作者先读本文件 + `README.md`，即可无缝接续开发。
 > 每完成一个阶段后在本文件追加更新（保持它与代码真实一致）。
 
-最后更新：V0.24（途径深化）完成时
+最后更新：V0.25（NPC 轻量记忆）完成时
 
 ---
 
@@ -26,7 +26,8 @@
 | V0.22 | 数据校验工具链：JSON Schema + 语义校验（已完成） |
 | V0.23 | 一年人生总结岁末回顾（已完成） |
 | V0.24 | 途径深化：占卜行动/观众加成/不眠者耐力 + 途径专属事件（已完成） |
-| 后续 | NPC 轻量记忆（规则驱动）、事件图图级分支、意式散文扩展 |
+| V0.25 | NPC 轻量记忆：帮过/坑过影响社交（已完成） |
+| 后续 | 事件图图级分支、更多途径能力、内容扩展 |
 
 每个小版节奏：跑 30 天 → 跑一年 → 测试 → 再进下一步。V0.15 坚决不做 LLM/Lisien/自由对话/长期记忆/非凡NPC。
 
@@ -175,6 +176,7 @@ tests/
 24. **V0.22 数据校验工具链**：`python tools/check_data.py` 或 pytest 校验全部 data/*.json——JSON 可解析 + JSON Schema 结构白名单（data/schema/event_graphs.schema.json）+ 语义（图/节点 id 唯一、边引用存在、min_day≤max_day、once_tag 不在 requires_tags_any 里互锁、choice 有 label/result）；**改完数据先跑它再跑引擎**，杜绝"手改 JSON 缺括号/引用崩溃"。
 25. **V0.23 一年总结是纯函数**：`summary.summarize_life(state)` 从既有数据（relationship 熟人圈、pathway、madness、bulletin、money）拼装报告，不引入 AI/新状态——Web 版 `buildLifeSummary()` 语义镜像，跨年弹"岁末回顾"模态；`ui.lastSummaryYear` 防重复弹。
 26. **V0.24 途径深化三件套**：占卜家→`divination` 专属行动（requires_pathway 校验 + available_actions 按 pathway 过滤 + 偶然吉兆）；观众→社交 trust 加成（apply_social_effects(bonus=3)/Web charisma）；不眠者→工作/调查耐力豁免（stamina 净变化放款）。3 个途径专属事件节点（初窥镜影/洞察谎言/夜巡纽扣）接 `途径：X` 标签触发，once_tag 防重复；`actions.json` 校验器（V0.22）当时直接拦下了 `trust_effects:{}` 的空对象错误。
+27. **V0.25 NPC 记忆是规则表不是 AI**：`NPC.memories{kind:{count,last_day}}` + `remember()/memory_magnitude()`（30 天内全强度、之后按 30 天半衰衰减）；事件 trust_effects 正负自动记 helped/harmed；深交社交收益按记忆修正（帮过 +≤3，坑过 −≤4）。Web 镜像：contact.memories 徽记（念着我的好/对我有怨）、changeTrust 记记忆（|Δ|≥2 才记）。
 
 ---
 
