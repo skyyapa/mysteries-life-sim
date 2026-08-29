@@ -2082,6 +2082,85 @@ const events = [
       },
     ],
   },
+  {
+    id: "guard_meet_dunn",
+    title: "值夜者：邓恩·史密斯",
+    text: "圣赛琳娜教堂的后院长凳上，值夜者队长邓恩·史密斯抬眼打量你：\u201c你见过夜里不该有的东西。\u201d",
+    chance: 45,
+    weight: 4,
+    minDay: 40,
+    requiresTags: ["成为教会线人"],
+    onceTag: "见过值夜者队长",
+    choices: [
+      {
+        label: "如实相告",
+        result: "你把看到的事一并说出。邓恩沉默很久，最后说：\u201c跟着我巡一晚。\u201d",
+        effects: { stress: 2 },
+        addTags: ["见过值夜者队长", "受托夜巡"],
+      },
+      {
+        label: "推辞离开",
+        result: "\u201c也好。\u201d他没有强求，只是把那半支烟点着，往夜色里走去。",
+        effects: { stress: -2 },
+        addTags: ["见过值夜者队长"],
+      },
+    ],
+  },
+  {
+    id: "guard_night_patrol",
+    title: "随值夜者巡夜",
+    text: "你披上防霜斗篷，跟在邓恩身后穿过东区的小巷。他走几步就停下听一听——像在听某种比你更安静的东西是否在暗处呼吸。",
+    chance: 55,
+    weight: 4,
+    minDay: 46,
+    requiresTags: ["受托夜巡"],
+    onceTag: "随值夜者巡夜",
+    choices: [
+      {
+        label: "紧随其步，记住路线",
+        result: "你记住了哪条巷子路灯永远坏、哪面墙缝里渗着不该有的凉。邓恩赞许地点头。",
+        effects: { stamina: -8, stress: 4, intelligence: 2 },
+        addTags: ["随值夜者巡夜"],
+        addClues: [
+          {
+            id: "night_patrol_route",
+            title: "值夜者的巡查路线",
+            text: "你记住了邓恩的夜巡路线：哪些地方路灯常坏，哪些墙缝渗着异常的凉。",
+          },
+        ],
+      },
+      {
+        label: "在街角等",
+        result: "你等到天亮。邓恩回来时只说了一句：\u201c没出事，就好。\u201d",
+        effects: { stress: -3, stamina: -4 },
+        addTags: ["随值夜者巡夜"],
+      },
+    ],
+  },
+  {
+    id: "guard_contain",
+    title: "值夜者的门",
+    text: "圣赛琳娜教堂的地下库房，邓恩打开一扇铁门。\u201c有些东西，我们要么收容，要么看着它收容我们。\u201d他看向你：\u201c值夜者，缺你这样的眼睛。\u201d",
+    chance: 55,
+    weight: 4,
+    minDay: 55,
+    requiresTags: ["随值夜者巡夜"],
+    onceTag: "值夜者结缘",
+    choices: [
+      {
+        label: "正式加入值夜者",
+        result: "从今夜起，你是值夜者的新眼睛——\u201c欢迎，我们的人。\u201d",
+        effects: { mysticism: 3, spirituality: 2, stress: 5 },
+        addTags: ["值夜者结缘", "成为值夜者"],
+      },
+      {
+        label: "只作外援",
+        result: "\u201c也行。\u201d邓恩没有勉强，但把他的地址留给了你：有异常，来教堂找我。",
+        effects: { spirituality: 2, stress: -2 },
+        addTags: ["值夜者结缘"],
+      },
+    ],
+  },
 ];
 
 const initialState = {

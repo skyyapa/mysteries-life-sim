@@ -1263,5 +1263,57 @@
       }
     ],
     "trust": 5
+  },
+  {
+    "id": "dunn_smith",
+    "canon_id": "cn_邓恩·史密斯",
+    "name": "邓恩·史密斯",
+    "job": "值夜者队长",
+    "goal": "让廷根的夜不再有不该有的事",
+    "home": "圣赛琳娜教堂",
+    "location": "圣赛琳娜教堂",
+    "job_location": "圣赛琳娜教堂",
+    "fatigue": 28,
+    "money": 60,
+    "schedule_id": "priest",
+    "schedule": [
+      {
+        "time": "08:00",
+        "location": "圣赛琳娜教堂",
+        "activity": "整理昨夜巡查记录",
+        "fatigue_change": -2
+      },
+      {
+        "time": "12:00",
+        "location": "圣赛琳娜教堂",
+        "activity": "简单用餐",
+        "fatigue_change": 2
+      },
+      {
+        "time": "14:00",
+        "location": "圣赛琳娜教堂",
+        "activity": "安排值夜小队",
+        "fatigue_change": 4
+      },
+      {
+        "time": "20:00",
+        "location": "圣赛琳娜教堂",
+        "activity": "带队夜巡",
+        "fatigue_change": 10
+      },
+      {
+        "time": "02:00",
+        "location": "北区",
+        "activity": "巡至北区街巷",
+        "fatigue_change": 7
+      },
+      {
+        "time": "05:00",
+        "location": "圣赛琳娜教堂",
+        "activity": "交接并休息",
+        "fatigue_change": -6
+      }
+    ],
+    "trust": 3
   }
 ]

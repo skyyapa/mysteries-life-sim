@@ -122,7 +122,8 @@ def test_world_engine_creates_21_npcs_with_schedules():
     engine = WorldEngine(seed=1)
     state = engine.new_game()
 
-    assert len(state.npcs) == 21
+    assert len(state.npcs) == 22  # V0.32 加值夜者队长邓恩
+    assert "dunn_smith" in state.npcs
     tom = state.npcs["tom_tavern"]
     assert tom.name == "汤姆"
     assert tom.job == "酒馆老板"

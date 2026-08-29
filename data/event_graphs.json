@@ -2044,5 +2044,196 @@
       }
     ],
     "edges": []
+  },
+  {
+    "id": "night_guard_line",
+    "title": "值夜者",
+    "type": "chain",
+    "start_node": "start",
+    "nodes": [
+      {
+        "id": "start",
+        "text": "圣赛琳娜教堂的后廊，值夜者队长邓恩·史密斯见过太多想「接触真相」的普通人。",
+        "chance": 0,
+        "weight": 1
+      },
+      {
+        "id": "meet_dunn",
+        "text": "邓恩·史密斯坐在教堂后院长凳上，指间夹着半支没点的烟。他抬眼打量你：「你见过夜里不该有的东西。」",
+        "chance": 45,
+        "weight": 4,
+        "locations": [
+          "church"
+        ],
+        "min_day": 40,
+        "requires_tags_any": [
+          "成为教会线人",
+          "向教会举报"
+        ],
+        "once_tag": "见过值夜者队长",
+        "choices": [
+          {
+            "label": "如实相告",
+            "result": "你把看到的事一并说出。邓恩沉默很久，最后说：「跟着我巡一晚。」",
+            "effects": {},
+            "add_tags": [
+              "见过值夜者队长",
+              "受托夜巡"
+            ],
+            "trust_effects": {
+              "dunn_smith": 5
+            }
+          },
+          {
+            "label": "推辞离开",
+            "result": "「也好。」他没有强求，只是把那半支烟点着，往夜色里走去。",
+            "effects": {
+              "stress": -2
+            },
+            "add_tags": [
+              "见过值夜者队长"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "night_patrol",
+        "text": "你披上防霜斗篷，跟在邓恩身后穿过东区的小巷。他走几步就停下听一听——像在听某种比你更安静的东西是否在暗处呼吸。",
+        "chance": 55,
+        "weight": 4,
+        "locations": [
+          "east",
+          "north"
+        ],
+        "min_day": 46,
+        "requires_tags_any": [
+          "受托夜巡"
+        ],
+        "once_tag": "随值夜者巡夜",
+        "choices": [
+          {
+            "label": "紧随其步，记住路线",
+            "result": "你记住了哪条巷子路灯永远坏、哪面墙缝里渗着不该有的凉。邓恩赞许地点头。",
+            "effects": {
+              "stamina": -8,
+              "stress": 4,
+              "intelligence": 2
+            },
+            "trust_effects": {
+              "dunn_smith": 4
+            },
+            "add_clues": [
+              {
+                "id": "night_patrol_route",
+                "title": "值夜者的巡查路线",
+                "text": "你记住了邓恩的夜巡路线：哪些地方路灯常坏，哪些墙缝渗着异常的凉。"
+              }
+            ],
+            "add_tags": [
+              "随值夜者巡夜"
+            ]
+          },
+          {
+            "label": "在街角等",
+            "result": "你等到天亮。邓恩回来时只说了一句：「没出事，就好。」",
+            "effects": {
+              "stress": -3,
+              "stamina": -4
+            },
+            "add_tags": [
+              "随值夜者巡夜"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "contain_anomaly",
+        "text": "圣赛琳娜教堂的地下库房，邓恩打开一扇铁门。「有些东西，我们要么收容，要么看着它收容我们。」他看向你：「值夜者，缺你这样的眼睛。」",
+        "chance": 55,
+        "weight": 4,
+        "locations": [
+          "church"
+        ],
+        "min_day": 55,
+        "requires_tags_any": [
+          "随值夜者巡夜"
+        ],
+        "once_tag": "值夜者结缘",
+        "choices": [
+          {
+            "label": "正式加入值夜者",
+            "result": "你在邓恩眼底看到一瞬的赞许。从今夜起，你是值夜者的新眼睛——「欢迎，我们的人。」",
+            "effects": {
+              "mysticism": 3,
+              "spirituality": 2,
+              "stress": 5
+            },
+            "trust_effects": {
+              "dunn_smith": 8
+            },
+            "add_tags": [
+              "值夜者结缘",
+              "成为值夜者"
+            ]
+          },
+          {
+            "label": "只作外援",
+            "result": "「也行。」邓恩没有勉强，但把他的地址留给了你：有异常，来教堂找我。",
+            "effects": {
+              "spirituality": 2,
+              "stress": -2
+            },
+            "add_tags": [
+              "值夜者结缘"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "night_guard_end",
+        "text": "后来的夜里，你在廷根街巷偶尔与值夜者擦肩。他们不言语，只微微颔首——你已经是他们中的一部分。",
+        "chance": 50,
+        "weight": 3,
+        "locations": [
+          "north",
+          "east"
+        ],
+        "min_day": 60,
+        "requires_tags_any": [
+          "值夜者结缘"
+        ],
+        "once_tag": "值夜者线终"
+      }
+    ],
+    "edges": [
+      {
+        "from": "start",
+        "to": "meet_dunn",
+        "condition": {
+          "min_day": 40
+        }
+      },
+      {
+        "from": "meet_dunn",
+        "to": "night_patrol",
+        "condition": {
+          "tag": "受托夜巡"
+        }
+      },
+      {
+        "from": "night_patrol",
+        "to": "contain_anomaly",
+        "condition": {
+          "tag": "随值夜者巡夜"
+        }
+      },
+      {
+        "from": "contain_anomaly",
+        "to": "night_guard_end",
+        "condition": {
+          "tag": "值夜者结缘"
+        }
+      }
+    ]
   }
 ]
