@@ -2099,8 +2099,8 @@ document.getElementById("autoDay").addEventListener("click", () => {
     render();
     return; // 事件等待玩家选择
   }
-  // 点击一下 = 过一天：主角自动生活一天，遇到事件停下交给玩家
-  takeAction(pickAutoAction());
+  // v0.27 点击一下 = 过一天：一天按早/午/晚三个时段生活，遇到事件停下交给玩家
+  liveOneFullDay();
   saveState();
   render();
   if (state.pendingEvent) {
@@ -2151,57 +2151,177 @@ function takeAction(actionId, shouldRender = true) {
     }
     return;
   }
+  advanceDayWithAction(actionId, shouldRender);
+}
 
-  if (actionId === "investigate" && getInvestigationCooldown() > 0) {
+/**
+ * v0.27 一天由早/午/晚三时段组成：执行动作但只在当天结束时推进日期。
+ * 各时段动作不做日期推进，事件判定只在整个天数末尾 roll 一次。
+ */
+function liveOneFullDay() {
+  if (state.pendingEvent) {
+    return;
+  }
+  const slotActions = pickDaySlots();
+  const happened = [];
+  for (const slot of slotActions) {
+    if (state.pendingEvent) {
+      break; // 中途遇事件（如调查触发），停下交给玩家
+    }
+    const text = performActionOnce(slot.action, slot.label, false);
+    if (text) {
+      happened.push(text);
+    }
+  }
+  // 只有那天真正过了才推进日期与月结算
+  const day = advanceDayNoEvent();
+  const logLines = happened.filter(Boolean);
+  if (logLines.length > 0) {
+    addEntry(formatDate(), logLines.join(" ").slice(0, 600));
+  }
+  saveState();
+  render();
+  return day;
+}
+
+/** 为今天的三时段挑选动作（上午重生存，午后重发展，晚上轻恢复，尽量不重复）。 */
+function pickDaySlots() {
+  const morning = pickAutoAction();
+  const noon = pickNoonAction();
+  const used = new Set([morning, noon]);
+  const evening = pickEveningAction(used);
+  return [
+    { label: "早晨", action: morning },
+    { label: "午后", action: noon },
+    { label: "夜晚", action: evening },
+  ];
+}
+
+function pickNoonAction() {
+  // 午后：优先推进主线/调查，其次工作/社交
+  if (state.clues.length >= 2 && state.stats.money >= 40 && getInvestigationCooldown() <= 0 && Math.random() < 0.55) {
+    return "investigate";
+  }
+  if (state.clues.length >= 2 && state.deductions.length < 4 && Math.random() < 0.4) {
+    return "deduce";
+  }
+  if (state.stats.money < 60) {
+    return "work";
+  }
+  return pick(["work", "social", "wander", "study"]);
+}
+
+function pickEveningAction(used = new Set()) {
+  const pathway = state.character?.pathway;
+  if (pathway === "占卜家" && state.stats.spirituality >= 12 && state.stats.money >= 40 && Math.random() < 0.25 && !used.has("divination")) {
+    return "divination";
+  }
+  if (state.stats.stress > 60 && !used.has("rest")) {
+    return "rest";
+  }
+  if (state.stats.money >= 40 && state.finance.savings < 120 && Math.random() < 0.2 && !used.has("save")) {
+    return "save";
+  }
+  const pool = ["rest", "social", "wander", "study"].filter((a) => !used.has(a));
+  return pool.length > 0 ? pick(pool) : "rest";
+}
+
+/** 纯执行一次动作：applyEffects + 生活描述，不推进日期、不 roll 事件。 */
+function performActionOnce(actionId, slotLabel, shouldRender) {
+  if (state.pendingEvent) {
+    return "";
+  }
+  const action = actions[actionId];
+  if (!action) {
+    return "";
+  }
+  const effects = getActionEffects(actionId, action);
+  applyEffects(effects);
+  applyActionReputation(actionId);
+  let text = `${action.summary}`;
+
+  if (actionId === "investigate") {
+    if (getInvestigationCooldown() > 0) {
+      text = "线索还不清晰，你决定今天把调查搁下。";
+    } else {
+      const inv = runInvestigation();
+      if (inv) {
+        state.pendingEvent = undefined; // 调查结果作为事件即时呈现
+        text = `${text} ${inv}`;
+      } else {
+        text = `${text} 但没问出什么新的。`;
+      }
+    }
+  } else if (actionId === "deduce") {
+    text = `${text} ${runDeduction()}`;
+  } else if (actionId === "save") {
+    const deposited = Math.min(10, state.stats.money);
+    if (deposited > 0) {
+      state.stats.money -= deposited;
+      state.finance.savings += deposited;
+      text = text + ` 你把 ${deposited} 镑存进储蓄银行。`;
+    } else {
+      text = "你走到银行门口，摸了摸空荡荡的口袋，只好转身回去。";
+    }
+  } else if (actionId === "withdraw") {
+    const withdrawn = Math.min(10, state.finance.savings || 0);
+    if (withdrawn > 0) {
+      state.finance.savings -= withdrawn;
+      state.stats.money += withdrawn;
+      text = text + ` 你从储蓄银行取出 ${withdrawn} 镑。`;
+    } else {
+      text = "你的存款是零，银行柜员礼貌地请你让开后面的队伍。";
+    }
+  }
+  // 时段标签 + 触发的随机事件（当天只 roll 一次）
+  const morning = slotLabel === "早晨";
+  if (morning) {
+    const event = rollEvent();
+    if (event) {
+      state.pendingEvent = { ...event, happenedAt: formatDate() };
+      text = `${text} ${event.text}`;
+    }
+  }
+  return `${slotLabel}：${text}`;
+}
+
+/** 推进日期（无事件判定），返回是否跨月。 */
+function advanceDayNoEvent() {
+  state.daysLived += 1;
+  state.day += 1;
+  worldTick();
+  let crossedMonth = false;
+  if (state.day > 30) {
+    state.day = 1;
+    state.month += 1;
+    settleMonth();
+    crossedMonth = true;
+  }
+  if (state.month > 12) {
+    state.month = 1;
+    state.year += 1;
+    advanceAge();
+    state.ui.lastSummaryYear = null;
+    showLifeSummary();
+  }
+  return crossedMonth;
+}
+
+/** 兼容旧调用：单动作一天（直接一次时段执行 + 推进日期）。 */
+function advanceDayWithAction(actionId, shouldRender = true) {
+  if (state.pendingEvent) {
     if (shouldRender) {
       render();
     }
     return;
   }
-
-  const action = actions[actionId];
-  const effects = getActionEffects(actionId, action);
-  applyEffects(effects);
-  applyActionReputation(actionId);
-  const lifeText = applyDailyLife(actionId);
-
-  let text = `${action.summary} ${lifeText}`;
-  if (actionId === "investigate") {
-    text = `${text} ${runInvestigation()}`;
+  const parts = [performActionOnce(actionId, "今日", false)];
+  advanceDayNoEvent();
+  const text = parts.filter(Boolean).join(" ");
+  if (text) {
+    addEntry(formatDate(), text.slice(0, 600));
   }
-  if (actionId === "deduce") {
-    text = `${text} ${runDeduction()}`;
-  }
-  if (actionId === "save") {
-    const deposited = Math.min(10, state.stats.money);
-    if (deposited > 0) {
-      state.stats.money -= deposited;
-      state.finance.savings += deposited;
-      text = `你把 ${deposited} 镑存进储蓄银行。` + (state.finance.savings >= 30 ? " 柜员认得你了，说你是个攒得下钱的人。" : "");
-    } else {
-      text = "你走到银行门口，摸了摸空荡荡的口袋，只好转身回去。";
-    }
-  }
-  if (actionId === "withdraw") {
-    const withdrawn = Math.min(10, state.finance.savings || 0);
-    if (withdrawn > 0) {
-      state.finance.savings -= withdrawn;
-      state.stats.money += withdrawn;
-      text = `你从储蓄银行取出 ${withdrawn} 镑。`;
-    } else {
-      text = "你的存款是零，银行柜员礼貌地请你让开后面的队伍。";
-    }
-  }
-  const event = rollEvent();
-  if (event) {
-    state.pendingEvent = { ...event, happenedAt: formatDate() };
-    text = `${text} ${event.text}`;
-  }
-
-  addEntry(formatDate(), `${action.name}：${text}`);
-  advanceDay();
   saveState();
-
   if (shouldRender) {
     render();
   }
@@ -3531,7 +3651,7 @@ function renderAutoLifeBadge() {
   if (!badge) {
     return;
   }
-  badge.textContent = "主角自动生活 · 点「过一天」推进";
+  badge.textContent = "自动生活 · 一天早午晚三程";
   badge.classList.add("on");
   badge.classList.remove("off");
 }
